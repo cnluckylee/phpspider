@@ -1,0 +1,16 @@
+#!/bin/bash
+controller=$1
+action=$2
+declare -i i=$3;
+
+for((;;))
+do
+php -f ./index.php $controller $action &
+i=$i-1
+if [ $i -le 0 ];then
+{
+break
+}
+
+fi
+done
