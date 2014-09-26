@@ -21,39 +21,25 @@ class manpianyiModel extends spiderModel {
 		$this->redis->delete ( $this->spidername . 'ItemJobRun' );
 		// 判断本次是否重新抓取分类数据
 		if ($thistimerun) {
-			$Category_URL = $Category ['Category_URL'];
-			$page = file_get_contents ( $Category_URL );
-			$preg = $Category ['Category_Match_Preg'];
-			$matchnum = $Category ['Category_Match_Match'];
-			// 网页编码转换
-				
-			if (Application::$_spider ['charset'] && strtolower ( Application::$_spider ['charset'] ) != 'utf-8')
-				$page = mb_convert_encoding ( $page, "utf-8", Application::$_spider ['charset'] );
-			// new
-			/*
-			* preg_match ( Application::$_spider['charset'], $page, $match ); $charset = isset($match[1])?$match[1]:""; //网页编码转换 if($charset && strtolower($charset)!='utf-8') $page = iconv($charset, "UTF-8", $page);
-			*/
-
-			preg_match_all ( $preg, $page, $match );
-			if (is_array ( $matchnum )) {
-			$name = $matchnum ['name'];
-					$cid = $matchnum ['cid'];
-							$Categorytmp = array_combine ( $match [$name], $match [$cid] );
-			} else {
-				$Categorytmp = $match [$matchnum];
-			}
-			$mondata =  array ();
 			$sid = Application::$_spider ['stid'];
-			// test
-			$Categorylist = array_unique ( $Categorytmp );
+			
 			/**
-			 * 增加另外的几个
+			 * 固定分类
 			 */
+			$Categorylist = array();
 			$Categorylist['限时折扣'] = 'zhekou';
 			$Categorylist['品牌秒杀'] = 'brand';
 			$Categorylist['9块9包邮'] = 'baoyou';
 			$Categorylist['其他'] = 'qita';
-			
+			$Categorylist['女装'] = 'nvzhuang';
+			$Categorylist['男装'] = 'nanzhuang';
+			$Categorylist['家居'] = 'jiaju';
+			$Categorylist['美妆'] = 'huazhuangpin';
+			$Categorylist['鞋包'] = 'xiebao';
+			$Categorylist['美食'] = 'meishi';
+			$Categorylist['配饰'] = 'peishi';
+			$Categorylist['母婴'] = 'muying';
+			$Categorylist['数码'] = 'shuma';
 			foreach ( $Categorylist as $name => $cid ) {
 				$this->pools->set ( $poolname, $cid );
 				$mondata [] = array (
@@ -93,7 +79,7 @@ class manpianyiModel extends spiderModel {
 		$poolname = $this->spidername . 'Item';
 		$Category = Application::$_spider ['Category'];
 		$Categoryurl = str_replace ( "#job", $job, $Category ['Category_List_URL'] );
-		
+// 		$Categoryurl = 'http://www.manpianyi.com/shuma.html?url=list';
 		// 首先获取下该分类下面的总页数
 		$pageHtml = $this->curlmulit->remote ( $Categoryurl, null, false );
 		if (! $pageHtml) {
@@ -109,10 +95,15 @@ class manpianyiModel extends spiderModel {
 		}
 		$preg_pagetotals = $Category ['Category_List_Preg'];
 		preg_match_all ( $preg_pagetotals, $pageHtml [0], $match_pagetotals );
-		$totalpages = $match_pagetotals ? $match_pagetotals [$Category ['Category_List_Match']] : 0;
+		
+		$totalpages = isset($match_pagetotals[$Category ['Category_List_Match']])  && $match_pagetotals[$Category ['Category_List_Match']] >0 ? $match_pagetotals [$Category ['Category_List_Match']] : 0;
+		
+		$totalpages = is_int($totalpages) && $totalpages >0 ? $totalpages : 1;
+		
 		$totalpages = intval ( $totalpages ) + 1;
 		$s = isset ( $Category ['Category_Page_Start'] ) ? $Category ['Category_Page_Start'] : 0;
 		$pagesize = $this->runpages;
+
 		if ($totalpages > 0) {
 			$randtimes = ceil ( $totalpages / $pagesize );
 			// 循环获取商品的url地址
@@ -129,6 +120,7 @@ class manpianyiModel extends spiderModel {
 					$url = str_replace ( '#i', $i, $url );
 					$tmpurls [$url] = $url;
 				}
+				
 				$pages = $this->curlmulit->remote ( $tmpurls, null, false );
 	
 				/**

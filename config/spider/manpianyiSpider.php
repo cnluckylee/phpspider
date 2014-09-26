@@ -56,9 +56,5 @@ $siteconfig = array(
 		elements::UPDATEDATA=>array(
 				elements::ITEM_DPRICE,
 				elements::ITEM_OPRICE,
-				elements::ITEM_COMMENT_NUMBER_ALL,
-				elements::ITEM_COMMENT_NUMBER_GENERAL,
-				elements::ITEM_COMMENT_NUMBER_SATISFY,
-				elements::ITEM_COMMENT_NUMBER_DISSATISFY
 		),
 );
