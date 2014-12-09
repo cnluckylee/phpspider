@@ -1,0 +1,4 @@
+2.0 开发计划
+1.加入xpath，支持正则和xpath
+2.加入cache机制，采用smarty思想，cachetime，cachefile
+3.加入cookie验证。
