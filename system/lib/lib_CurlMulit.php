@@ -8,16 +8,45 @@
  */
 class CurlMulit {
 
-    function remote($tmpurls, $reffer = null, $header = true,$charset=null) {
+    function remote($tmpurls, $reffer = null, $header = true,$charset=null,$cache=false) {
         $urls = array();
         if ($tmpurls && !is_array($tmpurls)) {
-            $urls[] = $tmpurls;
+            $urls[$tmpurls] = $tmpurls;
         } else if (is_array($tmpurls)) {
             $urls = $tmpurls;
         } else {
             return false;
         }
+        $urlparams = Application::$_urlparams;
 
+        /**
+         * 判断是否启动了cache
+         * 由于是一次获取的，此处可以通过统一判断，即要存在都存在，不存在就都不存在
+         */
+
+        if(isset($urlparams['params']['cache']) && $urlparams['params']['cache'])
+        {
+            $retuanpage = array();
+            foreach($urls as $url)
+            {
+                //验证是否存在cache,url地址转化//=>||,/=>_
+                $newurl = str_replace(array('//','/'),array('||','_'),$url);
+
+                $cachetime = ROOTPATH.'/cache/'.$newurl.'.ctime';
+                $cachefile = ROOTPATH.'/cache/'.$newurl.'.cache';
+
+                if(file_exists($cachetime))
+                {
+                    $cachetimec = file_get_contents($cachetime);
+                    $cachetimearr = unserialize($cachetimec);
+
+                    if($cachetimearr['deadtime']>time())
+                        $retuanpage[$url] = file_get_contents($cachefile);
+                }
+            }
+            if($retuanpage)
+             return $retuanpage;
+        }
         $user_agent = "Mozilla/5.0 (compatible; Baiduspider/2.0);+http://www.baidu.com/search/spider.html"; //来路
 
         $curl = $text = array();
@@ -60,13 +89,26 @@ class CurlMulit {
             		$text[$k] = mb_convert_encoding($texttmp, "utf-8",$charset);
             	}else
             		$text[$k] = (string) curl_multi_getcontent($curl[$k]);
-                
             }
             curl_multi_remove_handle($handle, $curl[$k]);
             curl_close($curl[$k]);
+            $newurl = str_replace(array('//','/'),array('||','_'),$k);
+            $cachetime = ROOTPATH.'/cache/'.$newurl.'.ctime';
+            $cachefile = ROOTPATH.'/cache/'.$newurl.'.cache';
+            $cachetimearr = array('createtime'=>time(),'deadtime'=>strtotime('+2 hours'));
+            $this->writefile($cachetime,$cachetimearr);
+            $this->writefile($cachefile,$text[$k]);
         }
         curl_multi_close($handle);
         return $text;
+    }
+    //写文件
+    protected function writefile($filename,$word)
+    {
+        $word = serialize($word);
+        $file = fopen($filename,"w");
+        fwrite($file,$word);
+        fclose($file);
     }
 
     //动态ip
