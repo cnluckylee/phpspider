@@ -13,7 +13,14 @@ class spiderController extends Controller {
                 $model = new $newmodel;
                 $this->model = $model;
         }
-		/**
+    /**
+     * 获取分类
+     */
+    public function getCategory() {
+        $this->model->getCategory();
+
+    }
+    /**
 		 * 全量新增整站
 		 */
         public function fulldata() {
@@ -50,7 +57,7 @@ class spiderController extends Controller {
         /**
          * 单个categoryjob
          */
-        public function Categoryjob() {
+        public function categoryjob() {
         	$this->model->CategroyJob();
         }
         /**

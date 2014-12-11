@@ -40,11 +40,13 @@ class CurlMulit {
                     $cachetimec = file_get_contents($cachetime);
                     $cachetimearr = unserialize($cachetimec);
 
-                    if($cachetimearr['deadtime']>time())
+                    if($cachetimearr['deadtime']>time()){
                         $retuanpage[$url] = file_get_contents($cachefile);
+                        unset($urls[$url]);
+                    }
                 }
             }
-            if($retuanpage)
+            if(!$urls)
              return $retuanpage;
         }
         $user_agent = "Mozilla/5.0 (compatible; Baiduspider/2.0);+http://www.baidu.com/search/spider.html"; //来路
@@ -96,16 +98,19 @@ class CurlMulit {
             $cachetime = ROOTPATH.'/cache/'.$newurl.'.ctime';
             $cachefile = ROOTPATH.'/cache/'.$newurl.'.cache';
             $cachetimearr = array('createtime'=>time(),'deadtime'=>strtotime('+2 hours'));
-            $this->writefile($cachetime,$cachetimearr);
-            $this->writefile($cachefile,$text[$k]);
+            if($text[$k])
+            {
+                $this->writefile($cachetime,$cachetimearr,1);
+                $this->writefile($cachefile,$text[$k]);
+            }
         }
         curl_multi_close($handle);
         return $text;
     }
     //写文件
-    protected function writefile($filename,$word)
+    protected function writefile($filename,$word,$serialize = false)
     {
-        $word = serialize($word);
+        $word = $serialize?serialize($word):$word;
         $file = fopen($filename,"w");
         fwrite($file,$word);
         fclose($file);
@@ -122,4 +127,42 @@ class CurlMulit {
         return $ip1id . "." . $ip2id . "." . $ip3id . "." . $ip4id;
     }
 
+    //加入xpath方法
+    function getRegexpInfo($pattern, $content,$match=1)
+    {
+        if (!strlen($pattern)){
+            return null;
+        }
+        $dom = new DOMDocument();
+        @$dom->loadHTML($content);
+        $xpath = new DOMXPath($dom);
+        $arr = explode("||", $pattern);
+        $query = $arr [0];
+        $preg = $arr [1];
+        $result = $xpath->query($query);
+        $page_str = $result->item(0)->nodeValue;
+        preg_match($preg,$page_str,$out);
+        return isset($out[$match]) && $out[$match]?$out[$match]:"";
+    }
+
+    //加入xpath方法
+    function getRegexpInfo2($pattern, $content,$match=1)
+    {
+        if (!strlen($pattern)){
+            return null;
+        }
+        $dom = new DOMDocument();
+        @$dom->loadHTML($content);
+        $xpath = new DOMXPath($dom);
+        $arr = explode("||", $pattern);
+        $query = $arr [0];
+        $preg = $arr [1];
+        $result = $xpath->query($query);
+        $out = array();
+        foreach($result as $item)
+        {
+            $out[]= $item->nodeValue;
+        }
+        return $out;
+    }
 }

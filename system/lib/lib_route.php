@@ -89,6 +89,8 @@ final class Route{
         }
         /**
          * 将命令行转成数组
+         * 命令行下执行方法：php index.php jumei categoryjob 1 cache=1 ca=2
+         * cache=1 ca=2 作为params的参数
          */
         public function ConsoleToArray()
         {
@@ -103,7 +105,12 @@ final class Route{
 	        		$this->route_url['process'] = $argv[3];
 	        	}
 	        	if(count($argv) > 4){
-	        		$this->route_url['params'] = array_slice($argv, 3);
+                    $arr = array_slice($argv, 4);
+                    foreach($arr as $i){
+                        $arr2 = explode("=",$i);
+                        $this->route_url['params'][$arr2[0]] = $arr2[1];
+                    }
+//	        		$this->route_url['params'] = array_slice($argv, 4);
 	        	}
 	        	unset($argv);
 	        	return $this->route_url;

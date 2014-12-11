@@ -12,10 +12,12 @@ class spiderModel extends Model {
 	 * 获取分类数据
 	 */
 	function getCategory() {
+        header("Content-type: text/html; charset=utf-8");
 		$Category = Application::$_spider ['Category'];
 		$thistimerun = isset ( $Category ['Category_Run'] ) ? $Category ['Category_Run'] : 1;
 		$collection_category_name = Application::$_spider ['collection_category_name'];
 		$poolname = $this->spidername . 'Category';
+        $sid = Application::$_spider ['stid'];
 		// 清理Category现场
 		$this->pools->del ( $poolname );
 		$this->redis->delete ( $this->spidername . 'CategoryCurrent' );
@@ -24,41 +26,59 @@ class spiderModel extends Model {
 		$this->redis->delete ( $this->spidername . 'ItemJobRun' );
 		// 判断本次是否重新抓取分类数据
 		if ($thistimerun) {
-			$Category_URL = $Category ['Category_URL'];
-			$page = file_get_contents ( $Category_URL );
-			$preg = $Category ['Category_Match_Preg'];
-			$matchnum = $Category ['Category_Match_Match'];
-			// 网页编码转换
-			
-			if (Application::$_spider ['charset'] && strtolower ( Application::$_spider ['charset'] ) != 'utf-8')
-				$page = mb_convert_encoding ( $page, "utf-8", Application::$_spider ['charset'] );
-				// new
-				/*
-			 * preg_match ( Application::$_spider['charset'], $page, $match ); $charset = isset($match[1])?$match[1]:""; //网页编码转换 if($charset && strtolower($charset)!='utf-8') $page = iconv($charset, "UTF-8", $page);
-			 */
-			preg_match_all ( $preg, $page, $match );
+			$Category_URL = $Category[elements::CATEGORY_URL];
+//			$page = file_get_contents ( $Category_URL );
+            $tmp = $this->curlmulit->remote( $Category_URL , null, false, Application::$_spider [ elements::ITEMPAGECHARSET]);
+            $page = $tmp[$Category_URL];
+            $preg = $Category [elements::CATEGORY_MATCH_PREG];
+            $matchnum = $Category [elements::CATEGORY_MATCH_MATCH];
+            $Categorytmp = array();
+            if(strtolower($Category[elements::CATEGORY_MATCHING]) == 'xpath')
+            {
+                $dom = new DOMDocument();
+                @$dom->loadHTML($page);
+                $xpath = new DOMXPath($dom);
+                $result = $xpath->query($preg);
+                for($i = 0; $i < ($result->length); $i++) {
+                    $event = $result->item($i);
+                    if(in_array('text',$matchnum))
+                    {
+                        $cid = $event->nodeValue;
+                    }
+                    foreach($event->attributes as $k=>$v)
+                    {
+                        if(in_array($v->name,$matchnum) && $cid){
+                            $Categorytmp[$v->nodeValue] = $cid;
+                        }
+                    }
 
-			if (is_array ( $matchnum )) {
-				$name = $matchnum ['name'];
-				$cid = $matchnum ['cid'];
-				$Categorytmp = array_combine ( $match [$name], $match [$cid] );
-			} else {
-				$Categorytmp = $match [$matchnum];
-			}
-			// test
-			// $Categorylist = array_slice($Categorytmp,1,12);
-			$Categorylist = array_unique ( $Categorytmp );
-			$mondata = array ();
-			$sid = Application::$_spider ['stid'];
-			foreach ( $Categorylist as $name => $cid ) {
-				$this->pools->set ( $poolname, $cid );
-				$mondata [] = array (
-						'name' => $name,
-						'cid' => $cid,
-						'sid' => $sid 
-				);
-			}
-			
+                    if((isset($Categorytmp[$i]['cid']) && !$Categorytmp[$i]['cid']) || !isset($Categorytmp[$i]['cid']))
+                         unset($Categorytmp[$i]);
+                }
+                $Categorylist = $Categorytmp;
+            }else{
+                preg_match_all ( $preg, $page, $match );
+
+                if (is_array ( $matchnum )) {
+                    $name = $matchnum ['name'];
+                    $cid = $matchnum ['cid'];
+                    $Categorytmp = array_combine ( $match [$name], $match [$cid] );
+                } else {
+                    $Categorytmp = $match [$matchnum];
+                }
+                // $Categorylist = array_slice($Categorytmp,1,12);
+                $Categorylist = array_unique ( $Categorytmp );
+            }
+
+            $mondata = array ();
+            foreach ( $Categorylist as $name => $cid ) {
+                $this->pools->set ( $poolname, $cid );
+                $mondata [] = array (
+                    'name' => $name,
+                    'cid' => $cid,
+                    'sid' => $sid
+                );
+            }
 			/**
 			 * 写入mongodb category集合
 			 */
@@ -74,6 +94,7 @@ class spiderModel extends Model {
 		}
 		echo "共收集到" . count ( $Categorylist ) . "个分类\n";
 		unset($Categorylist);
+        exit;
 	}
 	/**
 	 * 分类列表任务调度
@@ -147,14 +168,16 @@ class spiderModel extends Model {
 		exit ( "stack all over\n" );
 	}
 	function CategroyJob() {
+        header("Content-type: text/html; charset=utf-8");
 		$name = $this->spidername . 'Category';
 		$spidername = str_replace ( 'Spider', "", $this->spidername );
-		$job = $this->pools->get ( $name );
+//		$job = $this->pools->get ( $name );
+        $job = '爽肤水';
 		$poolname = $this->spidername . 'Item';
 		$Category = Application::$_spider ['Category'];
 		
-		$Categoryurl = str_replace ( "#job", $job, $Category ['Category_List_URL'] );
-		
+//		$Categoryurl = str_replace ( "#job", $job, $Category ['Category_List_URL'] );
+$Categoryurl = 'http://search.jumei.com/?filter=0-11-1&search=爽肤水';
 		// 首先获取下该分类下面的总页数
 		$pageHtml = $this->curlmulit->remote ( $Categoryurl, null, false );
 		if (! $pageHtml) {
@@ -168,14 +191,23 @@ class spiderModel extends Model {
 			) );
 			exit ();
 		}
-		$preg_pagetotals = $Category ['Category_List_Preg'];
-		preg_match ( $preg_pagetotals, $pageHtml [0], $match_pagetotals );
-		$totalpages = $match_pagetotals ? $match_pagetotals [$Category ['Category_List_Match']] : 0;
+		$preg_pagetotals = $Category [elements::CATEGORY_LIST_PREG];
+        if(strtolower($Category[elements::CATEGORY_MATCHING]) == 'xpath')
+        {
+            $totalpages = $this->curlmulit->getRegexpInfo($preg_pagetotals,$pageHtml [$Categoryurl],$Category [elements::CATEGORY_LIST_MATCH]);
+        }else{
+            preg_match ( $preg_pagetotals, $pageHtml [0], $match_pagetotals );
+            $totalpages = $match_pagetotals ? $match_pagetotals [$Category ['Category_List_Match']] : 0;
+        }
+        $Category_collectionname = $this->spidername . 'Category';
+        $this->mongodb->update ( $Category_collectionname,
+                                array ('cid' => $job),
+                                array('$set'=>array('totalcount'=>$totalpages)),
+                                 array("upsert"=>1,"multiple"=>true));
 
-		$totalpages = intval ( $totalpages ) + 1;
-		$s = isset ( $Category ['Category_Page_Start'] ) ? $Category ['Category_Page_Start'] : 0;
-
-		$pagesize = $this->runpages;
+		$totalpages = intval ( $totalpages );
+		$s = isset ( $Category [elements::CATEGORY_PAGE_START] ) ? $Category[elements::CATEGORY_PAGE_START] : 0;
+		$pagesize = $Category [elements::CATEGORY_GROUP_SIZE];
 		if ($totalpages > 0) {
 			$randtimes = ceil ( $totalpages / $pagesize );
 			// 循环获取商品的url地址
@@ -187,11 +219,12 @@ class spiderModel extends Model {
 				}
 				$tmpurls = array ();
 				for($i = $s; $i < $e; $i ++) {
-					$url = $Category ['CATEGORY_LIST_Pages_URL'];
+					$url = $Category [elements::CATEGORY_LIST_PAGES_URL];
 					$url = str_replace ( '#job', $job, $url );
 					$url = str_replace ( '#i', $i, $url );
 					$tmpurls [$url] = $url;
 				}
+
 				$pages = $this->curlmulit->remote ( $tmpurls, null, false );
 
 				/**
@@ -208,20 +241,40 @@ class spiderModel extends Model {
 					) );
 					exit ();
 				}
-				$preg = $Category ['Category_List_Goods_Preg'];
-				$match = $Category ['Category_List_Goods_Match'];
+				$preg = $Category [elements::CATEGORY_LIST_GOODS_PREG];
+				$match = $Category [elements::CATEGORY_LIST_GOODS_Match];
 				foreach ( $pages as $rurl => $page ) {
-					preg_match_all ( $preg, $page, $match_out );
-					$item_urls = isset ( $match_out [$match] ) ? $match_out [$match] : "";
-					$item_urls = array_unique ( $item_urls );
+                    if(strtolower($Category[elements::CATEGORY_MATCHING]) == 'xpath')
+                    {
+                        $item_urls = $this->curlmulit->getRegexpInfo2($preg,$page);
+                    }else{
+                        preg_match_all ( $preg, $page, $match_out );
+                        $item_urls = isset ( $match_out [$match] ) ? $match_out [$match] : "";
+                    }
+                    $item_urls = array_unique ( $item_urls );
 					// 加入itemjobs
 					foreach ( $item_urls as $url ) {
 						$this->pools->set ( $poolname, $url );
 					}
+                    //加入错误日志
+                    unset($tmpurls[$rurl]);
 				}
 				$s = $s + $pagesize;
+                if($tmpurls)
+                {
+                    foreach($tmpurls as $url)
+                    $this->log->errlog ( array (
+                        'job' => $job,
+                        'url' => $url,
+                        'urltype' =>'CategoryList',
+                        'error' => 1,
+                        'addtime' => date ( 'Y-m-d H:i:s' )
+                    ) );
+                }
+
 			} while ( $s <= $totalpages );
 		}
+        exit;
 		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
 		$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
 		$jobs2 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );

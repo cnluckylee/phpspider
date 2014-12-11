@@ -18,6 +18,7 @@ function errorHandle($errno, $errmsg, $filename, $linenum, $vars) {
 require dirname(__FILE__).'/system/app.php';
 require dirname(__FILE__).'/config/config.php';
 error_reporting(E_ALL);
+define('ROOTPATH',dirname(__FILE__));
 ini_set("display_errors",1);
 Application::run($CONFIG);
 

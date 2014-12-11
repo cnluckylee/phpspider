@@ -27,6 +27,7 @@ final class Application {
     public static $_spidername = null;
     public static $_spidermodel = 'spider';
     public static $_process = 10;
+    public static $_urlparams = null;
 
     public static function init() {
         self::setAutoLibs();
@@ -35,6 +36,7 @@ final class Application {
         require SYSTEM_PATH . '/elements.php';
         require SYS_CORE_PATH . '/spiderModel.php';
         require MODEL_PATH.'/productModel.php';
+        require MODEL_PATH.'/productXModel.php';
         require CONFIG_PATCH.'/spiderConfigFactory.php';
     }
 
@@ -50,6 +52,7 @@ final class Application {
         self::$_lib['route']->setUrlType(self::$_config['route']['url_type']); //设置url的类型
         $url_array = self::$_lib['route']->getUrlArray();                    //将url转发成数组
         self::routeToCm($url_array);
+
     }
 
     /**
@@ -126,7 +129,7 @@ final class Application {
         $action = '';
         $model = '';
         $params = '';
-
+        self::$_urlparams = $url_array;
 		//带有文件夹的model和controller，比如后台admin等
         if (isset($url_array['app'])) {
             $app = $url_array['app'];

@@ -74,6 +74,8 @@ class elements {
     const COLLECTION_ITEM_NAME='collection_item_name';//商品集合名称
     const COLLECTION_CATEGORY_NAME ='collection_category_name';//分类集合名称
     const DATASOURCE='datasource';//数据来源
+    const CATEGORY_MATCHING ='category_matching';//匹配方式 xpath,regular
+    const ITEM_MATCHING ='item_matching';//匹配方式 xpath,regular
     /**
      * 批量更新数据
      */
