@@ -87,5 +87,14 @@ class spiderController extends Controller {
         {
         	
         }
+
+    /**
+     * 转json
+     */
+        public function tojson()
+        {
+            $collection_name = trim(isset($_GET['cname'])?$_GET['cname']:"");
+            $this->model->tojson($collection_name);
+        }
 }
 

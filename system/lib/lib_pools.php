@@ -35,13 +35,11 @@ class pools{
 			}
 			return $lists;
 		}else{
-			if($num==null)
-				return $this->redis->spop($key);
-			else{
-				$value = $this->redis->spop($key);
-				$lists[$value] = $value;
-				return $lists;
-			}
+
+            $value = $this->redis->spop($key);
+            $lists[$value] = $value;
+            return $lists;
+
 		}
 	}
 }

@@ -8,7 +8,7 @@
  */
 class CurlMulit {
 
-    function remote($tmpurls, $reffer = null, $header = true,$charset=null,$cache=false) {
+    function remote($tmpurls, $reffer = null, $header = true,$charset=null,$encoding="") {
         $urls = array();
         if ($tmpurls && !is_array($tmpurls)) {
             $urls[$tmpurls] = $tmpurls;
@@ -49,7 +49,7 @@ class CurlMulit {
             if(!$urls)
              return $retuanpage;
         }
-        $user_agent = "Mozilla/5.0 (compatible; Baiduspider/2.0);+http://www.baidu.com/search/spider.html"; //来路
+        $user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/37.0.2062.120 Chrome/37.0.2062.120 Safari/537.36"; //来路
 
         $curl = $text = array();
         $handle = curl_multi_init();
@@ -64,6 +64,8 @@ class CurlMulit {
             curl_setopt($curl[$k], CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl[$k], CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($curl[$k], CURLOPT_NOBODY, false);
+            if($encoding)
+                curl_setopt($curl[$k], CURLOPT_ENCODING, $encoding);
             if ($reffer)
                 curl_setopt($curl[$k], CURLOPT_REFERER, $reffer); //来路地址
             curl_setopt($curl[$k], CURLOPT_USERAGENT, $user_agent);
@@ -88,7 +90,8 @@ class CurlMulit {
             if (curl_error($curl[$k]) == "") {
             	if($charset){
             		$texttmp = (string) curl_multi_getcontent($curl[$k]);
-            		$text[$k] = mb_convert_encoding($texttmp, "utf-8",$charset);
+//            		$text[$k] = mb_convert_encoding($texttmp, "utf-8",$charset);
+                    $text[$k] = html_entity_decode(mb_convert_encoding($texttmp, 'UTF-8', $charset), ENT_QUOTES, 'UTF-8');
             	}else
             		$text[$k] = (string) curl_multi_getcontent($curl[$k]);
             }
@@ -98,10 +101,13 @@ class CurlMulit {
             $cachetime = ROOTPATH.'/cache/'.$newurl.'.ctime';
             $cachefile = ROOTPATH.'/cache/'.$newurl.'.cache';
             $cachetimearr = array('createtime'=>time(),'deadtime'=>strtotime('+2 hours'));
-            if($text[$k])
+            if(isset($urlparams['params']['cache']) && $urlparams['params']['cache'])
             {
-                $this->writefile($cachetime,$cachetimearr,1);
-                $this->writefile($cachefile,$text[$k]);
+                if($text[$k])
+                {
+                    $this->writefile($cachetime,$cachetimearr,1);
+                    $this->writefile($cachefile,$text[$k]);
+                }
             }
         }
         curl_multi_close($handle);

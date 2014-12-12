@@ -27,6 +27,18 @@ class elements {
     const CATEGORY_LIST_PAGES_URL = 'CATEGORY_LIST_Pages_URL'; //分类列表页翻页url
     const CATEGORY_PAGE_START = 'Category_Page_Start';//分类列表页起始地址，0或1
     const CATEGORY_RUN = 'Category_Run';//本次是否重新抓取目标网站分类
+    const CATEGORY_ITEM_PREG = 'Category_Item_Preg';//列表页商品正则
+    const CATEGORY_ITEM_MATCHING = 'Category_Item_Matching';//列表页商品正则
+    const CATEGORY_ITEM_NAME = 'Category_Item_Name';//列表页商品名称
+    const CATEGORY_ITEM_URL = 'Category_Item_Url';//列表页商品url
+    const CATEGORY_ITEM_IMG = 'Category_Item_Img';//列表页图片
+    const CATEGORY_ITEM_OPRICE = 'Category_Item_OPrice';//列表页商品原价
+    const CATEGORY_ITEM_DPRICE = 'Category_Item_DPrice';//列表页商品折扣价
+    const CATEGORY_ITEM_HOT = 'Category_Item_Hot';//列表页是否热卖
+    const CATEGORY_ITEM_SALE = 'Category_Item_Sale';//列表页是否销售
+    const CATEGORY_ITEM_REVIEWS = 'Category_Item_Reviews';//列表页论数
+    const CATEGORY_ITEM_AREA = 'Category_Item_Area';//销售地区
+    const CATEGORY_ITEM_SKUID = 'Category_Item_Skuid';//销售地区
     const DB_TYPE = 'Db_Type';
     /* 商品相关参数 */
     const ITEM = 'Item';
@@ -56,7 +68,12 @@ class elements {
     const ITEM_BARCODE = 'barcode'; //Barcode
     const ITEM_CREATE_TIME = 'create_time'; //新增时间
     const ITEM_UPDATE_TIME = 'update_time'; //更新时间
-   
+    const ITEM_COMMENT_NUMBER_ALL = 'all_comment_number';//所有评论
+    const ITEM_COMMENT_NUMBER_SATISFY = 'satisfy_comment_number';//好评
+    const ITEM_COMMENT_NUMBER_GENERAL = 'general_comment_number';//中平
+    const ITEM_COMMENT_NUMBER_DISSATISFY = 'dissatisfy_comment_number';//差评
+    const ITEM_MPRICE = 'item_mprice';
+    const ITEM_MPRICE_PREG = 'item_mprice_preg';
 
     /* basic items of the particular market */
     const MANAGER = 'manager'; //脚本负责人
@@ -76,6 +93,8 @@ class elements {
     const DATASOURCE='datasource';//数据来源
     const CATEGORY_MATCHING ='category_matching';//匹配方式 xpath,regular
     const ITEM_MATCHING ='item_matching';//匹配方式 xpath,regular
+
+    const HTML_ZIP = 'html_zip';//网页压缩格式
     /**
      * 批量更新数据
      */

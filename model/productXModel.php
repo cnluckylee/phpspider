@@ -209,6 +209,72 @@ abstract class productXModel
     protected $_mprice = null;
 
     /**
+     * the item name of category list
+     * @var string
+     */
+    protected $_category_item_name = null;
+
+    /**
+     * the item img of category list
+     * @var string
+     */
+    protected $_category_item_url = null;
+
+    /**
+     * the item img of category list
+     * @var string
+     */
+    protected $_category_item_img = null;
+
+
+    /**
+     * the item oprice of category list
+     * @var string
+     */
+    protected $_category_item_oprice = null;
+
+
+    /**
+     * the item dprice of category list
+     * @var string
+     */
+    protected $_category_item_dprice = null;
+
+
+    /**
+     * the item hot of category list
+     * @var string
+     */
+    protected $_category_item_hot = null;
+
+
+    /**
+     * the item sale of category list
+     * @var string
+     */
+    protected $_category_item_sale = null;
+
+
+    /**
+     * the item reviews of category list
+     * @var string
+     */
+    protected $_category_item_reviews = null;
+
+
+    /**
+     * the item area of category list
+     * @var string
+     */
+    protected $_category_item_area = null;
+
+    /**
+     * the item skuid of category list
+     * @var string
+     */
+    protected $_category_item_skuid = null;
+
+    /**
      * @param string $spider spider name
      * @param string $url the url of the product
      * @param string $content the html content of the product
@@ -223,8 +289,11 @@ abstract class productXModel
         $this->_url = $url;
         $this->_content = $content;
         $this->_sourceID = $this->_config[\elements::STID];
-        $dom = new DOMDocument();
+        $dom = new DOMDocument('1.0','utf-8');
+//        $content = html_entity_decode(mb_convert_encoding($texttmp, 'gb2312','UTF-8'), ENT_QUOTES, 'gb2312');
+        $content = $this->loadNprepare($content,'utf-8');
         @$dom->loadHTML($content);
+        $dom->encoding = 'utf8';
         $this->_xpath = new DOMXPath($dom);
         $this->_sourceType = $this->_config[\elements::DATASOURCE];
     }
@@ -244,28 +313,44 @@ abstract class productXModel
      * @param integer $match_offset
      * @return mixed|boolean
      */
-    protected function _getRegexpInfo($pattern, $xpath, $match_offset = NULL)
+    protected function _getRegexpInfo($pattern, $xpath, $key = NULL)
     {
         if (!strlen($pattern)){
             return null;
         }
+
         $arr = explode("||", $pattern);
         $preg = $arr [0];
         $op = $arr [1];
+
         if ($op == 1) {
-            $result = $xpath->query($preg);
+            $qdata = $xpath->query($preg);
+            foreach($qdata as $i)
+            {
+                if(!$key)
+                     $result = $i->nodeValue;
+                else
+                    $result[] = $i;
+            }
             return $result;
         }else{
+
             $mutil = json_decode ( $arr [2], true );
             $events = $xpath->query($preg);
             $result = array();
             for($i = 0; $i < ($events->length); $i++) {
                 $event = $events->item($i);
-                foreach($event->attributes as $k=>$v)
+                if($mutil)
                 {
-                    if(in_array($v->name,$mutil)){
-                        $result[$v->name] = $v->nodeValue;
-                    }
+//                    foreach($event->attributes as $k=>$v)
+//                    {
+//
+//                        if(in_array($v->name,$mutil)){
+//                            $result[$v->name] = $v->nodeValue;
+//                        }
+//                    }
+                }else{
+                    $result[$i] = trim($event->nodeValue);
                 }
             }
             return $result;
@@ -313,12 +398,12 @@ abstract class productXModel
      */
     public function getContent()
     {
-        if (is_null($this->_content)) {
+        if (is_null($this->_xpath)) {
             //TODO: cURL may be better
             $this->_content = file_get_contents($this->_url);
         }
 
-        return $this->_content;
+        return $this->_xpath;
     }
 
     /**
@@ -531,7 +616,7 @@ abstract class productXModel
         if (is_null($this->_sourceBrandName)) {
             $filter = $this->_config[\elements::ITEM_SOURCE_BRAND_NAME];
             $this->_sourceBrandName = $this->_getRegexpInfo($filter, $this->getContent());
-            $this->_sourceBrandName = $this->filterbrandname($this->_sourceBrandName);
+
         }
         return $this->_sourceBrandName;
     }
@@ -743,6 +828,161 @@ abstract class productXModel
         return $this->_satisfyCommentNumber;
     }
 
+    /**
+     * get item name of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemName()
+    {
+
+        if (is_null($this->_category_item_name)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_NAME];
+            $this->_category_item_name = $this->_getRegexpInfo($filter, $this->getContent());
+
+        }
+        return $this->_category_item_name;
+    }
+
+    /**
+     * get item name of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemImg()
+    {
+
+        if (is_null($this->_category_item_img)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_IMG];
+            $this->_category_item_img = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_img;
+    }
+
+    /**
+     * get item url of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemUrL()
+    {
+        if (is_null($this->_category_item_url)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_URL];
+            $this->_category_item_url = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_url;
+    }
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemOprice()
+    {
+
+        if (is_null($this->_category_item_oprice)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_OPRICE];
+            $this->_category_item_oprice = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_oprice;
+    }
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemDprice()
+    {
+        if (is_null($this->_category_item_dprice)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_DPRICE];
+            $this->_category_item_dprice = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_dprice;
+    }
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemHot()
+    {
+        echo 34;
+        if (is_null($this->_category_item_hot)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_HOT];
+            $this->_category_item_hot = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_hot;
+    }
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemSale()
+    {
+        if (is_null($this->_category_item_sale)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_SALE];
+            $this->_category_item_sale = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_sale;
+    }
+
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemReviews()
+    {
+        if (is_null($this->_category_item_reviews)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_REVIEWS];
+            $this->_category_item_reviews = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_reviews;
+    }
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemArea()
+    {
+        if (is_null($this->_category_item_area)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_AREA];
+            $this->_category_item_area = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_area;
+    }
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemSkuid()
+    {
+        if (is_null($this->_category_item_skuid)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_SKUID];
+            $this->_category_item_skuid = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_skuid;
+    }
 
     /**
      * export the product model's properties to array
@@ -751,8 +991,7 @@ abstract class productXModel
      */
     public function exportToArray($updateconfig = null,$item=null)
     {
-    	require_once 'system/lib/lib_tools.php';
-		$tools = new tools();
+
         $arrData = $item?$item:array();
         if($item)
         	$this->_productID = $item['skuid'];
@@ -784,7 +1023,7 @@ abstract class productXModel
         	$arrData[\elements::ITEM_SOURCE_BRAND_ID] = $this->getSourceBrandID();
         if(($item && in_array(elements::ITEM_SOURCE_BRAND_NAME,$updateconfig))|| !$item)
         {
-        	$arrData[\elements::ITEM_SOURCE_BRAND_NAME] = $tools->getBrandName($this->getSourceBrandName());
+        	$arrData[\elements::ITEM_SOURCE_BRAND_NAME] = $this->getSourceBrandName();
         }
         	
         if(($item && in_array(elements::ITEM_DPRICE,$updateconfig))|| !$item)
@@ -812,7 +1051,7 @@ abstract class productXModel
 //         	$arrData[\elements::ITEM_STATUS] = $this->getStatus();
         if(($item && in_array(elements::ITEM_CHARACTERS,$updateconfig))|| !$item)
         {
-        	$arrData[\elements::ITEM_CHARACTERS] = $tools->filtercharacters($this->getCharacters());
+        	$arrData[\elements::ITEM_CHARACTERS] = $this->getCharacters();
         }
         
         
@@ -843,55 +1082,67 @@ abstract class productXModel
 //         $arrData['content'] = $this->getContent();
         return $arrData;
     }
+
+    function loadNprepare($content,$encod='') {
+        if (!empty($content)) {
+            if (empty($encod))
+                $encod = mb_detect_encoding($content);
+            $headpos = mb_strpos($content,'<head>');
+            if (FALSE=== $headpos)
+                $headpos= mb_strpos($content,'<HEAD>');
+            if (FALSE!== $headpos) {
+                $headpos+=6;
+                $content = mb_substr($content,0,$headpos) . '<meta http-equiv="Content-Type" content="text/html; charset='.$encod.'">' .mb_substr($content,$headpos);
+            }
+            $content=mb_convert_encoding($content, 'HTML-ENTITIES', $encod);
+        }
+        return $content;
+    }
     /**
-     * filterbrandname
-     * @param unknown $str
-     * @return mixed|Ambigous <string, mixed, unknown>
+     * 加入列表页获取数据
+     * 2014.12.11
      */
-    public function filterbrandname($str) {
-    	$str = rtrim($str);
-    	$str = ltrim($str);
-    	$str = strtoupper($str);
-    	$str = preg_replace("/\s+/"," ",$str);
-    	$str = str_replace(array("(",")","宏 ?"),array("（","）","宏基"),$str);
-    	$str_lower = strtolower($str);
-    	$preg1 = "/(.*)[\x{4e00}-\x{9fa5}](.*)[\x{4e00}-\x{9fa5}]([a-z]|\.|-|[0-9]|の)/u";
-    	$preg2 = "/([a-z]|\.|-|[0-9]|の)[\x{4e00}-\x{9fa5}](.*)[\x{4e00}-\x{9fa5}]/u";
-    	$preg3 = "/(.*)[\x{4e00}-\x{9fa5}]([a-z]|\.|-|[0-9]|の)/u";
-    	$preg4 = "/([a-z]|\.|-|[0-9]|の)[\x{4e00}-\x{9fa5}]/u";
-    	 
-    	if(preg_match($preg1, $str_lower, $match) || preg_match($preg2, $str_lower, $match) || preg_match($preg3, $str_lower, $match) || preg_match($preg4, $str_lower, $match)){
-    		return $str;
-    	}else{
-    		$qian=array("°","…","｜","……","－","、","￥","—","#","$","%","(",")","[","]","{","}",",","@","^","*","!","~"."&","?","？","。","，","：","（","）","_","-","'","‘","’","“","”","`");
-    		$hou=array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","");
-    		$after_str = str_replace($qian,$hou,$str);
-    		$str = str_replace(array("(",")","（","）"),array("","","",""),$str);
-    		if(!preg_match("/([\x81-\xfe][\x40-\xfe])/", $after_str, $match)){
-    	   
-    			return $str;
-    		}else{
-    			$preg = "/[\x{4e00}-\x{9fa5}](.*)[\x{4e00}-\x{9fa5}]+/u";
-    			preg_match($preg,$str,$matches);
-    			if(!$matches){
-    				$preg = "/[\x{4e00}-\x{9fa5}]+/u";
-    				preg_match($preg,$str,$matches);
-    			}
-    			if(isset($matches[0]) && $matches[0])
-    			{
-    				$str_chinese = $matches[0];
-    				$str_englist = str_replace($str_chinese,"",$str);
-    				$str_englist = str_replace("/","",$str_englist);
-    				$str_englist = rtrim($str_englist);
-    				$str_englist = ltrim($str_englist);
-    				if($str_englist){
-    					$str = $str_chinese."（".$str_englist."）";
-    				}else{
-    					$str = $str_chinese;
-    				}
-    			}
-    		}
-    		return $str;
-    	}
+    /**
+     * export the product model's properties to array
+     *
+     * @return array
+     */
+    public function CategoryToArray()
+    {
+        $fetchconfig = $this->_config;
+        $result = array();
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_NAME]) && $fetchconfig[elements::CATEGORY_ITEM_NAME]){
+            $result[elements::CATEGORY_ITEM_NAME] = $this->getCategoryItemName();
+        }
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_IMG]) && $fetchconfig[elements::CATEGORY_ITEM_IMG])
+            $result[elements::CATEGORY_ITEM_IMG] = $this->getCategoryItemImg();
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_URL]) && $fetchconfig[elements::CATEGORY_ITEM_URL])
+            $result[elements::CATEGORY_ITEM_URL] = $this->getCategoryItemUrL();
+
+
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_OPRICE]) && $fetchconfig[elements::CATEGORY_ITEM_OPRICE])
+            $result[elements::CATEGORY_ITEM_OPRICE] = $this->getCategoryItemOprice();
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_DPRICE]) && $fetchconfig[elements::CATEGORY_ITEM_DPRICE])
+            $result[elements::CATEGORY_ITEM_DPRICE] = $this->getCategoryItemDprice();
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_HOT]) && $fetchconfig[elements::CATEGORY_ITEM_HOT])
+            $result[elements::CATEGORY_ITEM_HOT] = $this->getCategoryItemHot();
+
+          if(isset($fetchconfig[elements::CATEGORY_ITEM_SALE]) && $fetchconfig[elements::CATEGORY_ITEM_SALE])
+            $result[elements::CATEGORY_ITEM_SALE] = $this->getCategoryItemSale();
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_REVIEWS]) && $fetchconfig[elements::CATEGORY_ITEM_REVIEWS])
+            $result[elements::CATEGORY_ITEM_REVIEWS] = $this->getCategoryItemReviews();
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_AREA]) && $fetchconfig[elements::CATEGORY_ITEM_AREA])
+            $result[elements::CATEGORY_ITEM_AREA] = $this->getCategoryItemArea();
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_SKUID]) && $fetchconfig[elements::CATEGORY_ITEM_SKUID])
+            $result[elements::CATEGORY_ITEM_SKUID] = $this->getCategoryItemSkuid();
+        return $result;
     }
 }

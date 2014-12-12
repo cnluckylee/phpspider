@@ -15,7 +15,7 @@ class spiderModel extends Model {
         header("Content-type: text/html; charset=utf-8");
 		$Category = Application::$_spider ['Category'];
 		$thistimerun = isset ( $Category ['Category_Run'] ) ? $Category ['Category_Run'] : 1;
-		$collection_category_name = Application::$_spider ['collection_category_name'];
+		$collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
 		$poolname = $this->spidername . 'Category';
         $sid = Application::$_spider ['stid'];
 		// 清理Category现场
@@ -28,7 +28,8 @@ class spiderModel extends Model {
 		if ($thistimerun) {
 			$Category_URL = $Category[elements::CATEGORY_URL];
 //			$page = file_get_contents ( $Category_URL );
-            $tmp = $this->curlmulit->remote( $Category_URL , null, false, Application::$_spider [ elements::ITEMPAGECHARSET]);
+            $tmp = $this->curlmulit->remote( $Category_URL , null, false, Application::$_spider[elements::CHARSET],Application::$_spider [ elements::ITEMPAGECHARSET]);
+
             $page = $tmp[$Category_URL];
             $preg = $Category [elements::CATEGORY_MATCH_PREG];
             $matchnum = $Category [elements::CATEGORY_MATCH_MATCH];
@@ -58,7 +59,6 @@ class spiderModel extends Model {
                 $Categorylist = $Categorytmp;
             }else{
                 preg_match_all ( $preg, $page, $match );
-
                 if (is_array ( $matchnum )) {
                     $name = $matchnum ['name'];
                     $cid = $matchnum ['cid'];
@@ -83,7 +83,8 @@ class spiderModel extends Model {
 			 * 写入mongodb category集合
 			 */
 			$this->mongodb->remove ( $collection_category_name, array () ); // 删除原始数据，保存最新的数据
-			$this->mongodb->batchinsert ( $collection_category_name, $mondata );
+            if($mondata)
+			    $this->mongodb->batchinsert ( $collection_category_name, $mondata );
 			unset($mondata);
 		} else {
 			$Categorylist = $this->mongodb->find ( $collection_category_name, array () );
@@ -94,7 +95,7 @@ class spiderModel extends Model {
 		}
 		echo "共收集到" . count ( $Categorylist ) . "个分类\n";
 		unset($Categorylist);
-        exit;
+//        exit;
 	}
 	/**
 	 * 分类列表任务调度
@@ -169,18 +170,23 @@ class spiderModel extends Model {
 	}
 	function CategroyJob() {
         header("Content-type: text/html; charset=utf-8");
-		$name = $this->spidername . 'Category';
+        $name = $this->spidername . 'Category';
 		$spidername = str_replace ( 'Spider', "", $this->spidername );
-//		$job = $this->pools->get ( $name );
-        $job = '爽肤水';
+//		$tmp = $this->pools->get ( $name );
+//        $jobs = array_values($tmp);
+//        $job = $jobs[0];
+        $job = 'sh';
+
 		$poolname = $this->spidername . 'Item';
-		$Category = Application::$_spider ['Category'];
-		
-//		$Categoryurl = str_replace ( "#job", $job, $Category ['Category_List_URL'] );
-$Categoryurl = 'http://search.jumei.com/?filter=0-11-1&search=爽肤水';
+		$Category = Application::$_spider [elements::CATEGORY];
+		$xpath = $Category [elements::CATEGORY_ITEM_PREG][elements::CATEGORY_ITEM_MATCHING];
+		$Categoryurl = str_replace ( "#job", $job, $Category [elements::CATEGORY_LIST_URL] );
+
 		// 首先获取下该分类下面的总页数
-		$pageHtml = $this->curlmulit->remote ( $Categoryurl, null, false );
-		if (! $pageHtml) {
+		$pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
+
+        if (! $pageHtml) {
+
 			$this->autostartitemmaster ();
 			$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
 			$this->log->errlog ( array (
@@ -191,21 +197,28 @@ $Categoryurl = 'http://search.jumei.com/?filter=0-11-1&search=爽肤水';
 			) );
 			exit ();
 		}
+
 		$preg_pagetotals = $Category [elements::CATEGORY_LIST_PREG];
-        if(strtolower($Category[elements::CATEGORY_MATCHING]) == 'xpath')
+        if(strtolower($xpath) == 'xpath')
         {
             $totalpages = $this->curlmulit->getRegexpInfo($preg_pagetotals,$pageHtml [$Categoryurl],$Category [elements::CATEGORY_LIST_MATCH]);
         }else{
             preg_match ( $preg_pagetotals, $pageHtml [0], $match_pagetotals );
             $totalpages = $match_pagetotals ? $match_pagetotals [$Category ['Category_List_Match']] : 0;
         }
-        $Category_collectionname = $this->spidername . 'Category';
-        $this->mongodb->update ( $Category_collectionname,
-                                array ('cid' => $job),
-                                array('$set'=>array('totalcount'=>$totalpages)),
-                                 array("upsert"=>1,"multiple"=>true));
+
+        $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
+
+
+
 
 		$totalpages = intval ( $totalpages );
+        if($totalpages && $totalpages>0){
+            $this->mongodb->update ( $collection_category_name,
+                array ('cid' => $job),
+                array('$set'=>array('totalcount'=>$totalpages)),
+                array("upsert"=>1,"multiple"=>true));
+        }
 		$s = isset ( $Category [elements::CATEGORY_PAGE_START] ) ? $Category[elements::CATEGORY_PAGE_START] : 0;
 		$pagesize = $Category [elements::CATEGORY_GROUP_SIZE];
 		if ($totalpages > 0) {
@@ -225,9 +238,9 @@ $Categoryurl = 'http://search.jumei.com/?filter=0-11-1&search=爽肤水';
 					$tmpurls [$url] = $url;
 				}
 
-				$pages = $this->curlmulit->remote ( $tmpurls, null, false );
+				$pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
 
-				/**
+                /**
 				 * 能否抓去到数据检测,此代码保留
 				 */
 				if ($s == 0 && count ( $pages ) == 0) {
@@ -244,7 +257,7 @@ $Categoryurl = 'http://search.jumei.com/?filter=0-11-1&search=爽肤水';
 				$preg = $Category [elements::CATEGORY_LIST_GOODS_PREG];
 				$match = $Category [elements::CATEGORY_LIST_GOODS_Match];
 				foreach ( $pages as $rurl => $page ) {
-                    if(strtolower($Category[elements::CATEGORY_MATCHING]) == 'xpath')
+                    if(strtolower($Category[elements::CATEGORY_ITEM_MATCHING]) == 'xpath')
                     {
                         $item_urls = $this->curlmulit->getRegexpInfo2($preg,$page);
                     }else{
@@ -258,6 +271,22 @@ $Categoryurl = 'http://search.jumei.com/?filter=0-11-1&search=爽肤水';
 					}
                     //加入错误日志
                     unset($tmpurls[$rurl]);
+                    //加入列表页数据的获取并保存
+                    if(isset($Category [elements::CATEGORY_ITEM_PREG]))
+                    {
+
+                        $Productmodel = $this->spidername . 'ProductModel';
+                        $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
+                        $categorydata = $spidermodel->CategoryToArray ( );
+
+                        if($categorydata){
+                            foreach($categorydata as $item)
+                            {
+                                $this->mongodb->insert($this->spidername.'_category_list',$item);
+                            }
+                        }
+
+                    }
 				}
 				$s = $s + $pagesize;
                 if($tmpurls)
@@ -274,17 +303,18 @@ $Categoryurl = 'http://search.jumei.com/?filter=0-11-1&search=爽肤水';
 
 			} while ( $s <= $totalpages );
 		}
-        exit;
+
 		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
 		$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
 		$jobs2 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
-		$this->log->msglog ( array (
+/*		$this->log->msglog ( array (
 				'job' => $job,
 				'runjobs1' => $jobs1,
 				'runjobs2' => $jobs2,
 				'addtime' => date ( 'Y-m-d H:i:s' ) 
 		) );
-		$this->autostartitemmaster ();
+*/
+//		$this->autostartitemmaster ();
 		exit ();
 	}
 	function autostartitemmaster($jobname = 'Item') {
@@ -295,24 +325,39 @@ $Categoryurl = 'http://search.jumei.com/?filter=0-11-1&search=爽肤水';
 		}
 	}
 	function itemjob() {
+        header("Content-type: text/html; charset=utf-8");
 		$poolname = $this->spidername . 'Item';
 		$Category = Application::$_spider ['Category'];
-		$collection_item_name = Application::$_spider ['collection_item_name'];
+		$collection_item_name = Application::$_spider [elements::collection_category_name];
+
 		if(isset($_GET['debug']) && $_GET['debug']=='itemjob')
 		{
 				$urls = isset($_GET['url'])?trim($_GET['url']):"";
 		}else			
-			$urls = $this->pools->get ( $poolname, $Category ['Category_Group_Size'] );		
-		$pages = $this->curlmulit->remote ( $urls, null, false, Application::$_spider ['item_page_charset'] );
+			$urls = $this->pools->get ( $poolname, $Category [elements::CATEGORY_GROUP_SIZE] );
+        $site_conversion_rules = $this->getsite_conversion_rules();
+
+        $url_rules = $site_conversion_rules[Application::$_spider[elements::STID]]?$site_conversion_rules[Application::$_spider[elements::STID]]:"";
+
+        if($url_rules)
+        {
+            foreach($urls as $k=>$turl){
+                $urls[$k] = preg_replace ( '/#skuid/', $turl, $url_rules ['pcurl'] );
+            }
+        }
+
+		$pages = $this->curlmulit->remote ( $urls, null, false, Application::$_spider ['item_page_charset'] ,Application::$_spider [elements::HTML_ZIP]);
+
 // 		$fetchitems = array ();
 		$Productmodel = $this->spidername . 'ProductModel';
 		foreach ( $pages as $srouceurl => $page ) {
 			$spidermodel = new $Productmodel ( $this->spidername, $srouceurl, $page, Application::$_spider );
 			$spiderdata = $spidermodel->exportToArray ();
+
 			if($spiderdata['title'])
 			{
 // 				$fetchitems [] = $spiderdata;
-				$this->mongodb->update('wcc_online_data', array('skuid'=>$spiderdata['skuid'],'stid'=>$spiderdata['stid']),$spiderdata,array("upsert"=>1));
+				$this->mongodb->update($collection_item_name, array('skuid'=>$spiderdata['skuid'],'stid'=>$spiderdata['stid']),$spiderdata,array("upsert"=>1));
 			}
 			if(isset($_GET['debug']) && $_GET['debug']=='itemjob')
 			{
@@ -395,4 +440,122 @@ $Categoryurl = 'http://search.jumei.com/?filter=0-11-1&search=爽肤水';
 		$this->redis->decr ( $this->spidername . 'UpdateCurrent' );
 		exit;
 	}
+
+    //获取url规则
+    public function getsite_conversion_rules()
+    {
+        $site_conversion_rules = array();
+        $site_conversion_rules_arr = $this->mongodb->find('site_conversion_rules',array());
+        foreach($site_conversion_rules_arr as $i)
+        {
+            $site_conversion_rules[$i['stid']] = array('pcurl'=>$i['pcurl'],'wapurl'=>$i['wapurl']);
+        }
+        return $site_conversion_rules;
+    }
+
+    /**
+     * 记录操作日志
+     * status 1:默认开始记录 2：记录完成
+     */
+    public function runlog($status = 1,$action = null)
+    {
+        $log = $this->spidername.'log'.$action;
+        switch ($status){
+            case 1:
+                if (! $this->redis->exists ($log))
+                {
+                    $logstr = date('Y-m-d H:i:s').'_'.$action;
+                    $this->redis->set($log,$logstr);
+                }
+                break;
+            case 2:
+                if ($this->redis->exists ($log))
+                {
+                    $logstr = $this->redis->get($log);
+                    $this->redis->delete ( $log );
+                    echo $logstr."\n";
+                    $logarr = explode("_", $logstr);
+                    $logtime = $logarr[0];
+                    $logaction = $logarr[1];
+                    $obj = $this->mongodb->findOne('source',array('domain'=>$this->spidername),array('sid'));
+                    if(isset($obj['sid']) && $obj['sid'])
+                    {
+                        $min = strtotime($logtime);
+                        $stid = $obj['sid'];
+                        $find =  array('stid'=>$stid,'create_time'=>array('$gte'=>(int)$min));
+                        $logdata = array('start_date'=>$logtime,'end_date'=>date('Y-m-d H:i:s'),'spidername'=>$this->spidername,'stid'=>$stid,'action'=>$logaction);
+                        $this->mongodb->insert('wcc_online_message',$logdata);
+
+                    }
+                    exit("log over!");
+                }
+                break;
+        }
+
+    }
+    /**
+     * api更新数据
+     */
+    public function apifun()
+    {
+        exit('this api interface');
+    }
+
+    /**
+     * 判断本次是否运行
+     */
+    function getDBStatus($domain='yhd.com')
+    {
+        $sql = "select table_name from wcc_data_message where domain='".$domain."' and status=0 order by id desc";
+        $table_name = $this->db->getOne($sql);
+        $this->tablename = $table_name;
+        return $table_name;
+    }
+    /**
+     * 处理完更新status字段,删除废弃数据
+     */
+    function updateDBStatus($domain='yhd.com')
+    {
+        $where = "domain='".$domain."' and status=0  order by id desc limit 1";
+        $this->db->update('wcc_data_message',array('status'=>1,'process_time'=>date('Y-m-d H:i:s')),$where);
+    }
+
+    /**
+     * 删除废弃数据
+     */
+    function delDiscard($table_name='yihaodian_product')
+    {
+        $where = 'status=9';
+        $this->db->delete($table_name,$where);
+        $uparr = array('status'=>1);
+        $where2 = '(status=2 or status=3)';
+        $this->db->update($table_name,$uparr,$where2);
+    }
+
+    /**
+     * 转json
+     */
+    function tojson($cname)
+    {
+        $total = $this->mongodb->count($cname);
+        $s = 0;
+        $limit = 1000;
+        $filename = $cname.'.log';
+        do {
+            $mondata = $this->mongodb->find ( $cname, array (), array (
+                "start" => $s,
+                "limit" => $limit
+            ) );
+            $str = '';
+
+            foreach($mondata as $item)
+            {
+                $str .= json_encode($item)."\n";
+            }
+            $file = fopen($filename,"a+");
+            fwrite($file,$str);
+            fclose($file);
+            $s +=$limit;
+        }while($s<$total);
+    }
 }
