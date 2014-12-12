@@ -21,14 +21,77 @@ class soufunareaProductModel extends productXModel {
         $names = $this->getCategoryItemName();
         $urls = $this->getCategoryItemUrL();
         $city = $this->getCategoryItemOprice();
+        $baseurl = $this->getCategoryItemUrL();
         $result = array();
         foreach($names as $k=>$v)
         {
             if($v != "不限")
             {
-                $result[] = array('name'=>$v,'url'=>$urls[$k],'city'=>$city);
+                $result[] = array('name'=>$v,'url'=>$urls[$k],'city'=>$city,'baseurl'=>$baseurl);
             }
         }
         return $result;
     }
+
+    public function  getPrice()
+    {
+        $arr = parent::getPrice();
+        $result = array();
+        foreach($arr as $k=>$v)
+        {
+            if($v != '不限')
+            {
+                $result[] = $v;
+            }
+        }
+        $arr2 = parent::getMPrice();
+        foreach($arr2 as $k=>$v)
+        {
+            $result[] = $v;
+        }
+        return $result;
+    }
+
+    public function  getOriginPrice()
+    {
+        $arr = parent::getOriginPrice();
+        $result = array();
+        foreach($arr as $k=>$v)
+        {
+            if($v != '不限')
+            {
+                $result[] = $v;
+            }
+        }
+        return $result;
+    }
+
+    public function  getTitle()
+    {
+        $arr = parent::getTitle();
+        $result = array();
+        foreach($arr as $k=>$v)
+        {
+            if($v != '不限')
+            {
+                $result[] = $v;
+            }
+        }
+        return $result;
+    }
+
+
+
+//    public function getCharacters()
+//    {
+//
+//            $filter = $this->_config[\elements::ITEM_CHARACTERS];
+//
+//            $events = $this->_xpath->query("*");
+//        print_r($events);exit;
+//
+//        return $this->_promotion;
+//    }
+
+
 }

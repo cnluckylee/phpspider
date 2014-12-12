@@ -157,12 +157,13 @@ class CurlMulit {
         if (!strlen($pattern)){
             return null;
         }
+
         $dom = new DOMDocument();
         @$dom->loadHTML($content);
         $xpath = new DOMXPath($dom);
         $arr = explode("||", $pattern);
         $query = $arr [0];
-        $preg = $arr [1];
+
         $result = $xpath->query($query);
         $out = array();
         foreach($result as $item)

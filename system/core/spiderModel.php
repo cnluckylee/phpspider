@@ -34,31 +34,32 @@ class spiderModel extends Model {
             $preg = $Category [elements::CATEGORY_MATCH_PREG];
             $matchnum = $Category [elements::CATEGORY_MATCH_MATCH];
             $Categorytmp = array();
-            if(strtolower($Category[elements::CATEGORY_MATCHING]) == 'xpath')
-            {
-                $dom = new DOMDocument();
-                @$dom->loadHTML($page);
-                $xpath = new DOMXPath($dom);
-                $result = $xpath->query($preg);
-                for($i = 0; $i < ($result->length); $i++) {
-                    $event = $result->item($i);
-                    if(in_array('text',$matchnum))
-                    {
-                        $cid = $event->nodeValue;
-                    }
-                    foreach($event->attributes as $k=>$v)
-                    {
-                        if(in_array($v->name,$matchnum) && $cid){
-                            $Categorytmp[$v->nodeValue] = $cid;
-                        }
-                    }
-
-                    if((isset($Categorytmp[$i]['cid']) && !$Categorytmp[$i]['cid']) || !isset($Categorytmp[$i]['cid']))
-                         unset($Categorytmp[$i]);
-                }
-                $Categorylist = $Categorytmp;
-            }else{
+//            if(strtolower($Category[elements::CATEGORY_MATCHING]) == 'xpath')
+//            {
+//                $dom = new DOMDocument();
+//                @$dom->loadHTML($page);
+//                $xpath = new DOMXPath($dom);
+//                $result = $xpath->query($preg);
+//                for($i = 0; $i < ($result->length); $i++) {
+//                    $event = $result->item($i);
+//                    if(in_array('text',$matchnum))
+//                    {
+//                        $cid = $event->nodeValue;
+//                    }
+//                    foreach($event->attributes as $k=>$v)
+//                    {
+//                        if(in_array($v->name,$matchnum) && $cid){
+//                            $Categorytmp[$v->nodeValue] = $cid;
+//                        }
+//                    }
+//
+//                    if((isset($Categorytmp[$i]['cid']) && !$Categorytmp[$i]['cid']) || !isset($Categorytmp[$i]['cid']))
+//                         unset($Categorytmp[$i]);
+//                }
+//                $Categorylist = $Categorytmp;
+//            }else{
                 preg_match_all ( $preg, $page, $match );
+
                 if (is_array ( $matchnum )) {
                     $name = $matchnum ['name'];
                     $cid = $matchnum ['cid'];
@@ -68,7 +69,7 @@ class spiderModel extends Model {
                 }
                 // $Categorylist = array_slice($Categorytmp,1,12);
                 $Categorylist = array_unique ( $Categorytmp );
-            }
+//            }
 
             $mondata = array ();
             foreach ( $Categorylist as $name => $cid ) {
@@ -95,7 +96,7 @@ class spiderModel extends Model {
 		}
 		echo "共收集到" . count ( $Categorylist ) . "个分类\n";
 		unset($Categorylist);
-//        exit;
+        exit;
 	}
 	/**
 	 * 分类列表任务调度
@@ -169,22 +170,27 @@ class spiderModel extends Model {
 		exit ( "stack all over\n" );
 	}
 	function CategroyJob() {
+
         header("Content-type: text/html; charset=utf-8");
         $name = $this->spidername . 'Category';
 		$spidername = str_replace ( 'Spider', "", $this->spidername );
-//		$tmp = $this->pools->get ( $name );
-//        $jobs = array_values($tmp);
-//        $job = $jobs[0];
-        $job = 'sh';
+		$tmp = $this->pools->get ( $name );
+        $jobs = array_values($tmp);
+        $job = $jobs[0];
+//        $job = 'sh';
+
 
 		$poolname = $this->spidername . 'Item';
 		$Category = Application::$_spider [elements::CATEGORY];
 		$xpath = $Category [elements::CATEGORY_ITEM_PREG][elements::CATEGORY_ITEM_MATCHING];
-		$Categoryurl = str_replace ( "#job", $job, $Category [elements::CATEGORY_LIST_URL] );
+        if(isset($Category [elements::TRANSFORM]) && $Category [elements::TRANSFORM] === false)
+            $Categoryurl = $job.'/';
+        else
+            $Categoryurl = str_replace ( "#job", $job, $Category [elements::CATEGORY_LIST_URL] );
+
 
 		// 首先获取下该分类下面的总页数
 		$pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
-
         if (! $pageHtml) {
 
 			$this->autostartitemmaster ();
@@ -197,22 +203,20 @@ class spiderModel extends Model {
 			) );
 			exit ();
 		}
-
-		$preg_pagetotals = $Category [elements::CATEGORY_LIST_PREG];
-        if(strtolower($xpath) == 'xpath')
-        {
-            $totalpages = $this->curlmulit->getRegexpInfo($preg_pagetotals,$pageHtml [$Categoryurl],$Category [elements::CATEGORY_LIST_MATCH]);
-        }else{
-            preg_match ( $preg_pagetotals, $pageHtml [0], $match_pagetotals );
-            $totalpages = $match_pagetotals ? $match_pagetotals [$Category ['Category_List_Match']] : 0;
+        if(isset(Application::$_spider [elements::TOTALPAGES])&&Application::$_spider [elements::TOTALPAGES]>0)
+            $totalpages = Application::$_spider [elements::TOTALPAGES];
+        else{
+            $preg_pagetotals = $Category [elements::CATEGORY_LIST_PREG];
+            if(strtolower($xpath) == 'xpath')
+            {
+                $totalpages = $this->curlmulit->getRegexpInfo($preg_pagetotals,$pageHtml [$Categoryurl],$Category [elements::CATEGORY_LIST_MATCH]);
+            }else{
+                preg_match ( $preg_pagetotals, $pageHtml [0], $match_pagetotals );
+                $totalpages = $match_pagetotals ? $match_pagetotals [$Category ['Category_List_Match']] : 0;
+            }
         }
-
         $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
 
-
-
-
-		$totalpages = intval ( $totalpages );
         if($totalpages && $totalpages>0){
             $this->mongodb->update ( $collection_category_name,
                 array ('cid' => $job),
@@ -232,14 +236,21 @@ class spiderModel extends Model {
 				}
 				$tmpurls = array ();
 				for($i = $s; $i < $e; $i ++) {
-					$url = $Category [elements::CATEGORY_LIST_PAGES_URL];
-					$url = str_replace ( '#job', $job, $url );
-					$url = str_replace ( '#i', $i, $url );
-					$tmpurls [$url] = $url;
+                    if(isset($Category [elements::TRANSFORM]) && $Category [elements::TRANSFORM] == false)
+                    {
+                        $url =$job.$i.'/';
+
+                    }else{
+                        $url = $Category [elements::CATEGORY_LIST_PAGES_URL];
+                        $url = str_replace ( '#job', $job, $url );
+                        $url = str_replace ( '#i', $i, $url );
+                    }
+                    $tmpurls [$url] = $url;
 				}
 
-				$pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
 
+
+				$pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
                 /**
 				 * 能否抓去到数据检测,此代码保留
 				 */
@@ -256,14 +267,16 @@ class spiderModel extends Model {
 				}
 				$preg = $Category [elements::CATEGORY_LIST_GOODS_PREG];
 				$match = $Category [elements::CATEGORY_LIST_GOODS_Match];
+
 				foreach ( $pages as $rurl => $page ) {
-                    if(strtolower($Category[elements::CATEGORY_ITEM_MATCHING]) == 'xpath')
+                    if(strtolower($Category[elements::CATEGORY_MATCHING]) == 'xpath')
                     {
                         $item_urls = $this->curlmulit->getRegexpInfo2($preg,$page);
                     }else{
                         preg_match_all ( $preg, $page, $match_out );
                         $item_urls = isset ( $match_out [$match] ) ? $match_out [$match] : "";
                     }
+
                     $item_urls = array_unique ( $item_urls );
 					// 加入itemjobs
 					foreach ( $item_urls as $url ) {
@@ -274,11 +287,9 @@ class spiderModel extends Model {
                     //加入列表页数据的获取并保存
                     if(isset($Category [elements::CATEGORY_ITEM_PREG]))
                     {
-
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
-
                         if($categorydata){
                             foreach($categorydata as $item)
                             {
@@ -307,6 +318,7 @@ class spiderModel extends Model {
 		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
 		$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
 		$jobs2 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
+        sleep(1);
 /*		$this->log->msglog ( array (
 				'job' => $job,
 				'runjobs1' => $jobs1,
@@ -314,7 +326,7 @@ class spiderModel extends Model {
 				'addtime' => date ( 'Y-m-d H:i:s' ) 
 		) );
 */
-//		$this->autostartitemmaster ();
+		$this->autostartitemmaster ();
 		exit ();
 	}
 	function autostartitemmaster($jobname = 'Item') {
@@ -328,8 +340,8 @@ class spiderModel extends Model {
         header("Content-type: text/html; charset=utf-8");
 		$poolname = $this->spidername . 'Item';
 		$Category = Application::$_spider ['Category'];
-		$collection_item_name = Application::$_spider [elements::collection_category_name];
-
+		$collection_item_name = Application::$_spider [elements::COLLECTION_ITEM_NAME];
+        $urls = array();
 		if(isset($_GET['debug']) && $_GET['debug']=='itemjob')
 		{
 				$urls = isset($_GET['url'])?trim($_GET['url']):"";
@@ -346,9 +358,9 @@ class spiderModel extends Model {
             }
         }
 
-		$pages = $this->curlmulit->remote ( $urls, null, false, Application::$_spider ['item_page_charset'] ,Application::$_spider [elements::HTML_ZIP]);
-
+		$pages = $this->curlmulit->remote ( $urls, null, false, Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
 // 		$fetchitems = array ();
+
 		$Productmodel = $this->spidername . 'ProductModel';
 		foreach ( $pages as $srouceurl => $page ) {
 			$spidermodel = new $Productmodel ( $this->spidername, $srouceurl, $page, Application::$_spider );

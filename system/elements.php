@@ -93,6 +93,9 @@ class elements {
     const DATASOURCE='datasource';//数据来源
     const CATEGORY_MATCHING ='category_matching';//匹配方式 xpath,regular
     const ITEM_MATCHING ='item_matching';//匹配方式 xpath,regular
+    const TOTALPAGES = 'totalpages';
+    const TRANSFORM = 'transform';//URL是否需要转换
+
 
     const HTML_ZIP = 'html_zip';//网页压缩格式
     /**

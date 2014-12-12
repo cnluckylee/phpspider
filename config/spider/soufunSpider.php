@@ -8,20 +8,21 @@ $siteconfig = array(
 						elements::HOST => 'mongo.wcc.cc',
 						elements::PORT => '27017',
 						elements::TIMEOUT => 0,
-						elements::DBNAME => 'soufun'
+						elements::DBNAME => 'soufun4'
 				)
 		),
 		elements::CATEGORY => array(
 				elements::CATEGORY_URL => 'http://img1.soufun.com/secondhouse/image/esfnew/scripts/citys.js?v=3.201412041',
 				elements::CATEGORY_MATCH_PREG => '/"name": "(.*)", "spell": "(.*)", "url": "http:\/\/esf.(\w+)\.soufun\.com\/"/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>1,'cid'=>3),
-				elements::CATEGORY_GROUP_SIZE => 1,
+				elements::CATEGORY_GROUP_SIZE => 10,
 				elements::CATEGORY_LIST_URL => 'http://esf.#job.fang.com/agenthome/',
 				elements::CATEGORY_LIST_PAGES_URL => 'http://esf.#job.fang.com/agenthome/-i3#i/',
 				elements::CATEGORY_LIST_PREG => '//span[@class="fy_text"]||/\/(\d+)/',
 				elements::CATEGORY_LIST_MATCH => 1,
 				elements::CATEGORY_PAGE_START => 1,
 				elements::CATEGORY_LIST_GOODS_PREG => '//p[@class="housetitle"]/a/@href',
+                elements::TRANSFORM => false,
 				elements::CATEGORY_LIST_GOODS_Match => 1,
                 elements::CATEGORY_MATCHING => '',
                 elements::CATEGORY_ITEM_PREG => array(
