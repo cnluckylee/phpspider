@@ -8,7 +8,7 @@ $siteconfig = array(
 						elements::HOST => 'mongo.wcc.cc',
 						elements::PORT => '27017',
 						elements::TIMEOUT => 0,
-						elements::DBNAME => 'soufun4'
+						elements::DBNAME => 'soufun5'
 				)
 		),
 		elements::CATEGORY => array(
@@ -45,7 +45,7 @@ $siteconfig = array(
         elements::ITEM_BARCODE =>'//div[@id="dsy_H01_04"]/div/a/@href||1',
         elements::ITEM_OPRICE =>'//ul[@class="info ml25"]/li[1]/p/a/text()||2',
         elements::ITEM_DPRICE =>'//ul[@class="info ml25"]/li[2]/a/text()||2',
-        elements::ITEM_MPRICE =>'//li[@id="dsinfrom"]/a/text()||2',
+        elements::ITEM_CHARACTERS =>'//li[@id="dsinfrom"]/a/text()||2',
 		elements::STID => 112,
         elements::HTML_ZIP =>'gzip',
 		elements::DATASOURCE => '1',

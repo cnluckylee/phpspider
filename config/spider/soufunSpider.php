@@ -8,7 +8,7 @@ $siteconfig = array(
 						elements::HOST => 'mongo.wcc.cc',
 						elements::PORT => '27017',
 						elements::TIMEOUT => 0,
-						elements::DBNAME => 'soufun4'
+						elements::DBNAME => 'soufun5'
 				)
 		),
 		elements::CATEGORY => array(

@@ -41,14 +41,17 @@ class soufunareaProductModel extends productXModel {
         {
             if($v != '不限')
             {
-                $result[] = $v;
+                if($v)
+                    $result[] = $v;
             }
         }
-        $arr2 = parent::getMPrice();
-        foreach($arr2 as $k=>$v)
+        $arr2 = parent::getCharacters();
+        foreach($arr2 as $kk=>$vv)
         {
-            $result[] = $v;
+            if($vv)
+                $result[] = $vv;
         }
+
         return $result;
     }
 

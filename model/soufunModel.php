@@ -14,21 +14,32 @@ class soufunModel extends spiderModel
         {
             $baseurl = $v['barcode'];
             $baseurl = substr($baseurl,0,strlen($baseurl)-1);
-            foreach($v['dprice'] as $kk=>$vv)
+            $v['promotion'] = array_unique($v['promotion']);
+            $v['dprice'] = array_unique($v['dprice']);
+            foreach($v['promotion'] as $u)
             {
-                $jjgs = '-c5'.$vv;
+                if($u)
+                $u = substr($u,0,strlen($u)-1);
+                $u = str_replace('-i31','',$u);
+                foreach($v['dprice'] as $kk=>$vv)
+                {
+                    $jjgs = '-c5'.$vv;
 //                foreach($v['oprice'] as $kkk=>$vvv)
 //                {
-                    $zytc = '-j5'.$vvv;
-                    foreach($v['promotion'] as $u)
-                    {
-                        $u = substr($u,0,strlen($u)-1);
-                        $u = str_replace('-i31','',$u);
-                        $result[] = $baseurl.$u.urlencode(mb_convert_encoding($jjgs.$zytc, 'GB2312', 'UTF-8')).'-i3';
+//                    $zytc = '-j5'.$vvv;
 
-                    }
+
 //                }
+
+
+                    $result[] = $baseurl.$u.urlencode(mb_convert_encoding($jjgs, 'GB2312', 'UTF-8')).'-i3';
+
+               }
+//                if($u)
+                $result[] = $baseurl.$u.'-i3';
+
             }
+
         }
         $Categorylist = array_unique ( $result );
 
