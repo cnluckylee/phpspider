@@ -915,7 +915,6 @@ abstract class productXModel
      */
     public function getCategoryItemHot()
     {
-        echo 34;
         if (is_null($this->_category_item_hot)) {
             $filter = $this->_config[\elements::CATEGORY_ITEM_HOT];
             $this->_category_item_hot = $this->_getRegexpInfo($filter, $this->getContent());

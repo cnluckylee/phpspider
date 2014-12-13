@@ -178,11 +178,9 @@ final class Application {
             //传入进程数
             if(isset($url_array['process']) && $url_array['process']>0 && $url_array['a'] == 'fulldata')
             	self::$_process = $url_array['process'];
-            else if(isset($url_array['process']) && $url_array['process']>0 && $url_array['a'] == 'itemmaster'){
-            	self::$_process = $url_array['process'];
-            }else if(isset($url_array['process']) && $url_array['process']>0 && $url_array['a'] == 'updatemaster'){
-            	self::$_process = $url_array['process'];
-            }
+            if(isset($url_array['process']) && $url_array['process']>0 && strpos($url_array['a'],'master'))
+                self::$_process = $url_array['process'];
+
         } else {
             echo $model . "'s Spider doesn't exist.";
             exit;

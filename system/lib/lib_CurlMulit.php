@@ -139,16 +139,22 @@ class CurlMulit {
         if (!strlen($pattern)){
             return null;
         }
-        $dom = new DOMDocument();
+        $dom = new DOMDocument('1.0','utf-8');
+        $content = $this->loadNprepare($content,'utf-8');
         @$dom->loadHTML($content);
+        $dom->encoding = 'utf8';
         $xpath = new DOMXPath($dom);
         $arr = explode("||", $pattern);
         $query = $arr [0];
         $preg = $arr [1];
         $result = $xpath->query($query);
-        $page_str = $result->item(0)->nodeValue;
-        preg_match($preg,$page_str,$out);
-        return isset($out[$match]) && $out[$match]?$out[$match]:"";
+        if($result)
+        {
+            $page_str = $result->item(0)->nodeValue;
+            preg_match($preg,$page_str,$out);
+            return isset($out[$match]) && $out[$match]?$out[$match]:"";
+        }
+           return "";
     }
 
     //加入xpath方法
@@ -157,19 +163,38 @@ class CurlMulit {
         if (!strlen($pattern)){
             return null;
         }
-
-        $dom = new DOMDocument();
+        $dom = new DOMDocument('1.0','utf-8');
+        $content = $this->loadNprepare($content,'utf-8');
         @$dom->loadHTML($content);
+        $dom->encoding = 'utf8';
         $xpath = new DOMXPath($dom);
         $arr = explode("||", $pattern);
         $query = $arr [0];
 
         $result = $xpath->query($query);
+
         $out = array();
         foreach($result as $item)
         {
             $out[]= $item->nodeValue;
         }
+
         return $out;
+    }
+
+    function loadNprepare($content,$encod='') {
+        if (!empty($content)) {
+            if (empty($encod))
+                $encod = mb_detect_encoding($content);
+            $headpos = mb_strpos($content,'<head>');
+            if (FALSE=== $headpos)
+                $headpos= mb_strpos($content,'<HEAD>');
+            if (FALSE!== $headpos) {
+                $headpos+=6;
+                $content = mb_substr($content,0,$headpos) . '<meta http-equiv="Content-Type" content="text/html; charset='.$encod.'">' .mb_substr($content,$headpos);
+            }
+            $content=mb_convert_encoding($content, 'HTML-ENTITIES', $encod);
+        }
+        return $content;
     }
 }

@@ -23,6 +23,7 @@ $siteconfig = array(
 				elements::CATEGORY_PAGE_START => 1,
 				elements::CATEGORY_LIST_GOODS_PREG => '//p[@class="housetitle"]/a/@href',
                 elements::TRANSFORM => false,
+                elements::TRANSFORMADDSPECIL =>'/',
 				elements::CATEGORY_LIST_GOODS_Match => 1,
                 elements::CATEGORY_MATCHING => '',
                 elements::CATEGORY_ITEM_PREG => array(

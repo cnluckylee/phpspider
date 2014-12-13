@@ -177,17 +177,16 @@ class spiderModel extends Model {
 		$tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
-//        $job = 'sh';
+//        $job = 'http://esf.sh.fang.com/agent/agentnew/aloneesfhlist.aspx?agentid=163724620&page=';
 
-
+//        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
 		$poolname = $this->spidername . 'Item';
 		$Category = Application::$_spider [elements::CATEGORY];
-		$xpath = $Category [elements::CATEGORY_ITEM_PREG][elements::CATEGORY_ITEM_MATCHING];
+		$xpath = $Category [elements::CATEGORY_MATCHING];
         if(isset($Category [elements::TRANSFORM]) && $Category [elements::TRANSFORM] === false)
-            $Categoryurl = $job.'/';
+            $Categoryurl = $job.$Category [elements::TRANSFORMADDSPECIL];
         else
             $Categoryurl = str_replace ( "#job", $job, $Category [elements::CATEGORY_LIST_URL] );
-
 
 		// 首先获取下该分类下面的总页数
 		$pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
@@ -203,18 +202,26 @@ class spiderModel extends Model {
 			) );
 			exit ();
 		}
+
         if(isset(Application::$_spider [elements::TOTALPAGES])&&Application::$_spider [elements::TOTALPAGES]>0)
             $totalpages = Application::$_spider [elements::TOTALPAGES];
         else{
+
             $preg_pagetotals = $Category [elements::CATEGORY_LIST_PREG];
             if(strtolower($xpath) == 'xpath')
             {
                 $totalpages = $this->curlmulit->getRegexpInfo($preg_pagetotals,$pageHtml [$Categoryurl],$Category [elements::CATEGORY_LIST_MATCH]);
             }else{
-                preg_match ( $preg_pagetotals, $pageHtml [0], $match_pagetotals );
-                $totalpages = $match_pagetotals ? $match_pagetotals [$Category ['Category_List_Match']] : 0;
+                preg_match ( $preg_pagetotals, $pageHtml [$Categoryurl], $match_pagetotals );
+
+                foreach($match_pagetotals as $k=>$v)
+                {
+                    $match_pagetotals[$k] = trim($v);
+                }
+                $totalpages = $match_pagetotals ? $match_pagetotals [$Category [elements::CATEGORY_LIST_MATCH]] : 0;
             }
         }
+
         $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
 
         if($totalpages && $totalpages>0){
@@ -223,6 +230,7 @@ class spiderModel extends Model {
                 array('$set'=>array('totalcount'=>$totalpages)),
                 array("upsert"=>1,"multiple"=>true));
         }
+
 		$s = isset ( $Category [elements::CATEGORY_PAGE_START] ) ? $Category[elements::CATEGORY_PAGE_START] : 0;
 		$pagesize = $Category [elements::CATEGORY_GROUP_SIZE];
 		if ($totalpages > 0) {
@@ -235,11 +243,10 @@ class spiderModel extends Model {
 					$e = $s + $pagesize;
 				}
 				$tmpurls = array ();
-				for($i = $s; $i < $e; $i ++) {
+				for($i = $s; $i <= $e; $i ++) {
                     if(isset($Category [elements::TRANSFORM]) && $Category [elements::TRANSFORM] == false)
                     {
-                        $url =$job.$i.'/';
-
+                        $url =$job.$i.$Category [elements::TRANSFORMADDSPECIL];;
                     }else{
                         $url = $Category [elements::CATEGORY_LIST_PAGES_URL];
                         $url = str_replace ( '#job', $job, $url );
@@ -247,8 +254,6 @@ class spiderModel extends Model {
                     }
                     $tmpurls [$url] = $url;
 				}
-
-
 
 				$pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
                 /**
@@ -269,19 +274,19 @@ class spiderModel extends Model {
 				$match = $Category [elements::CATEGORY_LIST_GOODS_Match];
 
 				foreach ( $pages as $rurl => $page ) {
-                    if(strtolower($Category[elements::CATEGORY_MATCHING]) == 'xpath')
+                    if(strtolower($Category[elements::CATEGORY_ITEM_PREG][elements::CATEGORY_ITEM_MATCHING]) == 'xpath')
                     {
                         $item_urls = $this->curlmulit->getRegexpInfo2($preg,$page);
                     }else{
                         preg_match_all ( $preg, $page, $match_out );
                         $item_urls = isset ( $match_out [$match] ) ? $match_out [$match] : "";
                     }
-
                     $item_urls = array_unique ( $item_urls );
 					// 加入itemjobs
 					foreach ( $item_urls as $url ) {
 						$this->pools->set ( $poolname, $url );
 					}
+
                     //加入错误日志
                     unset($tmpurls[$rurl]);
                     //加入列表页数据的获取并保存
@@ -290,6 +295,7 @@ class spiderModel extends Model {
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
+
                         if($categorydata){
                             foreach($categorydata as $item)
                             {
@@ -300,6 +306,7 @@ class spiderModel extends Model {
                     }
 				}
 				$s = $s + $pagesize;
+
                 if($tmpurls)
                 {
                     foreach($tmpurls as $url)
@@ -348,9 +355,7 @@ class spiderModel extends Model {
 		}else			
 			$urls = $this->pools->get ( $poolname, $Category [elements::CATEGORY_GROUP_SIZE] );
         $site_conversion_rules = $this->getsite_conversion_rules();
-
         $url_rules = $site_conversion_rules[Application::$_spider[elements::STID]]?$site_conversion_rules[Application::$_spider[elements::STID]]:"";
-
         if($url_rules)
         {
             foreach($urls as $k=>$turl){

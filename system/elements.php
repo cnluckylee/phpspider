@@ -95,6 +95,7 @@ class elements {
     const ITEM_MATCHING ='item_matching';//匹配方式 xpath,regular
     const TOTALPAGES = 'totalpages';
     const TRANSFORM = 'transform';//URL是否需要转换
+    const TRANSFORMADDSPECIL = 'transformaddspecil';
 
 
     const HTML_ZIP = 'html_zip';//网页压缩格式
