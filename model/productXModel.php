@@ -291,10 +291,20 @@ abstract class productXModel
         $this->_sourceID = $this->_config[\elements::STID];
         $dom = new DOMDocument('1.0','utf-8');
 //        $content = html_entity_decode(mb_convert_encoding($texttmp, 'gb2312','UTF-8'), ENT_QUOTES, 'gb2312');
-        $content = $this->loadNprepare($content,'utf-8');
-        @$dom->loadHTML($content);
-        $dom->encoding = 'utf8';
-        $this->_xpath = new DOMXPath($dom);
+        if($content)
+        {
+            $content = $this->loadNprepare($content,'utf-8');
+            try{
+                @$dom->loadHTML($content);
+            }catch (Exception $e)
+            {
+
+            }
+
+            $dom->encoding = 'utf8';
+            $this->_xpath = new DOMXPath($dom);
+        }
+
         $this->_sourceType = $this->_config[\elements::DATASOURCE];
     }
 

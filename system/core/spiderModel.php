@@ -365,7 +365,7 @@ class spiderModel extends Model {
 
 		$pages = $this->curlmulit->remote ( $urls, null, false, Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
 // 		$fetchitems = array ();
-
+        $tmpurls = $urls;
 		$Productmodel = $this->spidername . 'ProductModel';
 		foreach ( $pages as $srouceurl => $page ) {
 			$spidermodel = new $Productmodel ( $this->spidername, $srouceurl, $page, Application::$_spider );
@@ -379,8 +379,20 @@ class spiderModel extends Model {
 			if(isset($_GET['debug']) && $_GET['debug']=='itemjob')
 			{
 				print_r($spiderdata);exit;
-			}	
-		}		
+			}
+            unset($tmpurls[$srouceurl]);
+		}
+        if($tmpurls)
+        {
+            foreach($tmpurls as $url)
+                $this->log->errlog ( array (
+                    'job' => $poolname,
+                    'url' => $url,
+                    'urltype' =>'Items',
+                    'error' => 1,
+                    'addtime' => date ( 'Y-m-d H:i:s' )
+                ) );
+        }
 		$this->redis->decr ( $this->spidername . 'ItemCurrent' );
 		exit ();
 	}
