@@ -320,14 +320,14 @@ class spiderModel extends Model {
                         'addtime' => date ( 'Y-m-d H:i:s' )
                     ) );
                 }
-
+                sleep(1);
 			} while ( $s <= $totalpages );
 		}
 
 		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
 		$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
 		$jobs2 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
-        sleep(1);
+
 /*		$this->log->msglog ( array (
 				'job' => $job,
 				'runjobs1' => $jobs1,
