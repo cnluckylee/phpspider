@@ -177,7 +177,7 @@ class spiderModel extends Model {
 		$tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
-//        $job = 'http://esf.sh.fang.com/agent/agentnew/aloneesfhlist.aspx?agentid=163724620&page=';
+//       $job = 'http://esf.sh.fang.com/agenthome-a025/-c5%be%c5%bc%e4%b0%e9%b2%bb%b6%af%b2%fa-i31-j310';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
 		$poolname = $this->spidername . 'Item';
@@ -192,7 +192,7 @@ class spiderModel extends Model {
 		$pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
         if (! $pageHtml) {
 
-			$this->autostartitemmaster ();
+//			$this->autostartitemmaster ();
 			$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
 			$this->log->errlog ( array (
 					'job' => $job,
@@ -254,8 +254,10 @@ class spiderModel extends Model {
                     }
                     $tmpurls [$url] = $url;
 				}
+//$tmpurls = array();
+//                $tmpurls['http://esf.sh.fang.com/agenthome-a025/-c5%be%c5%bc%e4%b0%e9%b2%bb%b6%af%b2%fa-i31-j310/'] = 'http://esf.sh.fang.com/agenthome-a025/-c5%be%c5%bc%e4%b0%e9%b2%bb%b6%af%b2%fa-i31-j310/';
 
-				$pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
+                $pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
                 /**
 				 * 能否抓去到数据检测,此代码保留
 				 */
@@ -295,7 +297,7 @@ class spiderModel extends Model {
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
-
+//print_r($categorydata);exit;
                         if($categorydata){
                             foreach($categorydata as $item)
                             {
@@ -333,7 +335,7 @@ class spiderModel extends Model {
 				'addtime' => date ( 'Y-m-d H:i:s' ) 
 		) );
 */
-		$this->autostartitemmaster ();
+//		$this->autostartitemmaster ();
 		exit ();
 	}
 	function autostartitemmaster($jobname = 'Item') {

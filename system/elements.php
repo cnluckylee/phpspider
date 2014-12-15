@@ -39,6 +39,15 @@ class elements {
     const CATEGORY_ITEM_REVIEWS = 'Category_Item_Reviews';//列表页论数
     const CATEGORY_ITEM_AREA = 'Category_Item_Area';//销售地区
     const CATEGORY_ITEM_SKUID = 'Category_Item_Skuid';//销售地区
+    const CATEGORY_ITEM_MPRICE = 'Category_Item_Mprice';//销售地区
+    const CATEGORY_ITEM_MPRICE_URL = 'Category_Item_Mprice_Url';//销售地区
+    const CATEGORY_ITEM_SHOP_URL = 'Category_Item_Shop_Url';//销售地区
+    const CATEGORY_ITEM_SHOP_NAME = 'Category_Item_Shop_Name';//销售地区
+    const CATEGORY_ITEM_SHOP_ID = 'Category_Item_Shop_ID';//销售地区
+    const CATEGORY_ITEM_DISTRICT = 'Category_Item_District';//区域
+    const CATEGORY_ITEM_COMPANY = 'Category_Item_Company';//区域
+
+
     const DB_TYPE = 'Db_Type';
     /* 商品相关参数 */
     const ITEM = 'Item';
@@ -96,7 +105,7 @@ class elements {
     const TOTALPAGES = 'totalpages';
     const TRANSFORM = 'transform';//URL是否需要转换
     const TRANSFORMADDSPECIL = 'transformaddspecil';
-
+    const CATEGORY_SOURCE_URL = 'category_source_url';
 
     const HTML_ZIP = 'html_zip';//网页压缩格式
     /**

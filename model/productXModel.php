@@ -275,6 +275,54 @@ abstract class productXModel
     protected $_category_item_skuid = null;
 
     /**
+     *
+     */
+    protected $_category_source_url = null;
+
+    /**
+     * the item skuid of category list
+     * @var string
+     */
+    protected $_category_item_mprice = null;
+
+    /**
+     * the item skuid of category list
+     * @var string
+     */
+    protected $_category_item_mprice_url = null;
+
+    /**
+     * the item skuid of category list
+     * @var string
+     */
+    protected $_category_shop_name = null;
+
+    /**
+     * the item skuid of category list
+     * @var string
+     */
+    protected $_category_shop_url = null;
+
+    /**
+     * the item skuid of category list
+     * @var string
+     */
+    protected $_category_shop_id = null;
+
+    /**
+     * the item skuid of category list
+     * @var string
+     */
+    protected $_category_item_company = null;
+
+    /**
+     * the item skuid of category list
+     * @var string
+     */
+    protected $_category_item_district = null;
+
+
+    /**
      * @param string $spider spider name
      * @param string $url the url of the product
      * @param string $content the html content of the product
@@ -923,6 +971,36 @@ abstract class productXModel
      *
      * @return string|null
      */
+    public function getCategoryItemDistrict()
+    {
+        if (is_null($this->_category_item_district)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_DISTRICT];
+            $this->_category_item_district = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_district;
+    }
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemCompany()
+    {
+        if (is_null($this->_category_item_company)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_COMPANY];
+            $this->_category_item_company = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_company;
+    }
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
     public function getCategoryItemHot()
     {
         if (is_null($this->_category_item_hot)) {
@@ -991,6 +1069,84 @@ abstract class productXModel
             $this->_category_item_skuid = $this->_getRegexpInfo($filter, $this->getContent());
         }
         return $this->_category_item_skuid;
+    }
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemMprice()
+    {
+        if (is_null($this->_category_item_mprice)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_MPRICE];
+            $this->_category_item_mprice = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_mprice;
+    }
+
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemMpriceUrl()
+    {
+        if (is_null($this->_category_item_mprice_url)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_MPRICE_URL];
+            $this->_category_item_mprice_url = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_mprice_url;
+    }
+
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemShopName()
+    {
+        if (is_null($this->_category_item_shop_name)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_SHOP_NAME];
+            $this->_category_item_shop_name = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_shop_name;
+    }
+
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemShopUrl()
+    {
+        if (is_null($this->_category_item_shop_url)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_SHOP_URL];
+            $this->_category_item_shop_url = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_shop_url;
+    }
+
+    /**
+     * get title of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCategoryItemShopID()
+    {
+        if (is_null($this->_category_item_shop_id)) {
+            $filter = $this->_config[\elements::CATEGORY_ITEM_SHOP_ID];
+            $this->_category_item_shop_id = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_category_item_shop_id;
     }
 
     /**
@@ -1130,7 +1286,8 @@ abstract class productXModel
         if(isset($fetchconfig[elements::CATEGORY_ITEM_URL]) && $fetchconfig[elements::CATEGORY_ITEM_URL])
             $result[elements::CATEGORY_ITEM_URL] = $this->getCategoryItemUrL();
 
-
+        if(isset($fetchconfig[elements::CATEGORY_SOURCE_URL]) && $fetchconfig[elements::CATEGORY_SOURCE_URL])
+            $arrData[\elements::CATEGORY_SOURCE_URL] = $this->getUrl();
 
         if(isset($fetchconfig[elements::CATEGORY_ITEM_OPRICE]) && $fetchconfig[elements::CATEGORY_ITEM_OPRICE])
             $result[elements::CATEGORY_ITEM_OPRICE] = $this->getCategoryItemOprice();
@@ -1152,6 +1309,28 @@ abstract class productXModel
 
         if(isset($fetchconfig[elements::CATEGORY_ITEM_SKUID]) && $fetchconfig[elements::CATEGORY_ITEM_SKUID])
             $result[elements::CATEGORY_ITEM_SKUID] = $this->getCategoryItemSkuid();
+
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_MPRICE]) && $fetchconfig[elements::CATEGORY_ITEM_MPRICE])
+            $result[elements::CATEGORY_ITEM_MPRICE] = $this->getCategoryItemMprice();
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_MPRICE_URL]) && $fetchconfig[elements::CATEGORY_ITEM_MPRICE_URL])
+            $result[elements::CATEGORY_ITEM_MPRICE_URL] = $this->getCategoryItemMpriceUrl();
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_SHOP_NAME]) && $fetchconfig[elements::CATEGORY_ITEM_SHOP_NAME])
+            $result[elements::CATEGORY_ITEM_SHOP_NAME] = $this->getCategoryItemShopName();
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_SHOP_URL]) && $fetchconfig[elements::CATEGORY_ITEM_SHOP_URL])
+            $result[elements::CATEGORY_ITEM_SHOP_URL] = $this->getCategoryItemShopUrl();
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_SHOP_ID]) && $fetchconfig[elements::CATEGORY_ITEM_SHOP_ID])
+            $result[elements::CATEGORY_ITEM_SHOP_ID] = $this->getCategoryItemShopID();
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_DISTRICT]) && $fetchconfig[elements::CATEGORY_ITEM_DISTRICT])
+            $result[elements::CATEGORY_ITEM_DISTRICT] = $this->getCategoryItemDistrict();
+
+        if(isset($fetchconfig[elements::CATEGORY_ITEM_COMPANY]) && $fetchconfig[elements::CATEGORY_ITEM_COMPANY])
+            $result[elements::CATEGORY_ITEM_COMPANY] = $this->getCategoryItemCompany();
         return $result;
     }
 }
