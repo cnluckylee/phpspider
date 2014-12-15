@@ -10,10 +10,13 @@ function errorHandle($errno, $errmsg, $filename, $linenum, $vars) {
 	if ($errno == E_NOTICE) {
 		return;
 	}
+    /*
+     * 临时屏蔽
 	$file = '/tmp/spidermvc.err';
 	$handle = fopen ( $file, 'a+' );
 	fwrite ( $handle, $errmsg . '_' . $errno . '_' . $linenum . '_' . $filename . "\n" );
 	fclose ( $handle );
+    */
 }
 require dirname(__FILE__).'/system/app.php';
 require dirname(__FILE__).'/config/config.php';
