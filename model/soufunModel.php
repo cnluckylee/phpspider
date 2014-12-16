@@ -45,6 +45,7 @@ class soufunModel extends spiderModel
             }
             if($mondata2)
                 $this->mongodb->batchinsert ( $collection_category_name, $mondata2 );
+            unset($mondata2);
         }
         echo "do over"."\n";
         exit;
