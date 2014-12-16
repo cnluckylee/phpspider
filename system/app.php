@@ -26,7 +26,7 @@ final class Application {
     public static $_spider = null;
     public static $_spidername = null;
     public static $_spidermodel = 'spider';
-    public static $_process = 10;
+    public static $_process = 2;
     public static $_urlparams = null;
 
     public static function init() {
