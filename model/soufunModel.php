@@ -37,15 +37,14 @@ class soufunModel extends spiderModel
             $mondata2 = array ();
             foreach ( $Categorylist as $name => $cid ) {
                 $this->pools->set ( $poolname, $cid );
-                $mondata2 [] = array (
+                $mondata2 = array (
                     'name' => $name,
                     'cid' => $cid,
                     'sid' => $sid
                 );
+                $this->mongodb->insert ( $collection_category_name, $mondata2 );
             }
-            if($mondata2)
-                $this->mongodb->batchinsert ( $collection_category_name, $mondata2 );
-            unset($mondata2);
+            unset($result);
         }
         echo "do over"."\n";
         exit;
