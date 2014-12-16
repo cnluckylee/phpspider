@@ -15,7 +15,7 @@ $siteconfig = array(
 				elements::CATEGORY_URL => 'http://img1.soufun.com/secondhouse/image/esfnew/scripts/citys.js?v=3.201412041',
 				elements::CATEGORY_MATCH_PREG => '/"name": "(.*)", "spell": "(.*)", "url": "http:\/\/esf.(\w+)\.soufun\.com\/"/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>1,'cid'=>3),
-				elements::CATEGORY_GROUP_SIZE => 10,
+				elements::CATEGORY_GROUP_SIZE => 2,
 				elements::CATEGORY_LIST_URL => 'http://esf.#job.fang.com/agenthome/',
 				elements::CATEGORY_LIST_PAGES_URL => 'http://esf.#job.fang.com/agenthome/-i3#i/',
 				elements::CATEGORY_LIST_PREG => '/\/(.*?)\n页/',
