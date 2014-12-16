@@ -41,7 +41,18 @@ class Model {
 		$this->mongodb->init ( $config_mongodb ['host'] . ':' . $config_mongodb ['port'] );
 		
 		$this->mongodb->selectDb ( $config_mongodb ['dbname'] );
-		
+
+        if(isset(Application::$_config ['db']['mongodbsec']) && Application::$_config ['db']['mongodbsec'])
+        {
+            $this->mongodbsec =  $this->load ( 'HMongodb', true);
+            $config_mongodbsec = Application::$_config ['db']['mongodbsec'];
+
+            $this->mongodbsec->init ( $config_mongodbsec ['host'] . ':' . $config_mongodbsec ['port'] );
+
+            $this->mongodbsec->selectDb ( $config_mongodbsec ['dbname'] );
+
+        }
+
 		// 初始化redis
 		$this->redis = $this->load ( 'SRedis', true );	
 		$this->curlmulit = new CurlMulit ();

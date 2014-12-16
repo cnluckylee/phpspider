@@ -395,6 +395,7 @@ class spiderModel extends Model {
                     'addtime' => date ( 'Y-m-d H:i:s' )
                 ) );
         }
+        sleep(1);
 		$this->redis->decr ( $this->spidername . 'ItemCurrent' );
 		exit ();
 	}

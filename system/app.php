@@ -90,11 +90,11 @@ final class Application {
         $sys_lib = SYS_LIB_PATH . '/lib_' . $class_name . '.php';
 
         if (file_exists($app_lib)) {
-            require ($app_lib);
+            require_once ($app_lib);
             $class_name = ucfirst(self::$_config['lib']['prefix']) . ucfirst($class_name);
             return new $class_name;
         } else if (file_exists($sys_lib)) {
-            require ($sys_lib);
+            require_once ($sys_lib);
             return self::$_lib["$class_name"] = new $class_name;
         } else {
             trigger_error('加载 ' . $class_name . ' 类库不存在');
@@ -165,6 +165,9 @@ final class Application {
             if (isset($siteconfig['db'])) {
                 if (isset($siteconfig['db']['mongodb'])) {
                     self::$_config['db']['mongodb'] = $siteconfig['db']['mongodb'];
+                }
+                if (isset($siteconfig['db']['mongodbsec'])) {
+                    self::$_config['db']['mongodbsec'] = $siteconfig['db']['mongodbsec'];
                 }
                 if(isset ($siteconfig['db']['redis'])){
                     self::$_config['db']['redis'] = $siteconfig['db']['redis'];
