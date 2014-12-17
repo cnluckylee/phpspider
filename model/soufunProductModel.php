@@ -121,7 +121,6 @@ class soufunProductModel extends productXModel {
 
     public function getCategoryItemSale()
     {
-
         $filter = $this->_config[\elements::CATEGORY_ITEM_SALE];
         $filter2 = './/div[@class="zhuanjia"]';
         $nodes = $this->_xpath->query($filter);
@@ -302,5 +301,22 @@ class soufunProductModel extends productXModel {
             $this->_sourceSellerID =  $this->_getRegexpInfo($filter,$this->getContent());
         }
         return $this->_sourceSellerID;
+    }
+
+    public function getSales()
+    {
+        $str = parent::getSales();
+        $this->_sales = intval($str);
+        return $this->_sales;
+    }
+    public function getSourceBrandID()
+    {
+        $str = parent::getSourceBrandID();
+        if(!$str)
+        {
+            $filter = '//ul[@class="cont02 mb10"]/li[2]/a/text()||1';
+            $this->_sourceBrandID =  $this->_getRegexpInfo($filter,$this->getContent());
+        }
+        return $this->_sourceBrandID;
     }
 }
