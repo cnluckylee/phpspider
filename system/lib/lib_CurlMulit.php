@@ -76,15 +76,15 @@ class CurlMulit {
         $active = null;
         do {
             $mrc = curl_multi_exec($handle, $active);
-        } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+        } while ($active);
 
-        while ($active && $mrc == CURLM_OK) {
-            if (curl_multi_select($handle) != -1) {
-                do {
-                    $mrc = curl_multi_exec($handle, $active);
-                } while ($mrc == CURLM_CALL_MULTI_PERFORM);
-            }
-        }
+//        while ($active && $mrc == CURLM_OK) {
+//            if (curl_multi_select($handle) != -1) {
+//                do {
+//                    $mrc = curl_multi_exec($handle, $active);
+//                } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+//            }
+//        }
 
         foreach ($curl as $k => $v) {
             if (curl_error($curl[$k]) == "") {

@@ -759,8 +759,7 @@ abstract class productModel
      */
     public function exportToArray($updateconfig = null,$item=null)
     {
-    	require_once 'system/lib/lib_tools.php';
-		$tools = new tools();
+
         $arrData = $item?$item:array();
         if($item)
         	$this->_productID = $item['skuid'];
@@ -792,7 +791,7 @@ abstract class productModel
         	$arrData[\elements::ITEM_SOURCE_BRAND_ID] = $this->getSourceBrandID();
         if(($item && in_array(elements::ITEM_SOURCE_BRAND_NAME,$updateconfig))|| !$item)
         {
-        	$arrData[\elements::ITEM_SOURCE_BRAND_NAME] = $tools->getBrandName($this->getSourceBrandName());
+        	$arrData[\elements::ITEM_SOURCE_BRAND_NAME] = $this->getSourceBrandName();
         }
         	
         if(($item && in_array(elements::ITEM_DPRICE,$updateconfig))|| !$item)
@@ -820,7 +819,7 @@ abstract class productModel
 //         	$arrData[\elements::ITEM_STATUS] = $this->getStatus();
         if(($item && in_array(elements::ITEM_CHARACTERS,$updateconfig))|| !$item)
         {
-        	$arrData[\elements::ITEM_CHARACTERS] = $tools->filtercharacters($this->getCharacters());
+        	$arrData[\elements::ITEM_CHARACTERS] = $this->getCharacters();
         }
         
         

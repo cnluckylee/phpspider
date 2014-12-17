@@ -372,7 +372,8 @@ class spiderModel extends Model {
 		foreach ( $pages as $srouceurl => $page ) {
 			$spidermodel = new $Productmodel ( $this->spidername, $srouceurl, $page, Application::$_spider );
 			$spiderdata = $spidermodel->exportToArray ();
-
+//print_r($spiderdata);
+//print_r($page);exit;
 			if($spiderdata['title'])
 			{
 // 				$fetchitems [] = $spiderdata;

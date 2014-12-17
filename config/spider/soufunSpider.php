@@ -49,26 +49,26 @@ $siteconfig = array(
 
 		),
 		// item config
-		elements::ITEM_TITLE => '//div[@class="rzname floatl"]/text()||1',
-		elements::ITEM_SOURCE_CATEGORY_ID => '//input[@id="talkAgentPhone"]/@value||1',
-		elements::ITEM_SOURCE_CATEGORY_NAME=> '//ul[@class="cont02 mb10"]/li[1]/text()||1',
-		elements::ITEM_SKUID => '//input[@id="talkPageValue"]/@value||1',
+		elements::ITEM_TITLE => '//div[@class="rzname floatl"]/text()||1',//名称
+		elements::ITEM_SOURCE_CATEGORY_ID => '//input[@id="talkAgentPhone"]/@value||1',//手机
+		elements::ITEM_SOURCE_CATEGORY_NAME=> '//ul[@class="cont02 mb10"]/li[1]/text()||1',//所属公司
+		elements::ITEM_SKUID => '//input[@id="talkPageValue"]/@value||1',//昵称
 		elements::ITEM_NAME =>'',
-		elements::ITEM_SOURCE_BRAND_ID =>'//ul[@class="cont02 mb10"]/li[3]/a/text()||1',
-		elements::ITEM_SOURCE_BRAND_NAME =>'//input[@id="talkComerce"]/@value||1',
-		elements::ITEM_SOURCE_SELLER_ID =>'//input[@id="talkPageValue"]/@value||1',
-		elements::ITEM_SOURCE_SELLER_NAME => '//input[@id="talkAgentName"]/@value||1',
-		elements::ITEM_IMAGE_URL => '/jqimg="(.*?)"\/>/||1',
-		elements::ITEM_PROMOTION => '//ul[@class="cont02 mb10"]/li[5]/text()||1',
-		elements::ITEM_SALES => '//ul[@class="cont02 mb10"]/li[2]/a/text()||1',
-		elements::ITEM_DPRICE => '//ul[@class="cont03"]/li[2]/text()||1',
-		elements::ITEM_OPRICE => '//ul[@class="cont03"]/li[3]/text()||1',
-		elements::ITEM_PRICE_URL => '//ul[@class="cont03"]/li[5]/text()||1',
+		elements::ITEM_SOURCE_BRAND_ID =>'//ul[@class="cont02 mb10"]/li[3]/a/text()||1',//所属区县
+		elements::ITEM_SOURCE_BRAND_NAME =>'//input[@id="talkComerce"]/@value||1',//服务区域
+		elements::ITEM_SOURCE_SELLER_ID =>'//input[@id="talkPageValue"]/@value||1',//昵称
+		elements::ITEM_SOURCE_SELLER_NAME => '//input[@id="talkAgentName"]/@value||1',//姓名
+		elements::ITEM_IMAGE_URL => '',
+		elements::ITEM_PROMOTION => '//ul[@class="cont02 mb10"]/li[5]/text()||1',//注册时间
+		elements::ITEM_SALES => '//ul[@class="cont02 mb10"]/li[2]/a/text()||1',//销量
+		elements::ITEM_DPRICE => '//ul[@class="cont03"]/li[2]/text()||1',//所属门店
+		elements::ITEM_OPRICE => '//ul[@class="cont03"]/li[3]/text()||1',//门店地址
+		elements::ITEM_PRICE_URL => '//ul[@class="cont03"]/li[5]/text()||1',//服务热线
 		elements::ITEM_STATUS => '',
-		elements::ITEM_DESCRIPTION =>'//ul[@class="cont03"]/li[7]/text()||1',
-		elements::ITEM_CHARACTERS =>'/class="detail-list"(.*?)<\/ul>/si||1',
-		elements::ITEM_ISBN => '//ul[@class="cont03"]/li[8]/text()||1',
-		elements::ITEM_BARCODE => '//input[@id="talkAgentID"]/@value||1',
+		elements::ITEM_DESCRIPTION =>'//ul[@class="cont03"]/li[7]/text()||1',//门店店长
+		elements::ITEM_CHARACTERS =>'',
+		elements::ITEM_ISBN => '//ul[@class="cont03"]/li[8]/text()||1',//开店时间
+		elements::ITEM_BARCODE => '//input[@id="talkAgentID"]/@value||1',//ID
 		elements::BASE_URL => 'http://sh.soufun.com/',
 		elements::STID => 111,
         elements::HTML_ZIP =>'gzip',

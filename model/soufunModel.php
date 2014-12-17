@@ -91,8 +91,9 @@ class soufunModel extends spiderModel
 */
     function tojson($cname)
     {
+        $cname = 'soufun_category_list';
         $total = $this->mongodb->count($cname);
-        $collection = 'Soufun_Items';
+        $collection = 'soufunItem';
         $s = 0;
         $limit = 1000;
         $filename = $cname.'.log';
@@ -101,23 +102,15 @@ class soufunModel extends spiderModel
                 "start" => $s,
                 "limit" => $limit
             ) );
-            $str = '昵称 姓名 ID 星级 所属公司 服务地区 特长 认证';
-
             foreach($mondata as $item)
             {
-
-                $str .= $item['Category_Item_Skuid']." ".$item['Category_Item_Name'];
-                $str .= " ".$item['Category_Item_Url']." ".$item['Category_Item_Area'];
-                $str .= " ".$item['Category_Item_OPrice'];
-                $str .=" ".implode(",",$item['Category_Item_DPrice']).' '." ".implode(",",$item['Category_Item_Hot']);
-                $str .=" ".implode(",",$item['Category_Item_Reviews']);
-                $str .="\n";
+                $str = trim($item['Category_Item_Skuid']);
+                $this->redis->sadd($collection,$str);
             }
-            $file = fopen($filename,"a+");
-            fwrite($file,$str);
-            fclose($file);
             $s +=$limit;
+            echo "has load:".$s."\n";
         }while($s<$total);
+        exit("over");
     }
 
 }

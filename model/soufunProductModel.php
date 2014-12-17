@@ -249,13 +249,6 @@ class soufunProductModel extends productXModel {
         return $this->_price;
     }
 
-    public function getSourceSellerID()
-    {
-        $str = parent::getSourceSellerID();
-        $this->_sourceSellerID = str_replace("注册时间：","",$str);
-        return $this->_sourceSellerID;
-    }
-
     public function getPriceUrl()
     {
         $str = parent::getPriceUrl();
@@ -288,5 +281,16 @@ class soufunProductModel extends productXModel {
         }
         $this->_promotion = trim(str_replace("注册时间：","",$str));
         return $this->_promotion;
+    }
+
+    public function  getSourceSellerID()
+    {
+        $str = parent::getSourceSellerID();
+        if(!$str)
+        {
+            $filter = '//ul[@class="cont02 mb10"]/li[2]/a/text()||1';
+            $this->_sourceSellerID =  $this->_getRegexpInfo($filter,$this->getContent());
+        }
+        return $this->_sourceSellerID;
     }
 }
