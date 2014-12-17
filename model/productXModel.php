@@ -321,6 +321,10 @@ abstract class productXModel
      */
     protected $_category_item_district = null;
 
+    /**
+     * the common of category list
+     */
+    protected $_common = null;
 
     /**
      * @param string $spider spider name
@@ -380,7 +384,6 @@ abstract class productXModel
         $arr = explode("||", $pattern);
         $preg = $arr [0];
         $op = $arr [1];
-
         if ($op == 1) {
             $qdata = $xpath->query($preg);
             foreach($qdata as $i)
@@ -1150,6 +1153,28 @@ abstract class productXModel
     }
 
     /**
+     * get common of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getCommon()
+    {
+        if (is_null($this->_common)) {
+            $commons = $this->_config[\elements::COMMON];
+
+            foreach($commons as $key=>$filter)
+            {
+                $this->_common[$key] = $this->_getRegexpInfo($filter, $this->getContent());
+            }
+        }
+
+        return $this->_common;
+    }
+
+
+
+    /**
      * export the product model's properties to array
      *
      * @return array
@@ -1331,6 +1356,75 @@ abstract class productXModel
 
         if(isset($fetchconfig[elements::CATEGORY_ITEM_COMPANY]) && $fetchconfig[elements::CATEGORY_ITEM_COMPANY])
             $result[elements::CATEGORY_ITEM_COMPANY] = $this->getCategoryItemCompany();
+
+        if(isset($fetchconfig[elements::COMMON]) && count($fetchconfig[elements::COMMON])>0)
+        {
+            $commons = $this->getCommon();
+
+            foreach($commons as $key=>$val)
+            {
+                $result[$key] = $val;
+            }
+        }
+        $arr = $result;
+        $result = array();
+        foreach($arr[elements::CATEGORY_ITEM_SKUID] as $k=>$v)
+        {
+            $result[$k][elements::CATEGORY_ITEM_SKUID] = $v;
+            if(isset($arr[elements::CATEGORY_ITEM_URL][$k]))
+                $result[$k][elements::CATEGORY_ITEM_URL] = $arr[elements::CATEGORY_ITEM_URL][$k];
+            if(isset($arr[elements::CATEGORY_ITEM_IMG][$k]))
+                $result[$k][elements::CATEGORY_ITEM_IMG] = $arr[elements::CATEGORY_ITEM_IMG][$k];
+            if(isset($arr[elements::CATEGORY_ITEM_NAME][$k]))
+                $result[$k][elements::CATEGORY_ITEM_NAME] = $arr[elements::CATEGORY_ITEM_NAME][$k];
+            if(isset($arr[elements::CATEGORY_ITEM_DPRICE][$k]))
+                $result[$k][elements::CATEGORY_ITEM_DPRICE] = $arr[elements::CATEGORY_ITEM_DPRICE][$k];
+            if(isset($arr[elements::CATEGORY_ITEM_OPRICE][$k]))
+                $result[$k][elements::CATEGORY_ITEM_OPRICE] = $arr[elements::CATEGORY_ITEM_OPRICE][$k];
+            if(isset($arr[elements::CATEGORY_ITEM_SALE][$k]))
+                $result[$k][elements::CATEGORY_ITEM_SALE] = $arr[elements::CATEGORY_ITEM_SALE][$k];
+            if(isset($arr[elements::CATEGORY_ITEM_HOT][$k]))
+                $result[$k][elements::CATEGORY_ITEM_HOT] = $arr[elements::CATEGORY_ITEM_HOT][$k];
+            if(isset($arr[elements::CATEGORY_ITEM_REVIEWS][$k]))
+                $result[$k][elements::CATEGORY_ITEM_REVIEWS] = $arr[elements::CATEGORY_ITEM_REVIEWS][$k];
+            if(isset($arr[elements::CATEGORY_ITEM_AREA][$k]))
+                $result[$k][elements::CATEGORY_ITEM_AREA] = $arr[elements::CATEGORY_ITEM_AREA][$k];
+
+            if(isset($arr[elements::CATEGORY_ITEM_MPRICE][$k]) && $arr[elements::CATEGORY_ITEM_MPRICE][$k])
+                $result[$k][elements::CATEGORY_ITEM_MPRICE] = $arr[elements::CATEGORY_ITEM_MPRICE][$k];
+
+            if(isset($arr[elements::CATEGORY_ITEM_MPRICE_URL][$k]) && $arr[elements::CATEGORY_ITEM_MPRICE_URL][$k])
+                $result[$k][elements::CATEGORY_ITEM_MPRICE_URL] = $arr[elements::CATEGORY_ITEM_MPRICE_URL][$k];
+
+            if(isset($arr[elements::CATEGORY_ITEM_SHOP_NAME][$k]) && $arr[elements::CATEGORY_ITEM_SHOP_NAME][$k])
+                $result[$k][elements::CATEGORY_ITEM_SHOP_NAME] = $arr[elements::CATEGORY_ITEM_SHOP_NAME][$k];
+
+            if(isset($arr[elements::CATEGORY_ITEM_SHOP_URL][$k]) && $arr[elements::CATEGORY_ITEM_SHOP_URL][$k])
+                $result[$k][elements::CATEGORY_ITEM_SHOP_URL] = $arr[elements::CATEGORY_ITEM_SHOP_URL][$k];
+
+            if(isset($arr[elements::CATEGORY_ITEM_SHOP_ID][$k]) && $arr[elements::CATEGORY_ITEM_SHOP_ID][$k]){
+                $result[$k][elements::CATEGORY_ITEM_SHOP_ID] = $arr[elements::CATEGORY_ITEM_SHOP_ID][$k];
+            }
+
+            if(isset($arr[elements::CATEGORY_ITEM_COMPANY]) && $arr[elements::CATEGORY_ITEM_COMPANY]){
+                $result[$k][elements::CATEGORY_ITEM_COMPANY] = $arr[elements::CATEGORY_ITEM_COMPANY];
+            }
+
+            if(isset($arr[elements::CATEGORY_ITEM_DISTRICT]) && $arr[elements::CATEGORY_ITEM_DISTRICT]){
+                $result[$k][elements::CATEGORY_ITEM_DISTRICT] = $arr[elements::CATEGORY_ITEM_DISTRICT];
+            }
+
+            if(isset($arr[elements::COMMON]) && $arr[elements::COMMON])
+            {
+                $commons = $arr[elements::COMMON];
+                foreach($commons as $key=>$val)
+                {
+                    $result[$k][$key] = $val;
+                }
+            }
+        }
         return $result;
+
     }
+
 }

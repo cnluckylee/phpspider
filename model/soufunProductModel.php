@@ -174,60 +174,60 @@ class soufunProductModel extends productXModel {
         return $this->_category_item_district;
     }
 
-    public function CategoryToArray()
-    {
-        $arr = parent::CategoryToArray();
-        $result = array();
-        //数据重新瓶装
-
-        foreach($arr[elements::CATEGORY_ITEM_SKUID] as $k=>$v)
-        {
-            $result[$k][elements::CATEGORY_ITEM_SKUID] = $v;
-            if(isset($arr[elements::CATEGORY_ITEM_URL][$k]))
-                $result[$k][elements::CATEGORY_ITEM_URL] = $arr[elements::CATEGORY_ITEM_URL][$k];
-            if(isset($arr[elements::CATEGORY_ITEM_IMG][$k]))
-                $result[$k][elements::CATEGORY_ITEM_IMG] = $arr[elements::CATEGORY_ITEM_IMG][$k];
-            if(isset($arr[elements::CATEGORY_ITEM_NAME][$k]))
-                $result[$k][elements::CATEGORY_ITEM_NAME] = $arr[elements::CATEGORY_ITEM_NAME][$k];
-            if(isset($arr[elements::CATEGORY_ITEM_DPRICE][$k]))
-                $result[$k][elements::CATEGORY_ITEM_DPRICE] = $arr[elements::CATEGORY_ITEM_DPRICE][$k];
-            if(isset($arr[elements::CATEGORY_ITEM_OPRICE][$k]))
-                $result[$k][elements::CATEGORY_ITEM_OPRICE] = $arr[elements::CATEGORY_ITEM_OPRICE][$k];
-            if(isset($arr[elements::CATEGORY_ITEM_SALE][$k]))
-                $result[$k][elements::CATEGORY_ITEM_SALE] = $arr[elements::CATEGORY_ITEM_SALE][$k];
-            if(isset($arr[elements::CATEGORY_ITEM_HOT][$k]))
-                $result[$k][elements::CATEGORY_ITEM_HOT] = $arr[elements::CATEGORY_ITEM_HOT][$k];
-            if(isset($arr[elements::CATEGORY_ITEM_REVIEWS][$k]))
-                $result[$k][elements::CATEGORY_ITEM_REVIEWS] = $arr[elements::CATEGORY_ITEM_REVIEWS][$k];
-            if(isset($arr[elements::CATEGORY_ITEM_AREA][$k]))
-                $result[$k][elements::CATEGORY_ITEM_AREA] = $arr[elements::CATEGORY_ITEM_AREA][$k];
-
-            if(isset($arr[elements::CATEGORY_ITEM_MPRICE][$k]) && $arr[elements::CATEGORY_ITEM_MPRICE][$k])
-                $result[$k][elements::CATEGORY_ITEM_MPRICE] = $arr[elements::CATEGORY_ITEM_MPRICE][$k];
-
-            if(isset($arr[elements::CATEGORY_ITEM_MPRICE_URL][$k]) && $arr[elements::CATEGORY_ITEM_MPRICE_URL][$k])
-                $result[$k][elements::CATEGORY_ITEM_MPRICE_URL] = $arr[elements::CATEGORY_ITEM_MPRICE_URL][$k];
-
-            if(isset($arr[elements::CATEGORY_ITEM_SHOP_NAME][$k]) && $arr[elements::CATEGORY_ITEM_SHOP_NAME][$k])
-                $result[$k][elements::CATEGORY_ITEM_SHOP_NAME] = $arr[elements::CATEGORY_ITEM_SHOP_NAME][$k];
-
-            if(isset($arr[elements::CATEGORY_ITEM_SHOP_URL][$k]) && $arr[elements::CATEGORY_ITEM_SHOP_URL][$k])
-                $result[$k][elements::CATEGORY_ITEM_SHOP_URL] = $arr[elements::CATEGORY_ITEM_SHOP_URL][$k];
-
-            if(isset($arr[elements::CATEGORY_ITEM_SHOP_ID][$k]) && $arr[elements::CATEGORY_ITEM_SHOP_ID][$k]){
-                $result[$k][elements::CATEGORY_ITEM_SHOP_ID] = $arr[elements::CATEGORY_ITEM_SHOP_ID][$k];
-            }
-
-            if(isset($arr[elements::CATEGORY_ITEM_COMPANY]) && $arr[elements::CATEGORY_ITEM_COMPANY]){
-                $result[$k][elements::CATEGORY_ITEM_COMPANY] = $arr[elements::CATEGORY_ITEM_COMPANY];
-            }
-
-            if(isset($arr[elements::CATEGORY_ITEM_DISTRICT]) && $arr[elements::CATEGORY_ITEM_DISTRICT]){
-                $result[$k][elements::CATEGORY_ITEM_DISTRICT] = $arr[elements::CATEGORY_ITEM_DISTRICT];
-            }
-        }
-       return $result;
-    }
+//    public function CategoryToArray()
+//    {
+//        $arr = parent::CategoryToArray();
+//        $result = array();
+//        //数据重新瓶装
+//
+//        foreach($arr[elements::CATEGORY_ITEM_SKUID] as $k=>$v)
+//        {
+//            $result[$k][elements::CATEGORY_ITEM_SKUID] = $v;
+//            if(isset($arr[elements::CATEGORY_ITEM_URL][$k]))
+//                $result[$k][elements::CATEGORY_ITEM_URL] = $arr[elements::CATEGORY_ITEM_URL][$k];
+//            if(isset($arr[elements::CATEGORY_ITEM_IMG][$k]))
+//                $result[$k][elements::CATEGORY_ITEM_IMG] = $arr[elements::CATEGORY_ITEM_IMG][$k];
+//            if(isset($arr[elements::CATEGORY_ITEM_NAME][$k]))
+//                $result[$k][elements::CATEGORY_ITEM_NAME] = $arr[elements::CATEGORY_ITEM_NAME][$k];
+//            if(isset($arr[elements::CATEGORY_ITEM_DPRICE][$k]))
+//                $result[$k][elements::CATEGORY_ITEM_DPRICE] = $arr[elements::CATEGORY_ITEM_DPRICE][$k];
+//            if(isset($arr[elements::CATEGORY_ITEM_OPRICE][$k]))
+//                $result[$k][elements::CATEGORY_ITEM_OPRICE] = $arr[elements::CATEGORY_ITEM_OPRICE][$k];
+//            if(isset($arr[elements::CATEGORY_ITEM_SALE][$k]))
+//                $result[$k][elements::CATEGORY_ITEM_SALE] = $arr[elements::CATEGORY_ITEM_SALE][$k];
+//            if(isset($arr[elements::CATEGORY_ITEM_HOT][$k]))
+//                $result[$k][elements::CATEGORY_ITEM_HOT] = $arr[elements::CATEGORY_ITEM_HOT][$k];
+//            if(isset($arr[elements::CATEGORY_ITEM_REVIEWS][$k]))
+//                $result[$k][elements::CATEGORY_ITEM_REVIEWS] = $arr[elements::CATEGORY_ITEM_REVIEWS][$k];
+//            if(isset($arr[elements::CATEGORY_ITEM_AREA][$k]))
+//                $result[$k][elements::CATEGORY_ITEM_AREA] = $arr[elements::CATEGORY_ITEM_AREA][$k];
+//
+//            if(isset($arr[elements::CATEGORY_ITEM_MPRICE][$k]) && $arr[elements::CATEGORY_ITEM_MPRICE][$k])
+//                $result[$k][elements::CATEGORY_ITEM_MPRICE] = $arr[elements::CATEGORY_ITEM_MPRICE][$k];
+//
+//            if(isset($arr[elements::CATEGORY_ITEM_MPRICE_URL][$k]) && $arr[elements::CATEGORY_ITEM_MPRICE_URL][$k])
+//                $result[$k][elements::CATEGORY_ITEM_MPRICE_URL] = $arr[elements::CATEGORY_ITEM_MPRICE_URL][$k];
+//
+//            if(isset($arr[elements::CATEGORY_ITEM_SHOP_NAME][$k]) && $arr[elements::CATEGORY_ITEM_SHOP_NAME][$k])
+//                $result[$k][elements::CATEGORY_ITEM_SHOP_NAME] = $arr[elements::CATEGORY_ITEM_SHOP_NAME][$k];
+//
+//            if(isset($arr[elements::CATEGORY_ITEM_SHOP_URL][$k]) && $arr[elements::CATEGORY_ITEM_SHOP_URL][$k])
+//                $result[$k][elements::CATEGORY_ITEM_SHOP_URL] = $arr[elements::CATEGORY_ITEM_SHOP_URL][$k];
+//
+//            if(isset($arr[elements::CATEGORY_ITEM_SHOP_ID][$k]) && $arr[elements::CATEGORY_ITEM_SHOP_ID][$k]){
+//                $result[$k][elements::CATEGORY_ITEM_SHOP_ID] = $arr[elements::CATEGORY_ITEM_SHOP_ID][$k];
+//            }
+//
+//            if(isset($arr[elements::CATEGORY_ITEM_COMPANY]) && $arr[elements::CATEGORY_ITEM_COMPANY]){
+//                $result[$k][elements::CATEGORY_ITEM_COMPANY] = $arr[elements::CATEGORY_ITEM_COMPANY];
+//            }
+//
+//            if(isset($arr[elements::CATEGORY_ITEM_DISTRICT]) && $arr[elements::CATEGORY_ITEM_DISTRICT]){
+//                $result[$k][elements::CATEGORY_ITEM_DISTRICT] = $arr[elements::CATEGORY_ITEM_DISTRICT];
+//            }
+//        }
+//       return $result;
+//    }
     public function getSourceCategoryName()
     {
         $str = parent::getSourceCategoryName();
@@ -289,6 +289,16 @@ class soufunProductModel extends productXModel {
         if(!$str)
         {
             $filter = '//ul[@class="cont02 mb10"]/li[2]/a/text()||1';
+            $this->_sourceSellerID =  $this->_getRegexpInfo($filter,$this->getContent());
+        }
+        return $this->_sourceSellerID;
+    }
+    public function getProductID()
+    {
+        $str = parent::getProductID();
+        if(!$str)
+        {
+            $filter = '//input[@id="jjrmanagername"]/@value||1';
             $this->_sourceSellerID =  $this->_getRegexpInfo($filter,$this->getContent());
         }
         return $this->_sourceSellerID;
