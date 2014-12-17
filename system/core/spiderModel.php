@@ -59,7 +59,6 @@ class spiderModel extends Model {
 //                $Categorylist = $Categorytmp;
 //            }else{
                 preg_match_all ( $preg, $page, $match );
-
                 if (is_array ( $matchnum )) {
                     $name = $matchnum ['name'];
                     $cid = $matchnum ['cid'];
@@ -288,7 +287,6 @@ class spiderModel extends Model {
 					foreach ( $item_urls as $url ) {
 						$this->pools->set ( $poolname, $url );
 					}
-
                     //加入错误日志
                     unset($tmpurls[$rurl]);
                     //加入列表页数据的获取并保存
@@ -297,7 +295,6 @@ class spiderModel extends Model {
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
-//print_r($categorydata);exit;
                         if($categorydata){
                             foreach($categorydata as $item)
                             {
@@ -356,6 +353,7 @@ class spiderModel extends Model {
 				$urls = isset($_GET['url'])?trim($_GET['url']):"";
 		}else			
 			$urls = $this->pools->get ( $poolname, $Category [elements::CATEGORY_GROUP_SIZE] );
+
         $site_conversion_rules = $this->getsite_conversion_rules();
         $url_rules = $site_conversion_rules[Application::$_spider[elements::STID]]?$site_conversion_rules[Application::$_spider[elements::STID]]:"";
         if($url_rules)
@@ -372,13 +370,13 @@ class spiderModel extends Model {
 		foreach ( $pages as $srouceurl => $page ) {
 			$spidermodel = new $Productmodel ( $this->spidername, $srouceurl, $page, Application::$_spider );
 			$spiderdata = $spidermodel->exportToArray ();
-//print_r($spiderdata);
-//print_r($page);exit;
-			if($spiderdata['title'])
-			{
+
+//			if($spiderdata['title'])
+//			{
 // 				$fetchitems [] = $spiderdata;
+
 				$this->mongodb->update($collection_item_name, array('skuid'=>$spiderdata['skuid'],'stid'=>$spiderdata['stid']),$spiderdata,array("upsert"=>1));
-			}
+//			}
 			if(isset($_GET['debug']) && $_GET['debug']=='itemjob')
 			{
 				print_r($spiderdata);exit;
