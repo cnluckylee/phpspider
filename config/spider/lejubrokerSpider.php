@@ -2,13 +2,13 @@
 
 $siteconfig = array(
 		elements::TYPE => 'fulldata',
-		elements::NAME => '搜房网',
+		elements::NAME => '乐居经纪人',
 		elements::DB => array(
 				'mongodb' => array(
-						elements::HOST => 'master.mongo.cc',
+						elements::HOST => 'mongo.wcc.cc',
 						elements::PORT => '27017',
 						elements::TIMEOUT => 0,
-						elements::DBNAME => 'soufun5'
+						elements::DBNAME => 'leju'
 				),
                 'mongodbsec' => array(
                     elements::HOST => 'master.mongo.cc',
@@ -18,13 +18,13 @@ $siteconfig = array(
                 )
 		),
 		elements::CATEGORY => array(
-				elements::CATEGORY_URL => 'http://img1.soufun.com/secondhouse/image/esfnew/scripts/citys.js?v=3.201412041',
-				elements::CATEGORY_MATCH_PREG => '/"name": "(.*)", "spell": "(.*)", "url": "http:\/\/esf.(\w+)\.soufun\.com\/"/',
-				elements::CATEGORY_MATCH_MATCH => array('name'=>1,'cid'=>3),
+				elements::CATEGORY_URL => '',
+				elements::CATEGORY_MATCH_PREG => '',
+				elements::CATEGORY_MATCH_MATCH => array(),
 				elements::CATEGORY_GROUP_SIZE => 2,
 				elements::CATEGORY_LIST_URL => 'http://esf.#job.fang.com/agenthome/',
 				elements::CATEGORY_LIST_PAGES_URL => 'http://esf.#job.fang.com/agenthome/-i3#i/',
-				elements::CATEGORY_LIST_PREG => '//span[@class="txt"]/text()||/(\d+)/',
+				elements::CATEGORY_LIST_PREG => '//span[@class="all"]/text()||/(\d+)/',
 				elements::CATEGORY_LIST_MATCH => 1,
 				elements::CATEGORY_PAGE_START => 1,
 				elements::CATEGORY_LIST_GOODS_PREG => '//p[@class="housetitle"]/a/@href',
@@ -34,23 +34,20 @@ $siteconfig = array(
                 elements::CATEGORY_MATCHING => 'xpath',
                 elements::CATEGORY_ITEM_PREG => array(
                     elements::CATEGORY_ITEM_MATCHING =>'xpath',
-                    elements::CATEGORY_ITEM_NAME =>'//p[@class="housetitle"]/a/text()||2',//姓名
-                    elements::CATEGORY_ITEM_IMG =>'//p[@class="gray6"]/span[@class="blue"][1]/text()||2',//委托
-                    elements::CATEGORY_ITEM_URL =>'//span[@class=" gray9"]/text()||2',//ID
-                    elements::CATEGORY_ITEM_OPRICE =>'//p[@class="black"]/span/text()||2',//所属公司
-                    elements::CATEGORY_ITEM_DPRICE =>'//div[@class="house"]',
-                    elements::CATEGORY_ITEM_SALE =>'//div[@class="pic"]',//个人链接
-                    elements::CATEGORY_ITEM_REVIEWS =>'.//p[@class="mt10"]/a/@title',//认证
-                    elements::CATEGORY_ITEM_HOT =>'.//div[@class="techang"]/span',//特长
-                    elements::CATEGORY_ITEM_SKUID =>'.//div[@class="pic"]/a/@href',//昵称
-                    elements::CATEGORY_ITEM_AREA =>'.//p[@class="housetitle"]//img[contains(@src,"digest_1.gif")]',//钻
-                    elements::CATEGORY_ITEM_MPRICE =>'.//p[@class="housetitle"]//img[contains(@src,"star.jpg")]',//星
-                    elements::CATEGORY_ITEM_MPRICE_URL =>'//p[@class="gray6"]/span[@class="blue"][2]/text()||2',//已成交数
-                    elements::CATEGORY_ITEM_SHOP_NAME =>'//p[@class="gray6"]/span[@class="blue"][3]/text()||2',//好评数
-                    elements::CATEGORY_ITEM_SHOP_URL =>'.//p[@class="black"][3]/text()',//开店时间
-                    elements::CATEGORY_ITEM_SHOP_ID =>'.//p[@class="blue"][2]/a/text()',
-                    elements::CATEGORY_ITEM_COMPANY =>'//div[@class="qxName"]/a[@class="orange"]/text()||1',
-                    elements::CATEGORY_ITEM_DISTRICT =>'//ul[@class="info ml25"]/li[2]/a[@class="orange"]/text()||1',
+                    elements::CATEGORY_ITEM_DPRICE =>'//div[@class="hall_people_house"]',
+                    elements::CATEGORY_ITEM_SKUID =>'//div[@class="hall_people_house_name_l"]/a/@href||2',//昵称
+                    elements::CATEGORY_ITEM_AREA =>'.//div[@class="hall_people_house_font"][2]',//服务楼盘
+                    elements::CATEGORY_ITEM_MPRICE =>'.//img[contains(@src,"medal.png")]/@src',//金牌
+                    elements::CATEGORY_ITEM_OPRICE =>'.//img[contains(@src,"renzheng.jpg")]/@src',//认证
+                    elements::CATEGORY_ITEM_HOT =>'.//div[@class="hall_people_house_font"][5]/text()',//出售数量
+                    elements::CATEGORY_ITEM_SALE =>'.//div[@class="hall_people_house_font"][5]/text()',//出租数量
+                    elements::COMMON =>array(
+                        'UserName'=>'//div[@class="hall_people_house_name_l"]/a/text()||2',//姓名
+                        'ServiceArea'=>'.//div[@class="hall_people_house_font"][1]/text()||2',//区域
+                        'Stores' => './/div[@class="hall_people_house_font"][3]/text()||2',//服务楼盘
+                        'Tel'=>'.//span[@class="hall_people_red"]/text()||2',
+
+                    ),
                 )
 
 		),

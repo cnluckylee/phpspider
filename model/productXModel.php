@@ -1165,10 +1165,10 @@ abstract class productXModel
 
             foreach($commons as $key=>$filter)
             {
+
                 $this->_common[$key] = $this->_getRegexpInfo($filter, $this->getContent());
             }
         }
-
         return $this->_common;
     }
 
@@ -1359,13 +1359,15 @@ abstract class productXModel
 
         if(isset($fetchconfig[elements::COMMON]) && count($fetchconfig[elements::COMMON])>0)
         {
+
             $commons = $this->getCommon();
 
             foreach($commons as $key=>$val)
             {
-                $result[$key] = $val;
+                $result[elements::COMMON][$key] = $val;
             }
         }
+
         $arr = $result;
         $result = array();
         foreach($arr[elements::CATEGORY_ITEM_SKUID] as $k=>$v)
@@ -1419,9 +1421,11 @@ abstract class productXModel
                 $commons = $arr[elements::COMMON];
                 foreach($commons as $key=>$val)
                 {
-                    $result[$k][$key] = $val;
+                    $result[$k][$key] = $val[$k];
                 }
             }
+            //临时去除
+//            unset($result[$k][elements::CATEGORY_ITEM_DPRICE]);
         }
         return $result;
 

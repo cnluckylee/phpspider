@@ -87,6 +87,7 @@ class elements {
     /* basic items of the particular market */
     const MANAGER = 'manager'; //脚本负责人
     const BASE_URL = 'baseurl'; //网站地址
+    const COMMON = 'Common';//通用方法
     const STID = 'stid'; //网站编号
 
     /* 系统其他参数说明 */

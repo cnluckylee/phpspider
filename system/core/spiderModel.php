@@ -176,7 +176,7 @@ class spiderModel extends Model {
 		$tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
-//       $job = 'http://esf.sh.fang.com/agenthome-a025/-c5%be%c5%bc%e4%b0%e9%b2%bb%b6%af%b2%fa-i31-j310';
+//       $job = 'http://sh.esf.leju.com/agent/m3-a2--n2';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
 		$poolname = $this->spidername . 'Item';
@@ -295,9 +295,13 @@ class spiderModel extends Model {
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
+//print_r($categorydata);
+//                        print_r($page);
+//                        exit;
                         if($categorydata){
                             foreach($categorydata as $item)
                             {
+                                $item['Category_Source_Url'] = $rurl;
                                 $this->mongodb->insert($this->spidername.'_category_list',$item);
                             }
                         }
@@ -359,7 +363,8 @@ class spiderModel extends Model {
         if($url_rules)
         {
             foreach($urls as $k=>$turl){
-                $urls[$k] = preg_replace ( '/#skuid/', $turl, $url_rules ['pcurl'] );
+                $newurl = preg_replace ( '/#skuid/', $turl, $url_rules ['pcurl'] );
+                $urls[$newurl] = $newurl;
             }
         }
 

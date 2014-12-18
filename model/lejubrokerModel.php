@@ -1,15 +1,15 @@
 <?php 
 
-class soufunModel extends spiderModel
+class lejubrokerModel extends spiderModel
 {
     public function  getCategory()
     {
-        $collection = 'Soufun_Area_Items';
+        $collection = 'Leju_Area_Items';
         $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
         $poolname = $this->spidername . 'Category';
         $sid = Application::$_spider ['stid'];
         $data = $this->mongodb->find($collection,array());
-        $companys = $this->mongodb->find('soufun_company',array());
+
         $result = array();
         /**
          * 写入mongodb category集合
@@ -17,22 +17,25 @@ class soufunModel extends spiderModel
         $this->mongodb->remove ( $collection_category_name, array () ); // 删除原始数据，保存最新的数据
         foreach($data as $k=>$v)
         {
-            $baseurl = $v['barcode'];
-            $baseurl = substr($baseurl,0,strlen($baseurl)-1);
+            $tmp = parse_url($v['source_url']);
+            $baseurl = $tmp['scheme'].'://'.$tmp['host'];
+
             $v['promotion'] = array_unique($v['promotion']);
             $v['dprice'] = array_unique($v['dprice']);
             foreach($v['promotion'] as $u)
             {
-                if($u)
-                $u = substr($u,0,strlen($u)-1);
-                $u = str_replace('-i31','',$u);
-                foreach($companys as $kk=>$vv)
+                $tmp = str_replace("/","",$u);
+                $tmp = explode("-",$tmp);
+                $base2 = isset($tmp[2])?$tmp[2]:"";
+                $base3 = isset($tmp[3])?$tmp[3]:"";
+
+                foreach($v['dprice'] as $kk=>$vv)
                 {
-                    $jjgs = '-c5'.$vv['name'];
-                    $result[] = $baseurl.$u.urlencode(mb_convert_encoding($jjgs, 'GB2312', 'UTF-8')).'-i3';
-               }
-                $result[] = $baseurl.$u.'-i3';
+                    $u = substr($vv,0,strlen($vv)-1);
+                    $result[] = $baseurl.$u.'-'.$base2.'-'.$base3.'n';
+                }
             }
+
             $Categorylist = array_unique ( $result );
             $mondata2 = array ();
             foreach ( $Categorylist as $name => $cid ) {
