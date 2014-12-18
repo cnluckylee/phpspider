@@ -26,6 +26,8 @@ class soufunModel extends spiderModel
                 if($u)
                 $u = substr($u,0,strlen($u)-1);
                 $u = str_replace('-i31','',$u);
+                if(!$companys)
+                    $companys = $v['dprice'];
                 foreach($companys as $kk=>$vv)
                 {
                     $jjgs = '-c5'.$vv['name'];
