@@ -322,9 +322,19 @@ abstract class productXModel
     protected $_category_item_district = null;
 
     /**
-     * the common of category list
+     * the categorycommon of category list
      */
-    protected $_common = null;
+    protected $_categorycommon = null;
+
+    /**
+     * the itemcommon of category list
+     */
+    protected $_itemcommon = null;
+
+    /**
+     * the itemcommon of category list
+     */
+    protected $_baseurl = null;
 
     /**
      * @param string $spider spider name
@@ -1158,20 +1168,52 @@ abstract class productXModel
      *
      * @return string|null
      */
-    public function getCommon()
+    public function getCategoryCommon()
     {
-        if (is_null($this->_common)) {
-            $commons = $this->_config[\elements::COMMON];
+        if (is_null($this->_categorycommon)) {
+            $commons = $this->_config[\elements::CATEGORYCOMMON];
 
             foreach($commons as $key=>$filter)
             {
 
-                $this->_common[$key] = $this->_getRegexpInfo($filter, $this->getContent());
+                $this->_categorycommon[$key] = $this->_getRegexpInfo($filter, $this->getContent());
             }
         }
-        return $this->_common;
+        return $this->_categorycommon;
     }
 
+    /**
+     * get common of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getItemCommon()
+    {
+        if (is_null($this->_itemcommon)) {
+            $commons = $this->_config[\elements::ITEMCOMMON];
+            foreach($commons as $key=>$filter)
+            {
+                $this->_itemcommon[$key] = $this->_getRegexpInfo($filter, $this->getContent());
+            }
+        }
+        return $this->_itemcommon;
+    }
+
+    /**
+     * get common of product from html content.
+     * if the base method can't satisfy you ,you should override this method.
+     *
+     * @return string|null
+     */
+    public function getBaseUrl()
+    {
+        if (is_null($this->_baseurl)) {
+            $filter = $this->_config[\elements::BASE_URL];
+            $this->_baseurl = $this->_getRegexpInfo($filter, $this->getContent());
+        }
+        return $this->_baseurl;
+    }
 
 
     /**
@@ -1268,8 +1310,18 @@ abstract class productXModel
         	$arrData[\elements::ITEM_CREATE_TIME] = $this->getCreateDate();
 //         if($item)
         	$arrData[\elements::ITEM_UPDATE_TIME] = $this->getUpdateDate();
-        
+        if(($item && in_array(elements::BASE_URL,$updateconfig))|| !$item)
+            $arrData[\elements::BASE_URL] = $this->getBaseUrl();
+
 //         $arrData['content'] = $this->getContent();
+        if(($item && in_array(elements::ITEMCOMMON,$updateconfig))|| !$item)
+        {
+            $commons = $this->getItemCommon();
+            foreach($commons as $key=>$val)
+            {
+                $arrData[$key] = $val;
+            }
+        }
         return $arrData;
     }
 
@@ -1357,17 +1409,17 @@ abstract class productXModel
         if(isset($fetchconfig[elements::CATEGORY_ITEM_COMPANY]) && $fetchconfig[elements::CATEGORY_ITEM_COMPANY])
             $result[elements::CATEGORY_ITEM_COMPANY] = $this->getCategoryItemCompany();
 
-        if(isset($fetchconfig[elements::COMMON]) && count($fetchconfig[elements::COMMON])>0)
+        if(isset($fetchconfig[elements::CATEGORYCOMMON]) && count($fetchconfig[elements::CATEGORYCOMMON])>0)
         {
-
-            $commons = $this->getCommon();
-
+            $commons = $this->getCategoryCommon();
             foreach($commons as $key=>$val)
             {
-                $result[elements::COMMON][$key] = $val;
+                $result[elements::CATEGORYCOMMON][$key] = $val;
             }
         }
-
+        $baseurl = '';//基础url
+        if(isset($fetchconfig[elements::BASE_URL]) && count($fetchconfig[elements::BASE_URL])>0)
+            $baseurl = $this->getBaseUrl();
         $arr = $result;
         $result = array();
         foreach($arr[elements::CATEGORY_ITEM_SKUID] as $k=>$v)
@@ -1416,14 +1468,16 @@ abstract class productXModel
                 $result[$k][elements::CATEGORY_ITEM_DISTRICT] = $arr[elements::CATEGORY_ITEM_DISTRICT];
             }
 
-            if(isset($arr[elements::COMMON]) && $arr[elements::COMMON])
+            if(isset($arr[elements::CATEGORYCOMMON]) && $arr[elements::CATEGORYCOMMON])
             {
-                $commons = $arr[elements::COMMON];
+                $commons = $arr[elements::CATEGORYCOMMON];
                 foreach($commons as $key=>$val)
                 {
                     $result[$k][$key] = $val[$k];
                 }
             }
+            if($baseurl)
+                $result[$k]['baseurl'] = $baseurl;
             //临时去除
 //            unset($result[$k][elements::CATEGORY_ITEM_DPRICE]);
         }

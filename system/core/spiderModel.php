@@ -176,7 +176,8 @@ class spiderModel extends Model {
 		$tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
-//       $job = 'http://sh.esf.leju.com/agent/m3-a2--n2';
+
+//        $job = 'http://sh.esf.sina.com.cn/agentshop/5147593256-1-n';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
 		$poolname = $this->spidername . 'Item';
@@ -205,7 +206,6 @@ class spiderModel extends Model {
         if(isset(Application::$_spider [elements::TOTALPAGES])&&Application::$_spider [elements::TOTALPAGES]>0)
             $totalpages = Application::$_spider [elements::TOTALPAGES];
         else{
-
             $preg_pagetotals = $Category [elements::CATEGORY_LIST_PREG];
             if(strtolower($xpath) == 'xpath')
             {
@@ -254,7 +254,8 @@ class spiderModel extends Model {
                     $tmpurls [$url] = $url;
 				}
 //$tmpurls = array();
-//                $tmpurls['http://esf.sh.fang.com/agenthome-a025/-c5%be%c5%bc%e4%b0%e9%b2%bb%b6%af%b2%fa-i31-j310/'] = 'http://esf.sh.fang.com/agenthome-a025/-c5%be%c5%bc%e4%b0%e9%b2%bb%b6%af%b2%fa-i31-j310/';
+
+                $tmpurls[$job] = $job;
 
                 $pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
                 /**
@@ -292,9 +293,10 @@ class spiderModel extends Model {
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
+
 //print_r($categorydata);
-//                        print_r($page);
-//                        exit;
+//print_r($page);
+
                         if($categorydata){
                             foreach($categorydata as $item)
                             {

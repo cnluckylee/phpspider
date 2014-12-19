@@ -17,5 +17,4 @@
 class lejuareaProductModel extends productXModel {
 
 
-
 }

@@ -33,7 +33,7 @@ $siteconfig = array(
                     elements::CATEGORY_LIST_GOODS_PREG =>'',
                     elements::CATEGORY_ITEM_DPRICE =>'',
                     elements::CATEGORY_ITEM_SALE =>'',
-                    elements::COMMON =>array(
+                    elements::CATEGORYCOMMON =>array(
 //                        'BaseUrl'=>'//div[@class="my_position"]/a[1]/@href||1',
                     ),
                 )

@@ -122,5 +122,24 @@ class lejubrokerProductModel extends productXModel {
         }
         return $this->_category_item_sale;
     }
-
+    public  function getIsbnCode()
+    {
+        $str = parent::getIsbnCode();
+        $this->_isbnCode = str_replace("创建时间：","",$str);
+        return $this->_isbnCode;
+    }
+    public function getProductID()
+    {
+        $str = parent::getUrl();
+        $p = '/tshop\/(\d+)-/';
+        preg_match($p,$str,$out);
+        $this->_productID = isset($out[1])?$out[1]:"";
+        return $this->_productID;
+    }
+    public function getBaseUrl()
+    {
+        $str = parent::getUrl();
+        $this->_baseurl = parent::getBaseUrl().'/agentshop/'.$this->getProductID().'-1-n';
+        return $this->_baseurl;
+    }
 }

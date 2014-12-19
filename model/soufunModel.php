@@ -93,9 +93,9 @@ class soufunModel extends spiderModel
 */
     function tojson($cname)
     {
-        $cname = 'soufun_category_list';
+        $cname = 'soufun_err_log';
         $total = $this->mongodb->count($cname);
-        $collection = 'SoufunItem';
+        $collection = 'soufunCategory';
         $s = 0;
         $limit = 1000;
         do {
@@ -105,9 +105,10 @@ class soufunModel extends spiderModel
             ) );
             foreach($mondata as $v)
             {
-                $vv = str_replace("/a/","",$v['Category_Item_Skuid']);
-                $vv = 'http://esf.nanjing.fang.com/agent/Agentnew/AloneService.aspx?managername='.$vv;
-                $this->redis->sadd($collection,$vv);
+                if(isset($v['urltype']) && $v['urltype']=='Items')
+                    $this->mongodb->remove($cname,array('_id'=>$v['_id']));
+                else
+                    $this->redis->sadd($collection,$v['job']);
             }
             $s +=$limit;
             echo "has load:".$s."\n";
