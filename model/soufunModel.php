@@ -99,6 +99,7 @@ class soufunModel extends spiderModel
         foreach($data as $v)
         {
             $vv = str_replace("/a/","",$v);
+            $vv = 'http://esf.nanjing.fang.com/agent/Agentnew/AloneService.aspx?managername='.$vv;
             $this->redis->sadd($r2,$vv);
         }
         exit("all over");
