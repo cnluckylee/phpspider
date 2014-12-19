@@ -5,15 +5,15 @@ $siteconfig = array(
 		elements::NAME => '搜房网',
 		elements::DB => array(
 				'mongodb' => array(
-						elements::HOST => 'mongo.wcc.cc',
+						elements::HOST => 'master.mongo.cc',
 						elements::PORT => '27017',
 						elements::TIMEOUT => 0,
-						elements::DBNAME => 'soufunnj'
+						elements::DBNAME => 'soufunjinan'
 				)
 		),
 		elements::CATEGORY => array(
 				elements::CATEGORY_URL => 'http://img1.soufun.com/secondhouse/image/esfnew/scripts/citys.js?v=3.201412041',
-				elements::CATEGORY_MATCH_PREG => '/"name": "(.*)", "spell": "nanjing", "url": "http:\/\/esf.(\w+)\.soufun\.com\/"/',
+				elements::CATEGORY_MATCH_PREG => '/"name": "(.*)", "spell": "jinan", "url": "http:\/\/esf.(\w+)\.soufun\.com\/"/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>1,'cid'=>2),
 				elements::CATEGORY_GROUP_SIZE => 1,
 				elements::CATEGORY_LIST_URL => 'http://esf.#job.fang.com/agenthome/',

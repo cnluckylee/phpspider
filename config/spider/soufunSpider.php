@@ -5,10 +5,10 @@ $siteconfig = array(
 		elements::NAME => '搜房网',
 		elements::DB => array(
 				'mongodb' => array(
-						elements::HOST => 'mongo.wcc.cc',
+						elements::HOST => 'master.mongo.cc',
 						elements::PORT => '27017',
 						elements::TIMEOUT => 0,
-						elements::DBNAME => 'soufunnj'
+						elements::DBNAME => 'soufunjinan'
 				),
                 'mongodbsec' => array(
                     elements::HOST => 'master.mongo.cc',
@@ -22,8 +22,8 @@ $siteconfig = array(
 				elements::CATEGORY_MATCH_PREG => '/"name": "(.*)", "spell": "(.*)", "url": "http:\/\/esf.(\w+)\.soufun\.com\/"/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>1,'cid'=>3),
 				elements::CATEGORY_GROUP_SIZE => 2,
-				elements::CATEGORY_LIST_URL => 'http://esf.nanjing.fang.com/agenthome/',
-				elements::CATEGORY_LIST_PAGES_URL => 'http://esf.nanjing.fang.com/agenthome/-i3#i/',
+				elements::CATEGORY_LIST_URL => 'http://esf.#job.fang.com/agenthome/',
+				elements::CATEGORY_LIST_PAGES_URL => 'http://esf.#job.fang.com/agenthome/-i3#i/',
 				elements::CATEGORY_LIST_PREG => '//span[@class="txt"]/text()||/(\d+)/',
 				elements::CATEGORY_LIST_MATCH => 1,
 				elements::CATEGORY_PAGE_START => 1,
