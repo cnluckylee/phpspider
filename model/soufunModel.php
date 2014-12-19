@@ -98,7 +98,8 @@ class soufunModel extends spiderModel
         $data = $this->redis->smembers($r);
         foreach($data as $v)
         {
-            $this->redis->sadd($r2,$v);
+            $vv = str_replace("/a/","",$v);
+            $this->redis->sadd($r2,$vv);
         }
         exit("all over");
     }
