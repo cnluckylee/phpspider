@@ -30,7 +30,7 @@ class soufunModel extends spiderModel
                     $companys = $v['dprice'];
                 foreach($companys as $kk=>$vv)
                 {
-                    $jjgs = '-c5'.$vv['name'];
+                    $jjgs = '-c5'.$vv;
                     $result[] = $baseurl.$u.urlencode(mb_convert_encoding($jjgs, 'GB2312', 'UTF-8')).'-i3';
                }
                 $result[] = $baseurl.$u.'-i3';
