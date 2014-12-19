@@ -273,7 +273,7 @@ class spiderModel extends Model {
 				}
 				$preg = $Category [elements::CATEGORY_LIST_GOODS_PREG];
 				$match = $Category [elements::CATEGORY_LIST_GOODS_Match];
-
+                $baseurl = '';
 				foreach ( $pages as $rurl => $page ) {
                     if(strtolower($Category[elements::CATEGORY_ITEM_PREG][elements::CATEGORY_ITEM_MATCHING]) == 'xpath')
                     {
@@ -283,10 +283,7 @@ class spiderModel extends Model {
                         $item_urls = isset ( $match_out [$match] ) ? $match_out [$match] : "";
                     }
                     $item_urls = array_unique ( $item_urls );
-					// 加入itemjobs
-					foreach ( $item_urls as $url ) {
-						$this->pools->set ( $poolname, $url );
-					}
+
                     //加入错误日志
                     unset($tmpurls[$rurl]);
                     //加入列表页数据的获取并保存
@@ -302,10 +299,18 @@ class spiderModel extends Model {
                             foreach($categorydata as $item)
                             {
                                 $item['Category_Source_Url'] = $rurl;
+                                if(!$baseurl)
+                                    $baseurl = $item['baseurl'];
                                 $this->mongodb->insert($this->spidername.'_category_list',$item);
                             }
                         }
 
+                    }
+                    // 加入itemjobs
+                    foreach ( $item_urls as $url ) {
+                        if(!strpos($url,'http'))
+                            $url = $baseurl.$url;
+                        $this->pools->set ( $poolname, $url );
                     }
 				}
 				$s = $s + $pagesize;
