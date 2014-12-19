@@ -93,35 +93,14 @@ class soufunModel extends spiderModel
 */
     function tojson($cname)
     {
-        $cname = 'Soufun_Items';
-        $total = $this->mongodb->count($cname);
-        $collection = 'soufun_Items';
-        $s = 0;
-        $limit = 1000;
-        $companys = array();
-        $tmp = array();
-        do {
-            $mondata = $this->mongodb->find ( $cname, array (), array (
-                "start" => $s,
-                "limit" => $limit
-            ) );
-            foreach($mondata as $item)
-            {
-                $skuid = $item['source_category_name'];
-                $companys[$skuid] += 1;
-            }
-            $s +=$limit;
-            echo "has load:".$s."\n";
-        }while($s<$total);
-        $str = '';
-        foreach($companys as $name=>$count)
+        $r = 'soufunItem2';
+        $r2 = 'soufunItem';
+        $data = $this->redis->smembers($r);
+        foreach($data as $v)
         {
-            $str .=$name.' '.$count."\n";
+            $this->redis->sadd($r2,$v);
         }
-        $file = fopen("test.txt","w");
-        fwrite($file,$str);
-        fclose($file);
-        exit("over");
+        exit("all over");
     }
 
 }
