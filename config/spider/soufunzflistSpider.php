@@ -34,10 +34,8 @@ $siteconfig = array(
                     elements::CATEGORY_ITEM_OPRICE =>'//dd[@class="money"]/text()||2',
                     elements::CATEGORY_ITEM_DPRICE =>'//div[@class="house"]',
                     elements::CATEGORY_ITEM_SALE =>'//dd[@class="pfm"]/text()||2',
-                    elements::CATEGORY_ITEM_REVIEWS =>'',
                     elements::CATEGORY_ITEM_HOT =>'//p[@class="grey"]/text()||2',
                     elements::CATEGORY_ITEM_SKUID =>'//input[@id="talkPageValue"]/@value||1',
-                    elements::CATEGORY_ITEM_AREA =>'',
                 )
 
 		),

@@ -5,15 +5,15 @@ $siteconfig = array(
 		elements::NAME => '搜房网',
 		elements::DB => array(
 				'mongodb' => array(
-						elements::HOST => 'master.mongo.cc',
+						elements::HOST => 'mongo.wcc.cc',
 						elements::PORT => '27017',
 						elements::TIMEOUT => 0,
-						elements::DBNAME => 'soufunjinan'
+						elements::DBNAME => 'soufun'
 				)
 		),
 		elements::CATEGORY => array(
 				elements::CATEGORY_URL => 'http://img1.soufun.com/secondhouse/image/esfnew/scripts/citys.js?v=3.201412041',
-				elements::CATEGORY_MATCH_PREG => '/"name": "(.*)", "spell": "jinan", "url": "http:\/\/esf.(\w+)\.soufun\.com\/"/',
+				elements::CATEGORY_MATCH_PREG => '/"name": "(.*)", "spell": "(\w+)", "url": "http:\/\/esf.(\w+)\.soufun\.com\/"/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>1,'cid'=>2),
 				elements::CATEGORY_GROUP_SIZE => 1,
 				elements::CATEGORY_LIST_URL => 'http://esf.#job.fang.com/agenthome/',
@@ -28,18 +28,15 @@ $siteconfig = array(
                 elements::CATEGORY_ITEM_PREG => array(
                     elements::CATEGORY_ITEM_MATCHING =>'xpath',
                     elements::CATEGORY_ITEM_NAME =>'//div[@class="qxName"]/a/text()||2',
-                    elements::CATEGORY_ITEM_IMG =>'//div[@class="s4Box"]/a/text()||1',
-                    elements::CATEGORY_ITEM_URL =>'//div[@id="dsy_H01_04"]/div/a/@href||1',
-                    elements::CATEGORY_ITEM_OPRICE =>'//input[@id="strCity11"]/@value||1',
-                    elements::CATEGORY_LIST_GOODS_PREG =>'',
-                    elements::CATEGORY_ITEM_DPRICE =>'',
-                    elements::CATEGORY_ITEM_SALE =>'',
+                    elements::CATEGORY_ITEM_URL =>'//div[@class="qxName"]/a/@href||2',
+                    elements::CATEGORY_ITEM_SKUID =>'//div[@class="qxName"]/a/@href||2',
+                    elements::BASE_URL => '//div[@id="esfsh_71"]//a[contains(@href,"links.htm")]/@href||1',
                 )
 
 		),
 		// item config
 		elements::ITEM_TITLE => '//p[@id="shangQuancontain"]/a/text()||2',
-        elements::ITEM_PROMOTION =>   '//p[@id="shangQuancontain"]/a/@href||2',
+        elements::ITEM_PRICE_URL =>   '//p[@id="shangQuancontain"]/a/@href||2',//详情url
         elements::ITEM_SKUID =>'//div[@class="bread"]/a[3]/text()||1',
 		elements::BASE_URL => 'http://sh.soufun.com/',
         elements::ITEM_BARCODE =>'//div[@id="dsy_H01_04"]/div/a/@href||1',
@@ -50,6 +47,7 @@ $siteconfig = array(
         elements::HTML_ZIP =>'gzip',
 		elements::DATASOURCE => '1',
         elements::TOTALPAGES =>1,
+        elements::BASE_URL => '//div[@id="esfsh_71"]//a[contains(@href,"links.htm")]/@href||1',
 		elements::COLLECTION_ITEM_NAME => 'Soufun_Area_Items',
 		elements::COLLECTION_CATEGORY_NAME => 'soufun_area',
         elements::ITEMPAGECHARSET => 'gbk',

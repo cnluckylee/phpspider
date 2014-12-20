@@ -14,7 +14,7 @@
  *
  * @package model
  */
-class soufunProductModel extends productXModel {
+class soufunbrokerProductModel extends productXModel {
 
     public function getCategoryItemDprice()
     {
@@ -29,15 +29,7 @@ class soufunProductModel extends productXModel {
         return $this->_category_item_dprice;
     }
 
-    public function getCategoryItemUrl()
-    {
-        $arr = parent::getCategoryItemUrL();
-        $this->_category_item_url = array();
-        foreach ($arr as $k=>$item) {
-            $this->_category_item_url[$k] = str_replace(array('(ID:',')'),"",$item);
-        }
-        return $this->_category_item_url;
-    }
+
     public function getCategoryItemHot()
     {
 
@@ -150,6 +142,21 @@ class soufunProductModel extends productXModel {
 
     }
 
+    public function getCategoryItemImg()
+    {
+        $filter = $this->_config[\elements::CATEGORY_ITEM_DPRICE];
+        $filter2 = $this->_config[\elements::CATEGORY_ITEM_IMG];
+        $nodes = $this->_xpath->query($filter);
+        $this->_category_item_img = array();
+        foreach ($nodes as $k=>$node) {
+            foreach ($this->_xpath->query($filter2, $node) as $child) {
+                $this->_category_item_img[$k] = $child->nodeValue;
+            }
+        }
+        return $this->_category_item_img;
+
+    }
+
     public function getCategoryItemSkuid()
     {
         $arr = parent::getCategoryItemSkuid();
@@ -227,6 +234,24 @@ class soufunProductModel extends productXModel {
 //        }
 //       return $result;
 //    }
+
+    public  function getCategoryItemUrL()
+    {
+        $sourceurl = parent::getUrl();
+        $data = parent::getCategoryItemUrL();
+        $arr = parse_url($sourceurl);
+        $baseurl = $arr['scheme']."://".$arr['host'];
+        $this->_category_item_url = array();
+        foreach($data as $k=>$v)
+        {
+            $url = trim($v);
+            $skuid = str_replace("/a/","",$v);
+            $this->_category_item_url[$k] = $baseurl.'/agent/Agentnew/AloneService.aspx?managername='.$skuid;
+        }
+        return  $this->_category_item_url;
+    }
+
+
     public function getSourceCategoryName()
     {
         $str = parent::getSourceCategoryName();
@@ -234,6 +259,12 @@ class soufunProductModel extends productXModel {
         return $this->_sourceCategoryName;
     }
 
+    public function getCategoryItemName()
+    {
+        $str = parent::getCategoryItemName();
+        $this->_category_item_name = str_replace(array("(ID:",")"),"",$str);
+        return $this->_category_item_name;
+    }
     public function getOriginPrice()
     {
         $str = parent::getOriginPrice();

@@ -1,6 +1,6 @@
 <?php 
 
-class soufunModel extends spiderModel
+class soufunbrokerModel extends spiderModel
 {
     public function  getCategory()
     {
@@ -9,31 +9,31 @@ class soufunModel extends spiderModel
         $poolname = $this->spidername . 'Category';
         $sid = Application::$_spider ['stid'];
         $data = $this->mongodb->find($collection,array());
-        $companys = $this->mongodb->find('soufun_company',array());
         $result = array();
         /**
          * 写入mongodb category集合
          */
+
         $this->mongodb->remove ( $collection_category_name, array () ); // 删除原始数据，保存最新的数据
         foreach($data as $k=>$v)
         {
-            $baseurl = $v['barcode'];
-            $baseurl = substr($baseurl,0,strlen($baseurl)-1);
-            $v['promotion'] = array_unique($v['promotion']);
+
+            $urls = array_unique($v['price_url']);
             $v['dprice'] = array_unique($v['dprice']);
-            foreach($v['promotion'] as $u)
+            foreach($urls as $u)
             {
                 if($u)
                 $u = substr($u,0,strlen($u)-1);
                 $u = str_replace('-i31','',$u);
-                if(!$companys)
-                    $companys = $v['dprice'];
+
+                $companys = $v['dprice'];
                 foreach($companys as $kk=>$vv)
                 {
                     $jjgs = '-c5'.$vv;
-                    $result[] = $baseurl.$u.urlencode(mb_convert_encoding($jjgs, 'GB2312', 'UTF-8')).'-i3';
+                    $result[] = $u.urlencode(mb_convert_encoding($jjgs, 'GB2312', 'UTF-8')).'-i3';
                }
-                $result[] = $baseurl.$u.'-i3';
+                $result[] = $u.'-i3';
+
             }
             $Categorylist = array_unique ( $result );
             $mondata2 = array ();

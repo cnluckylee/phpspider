@@ -4,15 +4,12 @@ class soufunesflistModel extends spiderModel
 {
     public function  getCategory()
     {
-        $collection = 'soufun_category_list';
+        $collection = 'soufunbroker_category_list';
         $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
         $poolname = $this->spidername . 'Category';
         $sid = Application::$_spider ['stid'];
-
         $result = array();
-        $baseurl = 'http://esf.sh.fang.com';
         $total = $this->mongodb->count($collection);
-
         $s = 0;
         $limit = 1000;
         /**
@@ -29,7 +26,10 @@ class soufunesflistModel extends spiderModel
 
             foreach($mondata as $item)
             {
-                $result[] = $baseurl.'/agent/agentnew/AloneRentHList.aspx?&agentid='.$item['Category_Item_Url'].'&pricemax=&page=';
+                $sourceurl = $item['Category_Item_Url'];
+                $arr = parse_url($sourceurl);
+                $baseurl = $arr['scheme']."://".$arr['host'];
+                $result[] = $baseurl.'/agent/agentnew/AloneesfHList.aspx?&agentid='.$item['Category_Item_Name'].'&pricemax=&page=';
             }
             $Categorylist = array_unique ( $result );
 

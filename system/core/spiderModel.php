@@ -25,6 +25,7 @@ class spiderModel extends Model {
 		$this->redis->delete ( $this->spidername . 'Item' );
 		$this->redis->delete ( $this->spidername . 'ItemJobRun' );
 		// 判断本次是否重新抓取分类数据
+
 		if ($thistimerun) {
 			$Category_URL = $Category[elements::CATEGORY_URL];
 //			$page = file_get_contents ( $Category_URL );
@@ -176,8 +177,8 @@ class spiderModel extends Model {
 		$tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
-
-//        $job = 'http://sh.esf.sina.com.cn/agentshop/5147593256-1-n';
+//        $job = 'sh';
+//        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
 		$poolname = $this->spidername . 'Item';
@@ -295,25 +296,22 @@ class spiderModel extends Model {
                         $categorydata = $spidermodel->CategoryToArray ( );
 
 //print_r($categorydata);
+
 //print_r($page);
 
                         if($categorydata){
                             foreach($categorydata as $item)
                             {
                                 $item['Category_Source_Url'] = $rurl;
-                                if(!$baseurl)
-                                    $baseurl = $item['baseurl'];
+                                $item['job'] = $job;
+                                if($item[\elements::CATEGORY_ITEM_URL])
+                                     $this->pools->set ( $poolname, $item[\elements::CATEGORY_ITEM_URL] );//将category_item_url加入任务池中 2014.12.20 22:32
                                 $this->mongodb->insert($this->spidername.'_category_list',$item);
                             }
                         }
 
                     }
-                    // 加入itemjobs
-                    foreach ( $item_urls as $url ) {
-                        if(!strpos($url,'http'))
-                            $url = $baseurl.$url;
-                        $this->pools->set ( $poolname, $url );
-                    }
+
 				}
 				$s = $s + $pagesize;
 

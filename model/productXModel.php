@@ -1417,10 +1417,13 @@ abstract class productXModel
                 $result[elements::CATEGORYCOMMON][$key] = $val;
             }
         }
+
         $baseurl = '';//基础url
         if(isset($fetchconfig[elements::BASE_URL]) && count($fetchconfig[elements::BASE_URL])>0)
             $baseurl = $this->getBaseUrl();
+
         $arr = $result;
+
         $result = array();
         foreach($arr[elements::CATEGORY_ITEM_SKUID] as $k=>$v)
         {

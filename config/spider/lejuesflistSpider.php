@@ -38,7 +38,7 @@ $siteconfig = array(
                     elements::CATEGORY_ITEM_HOT =>'',
                     elements::CATEGORY_ITEM_SKUID =>'//div[@class="text_current"]/a/@href||2',
                     elements::CATEGORY_ITEM_AREA =>'//div[@class="text_current_left"]/span[2]/text()||2',//小区地址
-                    elements::BASE_URL => '//div[@class="favorite"]/a[@class="shouye"]/@href||1',
+                    elements::BASE_URL => '//div[@id="esfsh_71"]//a[contains(@href,"links.htm")]/@href||1',
 
                 )
 

@@ -16,85 +16,42 @@
  */
 class soufunareaProductModel extends productXModel {
 
-    public function CategoryToArray()
+    public function  getBaseUrl()
     {
-        $names = $this->getCategoryItemName();
-        $urls = $this->getCategoryItemUrL();
-        $city = $this->getCategoryItemOprice();
-        $baseurl = $this->getCategoryItemUrL();
-        $result = array();
-        foreach($names as $k=>$v)
-        {
-            if($v != "不限")
-            {
-                $result[] = array('name'=>$v,'url'=>$urls[$k],'city'=>$city,'baseurl'=>$baseurl);
-            }
-        }
-        return $result;
+        $baseurl = parent::getBaseUrl();
+        $this->_baseurl= str_replace("/links.htm","",$baseurl);
+        return $this->_baseurl;
     }
 
-    public function  getPrice()
+    public  function getCategoryItemUrL()
     {
-        $arr = parent::getPrice();
-        $result = array();
-        foreach($arr as $k=>$v)
+        $sourceurl = parent::getUrl();
+        $data = parent::getCategoryItemUrL();
+        $arr = parse_url($sourceurl);
+        $baseurl = $arr['scheme']."://".$arr['host'];
+        $this->_category_item_url = array();
+        foreach($data as $k=>$v)
         {
-            if($v != '不限')
-            {
-                if($v)
-                    $result[] = $v;
-            }
+            $url = trim($v);
+            $this->_category_item_url[$k] = $baseurl.$url;
         }
-        $arr2 = parent::getCharacters();
-        foreach($arr2 as $kk=>$vv)
-        {
-            if($vv)
-                $result[] = $vv;
-        }
-
-        return $result;
+        return  $this->_category_item_url;
     }
 
-    public function  getOriginPrice()
+    public function getPriceUrl()
     {
-        $arr = parent::getOriginPrice();
-        $result = array();
-        foreach($arr as $k=>$v)
+        $sourceurl = parent::getUrl();
+        $data = parent::getPriceUrl();
+        $arr = parse_url($sourceurl);
+        $baseurl = $arr['scheme']."://".$arr['host'];
+        $this->_priceUrl = array();
+        foreach($data as $k=>$v)
         {
-            if($v != '不限')
-            {
-                $result[] = $v;
-            }
+            $url = trim($v);
+            $url = str_replace("-i31-j310/","-j310-i31/",$url);
+            $this->_priceUrl[$k] = $baseurl.$url;
         }
-        return $result;
+        return  $this->_priceUrl;
     }
-
-    public function  getTitle()
-    {
-        $arr = parent::getTitle();
-        $result = array();
-        foreach($arr as $k=>$v)
-        {
-            if($v != '不限')
-            {
-                $result[] = $v;
-            }
-        }
-        return $result;
-    }
-
-
-
-//    public function getCharacters()
-//    {
-//
-//            $filter = $this->_config[\elements::ITEM_CHARACTERS];
-//
-//            $events = $this->_xpath->query("*");
-//        print_r($events);exit;
-//
-//        return $this->_promotion;
-//    }
-
 
 }

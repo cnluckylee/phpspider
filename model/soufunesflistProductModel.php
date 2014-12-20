@@ -57,18 +57,6 @@ class soufunesflistProductModel extends productXModel {
         return $this->_category_item_dprice;
     }
 
-    public function getCategoryItemUrl()
-    {
-        $arrs = parent::getCategoryItemUrl();
-        $baseurl = trim($this->getCategoryItemArea());
-        $this->_category_item_url = array();
-        foreach($arrs as $k=>$v)
-        {
-            $this->_category_item_url[$k] = $baseurl.trim($v);
-        }
-        return $this->_category_item_url;
-    }
-
     public function getCategoryItemHot()
     {
         $arrs = parent::getCategoryItemHot();
@@ -80,35 +68,21 @@ class soufunesflistProductModel extends productXModel {
         return $this->_category_item_hot;
     }
 
-        public function CategoryToArray()
+    public  function getCategoryItemUrL()
+    {
+        $sourceurl = parent::getUrl();
+        $data = parent::getCategoryItemUrL();
+        $arr = parse_url($sourceurl);
+        $baseurl = $arr['scheme']."://".$arr['host'];
+        $this->_category_item_url = array();
+        foreach($data as $k=>$v)
         {
-            $arr = parent::CategoryToArray();
-            $result = array();
-            //数据重新瓶装
-            foreach($arr[elements::CATEGORY_ITEM_NAME] as $k=>$v)
-            {
-                $result[$k][elements::CATEGORY_ITEM_NAME] = $v;
-                if(isset($arr[elements::CATEGORY_ITEM_URL][$k]))
-                    $result[$k][elements::CATEGORY_ITEM_URL] = $arr[elements::CATEGORY_ITEM_URL][$k];
-                if(isset($arr[elements::CATEGORY_ITEM_IMG][$k]))
-                    $result[$k][elements::CATEGORY_ITEM_IMG] = $arr[elements::CATEGORY_ITEM_IMG][$k];
-                if(isset($arr[elements::CATEGORY_ITEM_NAME][$k]))
-                    $result[$k][elements::CATEGORY_ITEM_NAME] = $arr[elements::CATEGORY_ITEM_NAME][$k];
-                if(isset($arr[elements::CATEGORY_ITEM_DPRICE][$k]))
-                    $result[$k][elements::CATEGORY_ITEM_DPRICE] = $arr[elements::CATEGORY_ITEM_DPRICE][$k];
-                if(isset($arr[elements::CATEGORY_ITEM_OPRICE][$k]))
-                    $result[$k][elements::CATEGORY_ITEM_OPRICE] = $arr[elements::CATEGORY_ITEM_OPRICE][$k];
-                if(isset($arr[elements::CATEGORY_ITEM_SALE][$k]))
-                    $result[$k][elements::CATEGORY_ITEM_SALE] = $arr[elements::CATEGORY_ITEM_SALE][$k];
-                if(isset($arr[elements::CATEGORY_ITEM_HOT][$k]))
-                    $result[$k][elements::CATEGORY_ITEM_HOT] = $arr[elements::CATEGORY_ITEM_HOT][$k];
-                if(isset($arr[elements::CATEGORY_ITEM_REVIEWS][$k]))
-                    $result[$k][elements::CATEGORY_ITEM_REVIEWS] = $arr[elements::CATEGORY_ITEM_REVIEWS][$k];
-                if(isset($arr[elements::CATEGORY_ITEM_AREA][$k]))
-                    $result[$k][elements::CATEGORY_ITEM_AREA] = $arr[elements::CATEGORY_ITEM_AREA][$k];
-            }
-           return $result;
+            $url = trim($v);
+            $skuid = str_replace("/a/","",$v);
+            $this->_category_item_url[$k] = $baseurl.'/agent/Agentnew/AloneService.aspx?managername='.$skuid;
         }
+        return  $this->_category_item_url;
+    }
 
     public function  getAllCommentNumber()
     {
