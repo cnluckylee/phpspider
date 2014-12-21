@@ -2,7 +2,7 @@
 
 $siteconfig = array(
 		elements::TYPE => 'fulldata',
-		elements::NAME => '搜房网',
+		elements::NAME => '搜房地区',
 		elements::DB => array(
 				'mongodb' => array(
 						elements::HOST => 'mongo.wcc.cc',
