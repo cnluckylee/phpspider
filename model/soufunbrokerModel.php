@@ -93,9 +93,9 @@ class soufunbrokerModel extends spiderModel
 */
     function tojson($cname)
     {
-        $cname = 'soufun_err_log';
+        $cname = 'soufunbroker_category_list';
         $total = $this->mongodb->count($cname);
-        $collection = 'soufunCategory';
+        $collection = 'soufunbrokerItem';
         $s = 0;
         $limit = 1000;
         do {
@@ -105,10 +105,11 @@ class soufunbrokerModel extends spiderModel
             ) );
             foreach($mondata as $v)
             {
-                if(isset($v['urltype']) && $v['urltype']=='Items')
-                    $this->mongodb->remove($cname,array('_id'=>$v['_id']));
+                   $d = $this->mongodb->findOne($cname,array('skuid'=>$v['Category_Item_Skuid']));
+                if(!$d)
+                    $this->redis->sadd($collection,$v['Category_Item_Url']);
                 else
-                    $this->redis->sadd($collection,$v['job']);
+                    echo "find".$v['Category_Item_Skuid']."\n";
             }
             $s +=$limit;
             echo "has load:".$s."\n";
