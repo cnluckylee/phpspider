@@ -2,7 +2,7 @@
 
 $siteconfig = array(
 		elements::TYPE => 'fulldata',
-		elements::NAME => '乐居网',
+		elements::NAME => '乐居新房网',
 		elements::DB => array(
 				'mongodb' => array(
 						elements::HOST => 'mongo.wcc.cc',
@@ -12,23 +12,23 @@ $siteconfig = array(
 				)
 		),
 		elements::CATEGORY => array(
-				elements::CATEGORY_URL => 'http://sh.esf.leju.com/agent/',
-				elements::CATEGORY_MATCH_PREG => '/href="http:\/\/(\w+?).esf.eju.com\/" target="_blank">(.*)<\/a>/',
+				elements::CATEGORY_URL => 'http://bj.house.sina.com.cn/cityguide/',
+				elements::CATEGORY_MATCH_PREG => '/href="http:\/\/(\w+).house.sina.com.cn">(.*?)<\/a>/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>2,'cid'=>1),
 				elements::CATEGORY_GROUP_SIZE => 1,
-				elements::CATEGORY_LIST_URL => 'http://#job.esf.sina.com.cn/agent/',
-				elements::CATEGORY_LIST_PAGES_URL => 'http://#job.esf.sina.com.cn/agent/m3/',
+				elements::CATEGORY_LIST_URL => 'http://www.leju.com/index.php?mod=sale_search&city=#job',
+				elements::CATEGORY_LIST_PAGES_URL => 'http://www.leju.com/index.php?mod=sale_search&city=#job',
 				elements::CATEGORY_LIST_PREG => '//span[@class="all"]/text()||/\/(\d+)/',
 				elements::CATEGORY_LIST_MATCH => 1,
 				elements::CATEGORY_PAGE_START => 1,
-				elements::CATEGORY_LIST_GOODS_PREG => '//div[@class="item"]/a/@href||2',
+				elements::CATEGORY_LIST_GOODS_PREG => '//ul[@class="district clearfix"]/li/a/@href||2',
 				elements::CATEGORY_LIST_GOODS_Match => 1,
                 elements::CATEGORY_MATCHING => 'xpath',
                 elements::CATEGORY_ITEM_PREG => array(
                     elements::CATEGORY_ITEM_MATCHING =>'xpath',
-                    elements::CATEGORY_ITEM_SKUID =>'//div[@class="item"]/a/text()||2',
-                    elements::CATEGORY_ITEM_URL =>'//div[@class="item"]/a/@href||2',
-                    elements::CATEGORY_ITEM_NAME =>'//div[@class="item"]/a/text()||2',
+                    elements::CATEGORY_ITEM_SKUID =>'//div[@id="s_list"]/dl[2]/dd[2]/a/@href||2',
+                    elements::CATEGORY_ITEM_URL =>'//div[@id="s_list"]/dl[2]/dd[2]/a/@href||2',
+                    elements::CATEGORY_ITEM_NAME =>'//div[@id="s_list"]/dl[2]/dd[2]/a/text()||2',
                     elements::CATEGORYCOMMON =>array(
 //                        'BaseUrl'=>'//div[@class="my_position"]/a[1]/@href||1',
                     ),
@@ -46,10 +46,10 @@ $siteconfig = array(
         elements::HTML_ZIP =>'gzip',
 		elements::DATASOURCE => '1',
         elements::TOTALPAGES =>1,
-		elements::COLLECTION_ITEM_NAME => 'Leju_Area_Items',
-		elements::COLLECTION_CATEGORY_NAME => 'leju_area',
-        elements::ITEMPAGECHARSET => '',
-        elements::CHARSET => '',
+		elements::COLLECTION_ITEM_NAME => 'Lejunewhouse_Area_Items',
+		elements::COLLECTION_CATEGORY_NAME => 'lejunewhouse_area',
+        elements::ITEMPAGECHARSET => 'utf-8',
+        elements::CHARSET => 'utf-8',
 		elements::MANAGER => 'living',
 		elements::UPDATEDATA=>array(
 				elements::ITEM_DPRICE,

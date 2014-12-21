@@ -47,6 +47,10 @@ class lejubrokerProductModel extends productXModel {
        return $this->_category_item_area;
     }
 
+    public function getCategoryItemDprice()
+    {
+        return "";
+    }
     public function getCategoryItemMprice()
     {
         $filter = $this->_config[\elements::CATEGORY_ITEM_DPRICE];

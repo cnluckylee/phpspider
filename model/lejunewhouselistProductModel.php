@@ -14,9 +14,93 @@
  *
  * @package model
  */
-class lejuareaProductModel extends productXModel {
+class lejunewhouselistProductModel extends productXModel {
 
+    public function getBarcode()
+    {
+        $str = parent::getBarcode();
+        $this->_barcode = date('Y-m-d',strtotime("+".$str."second"));
+        return  $this->_barcode;
+    }
 
+    public function getSales2()
+    {
+        $str = parent::getSales2();
+        $this->_sales = 0;
+        if(strstr($str,'e_ico6'))
+            $this->_sales = 1;
+        return  $this->_sales;
+    }
+
+    public function getSales()
+    {
+        $str = parent::getSales();
+        if($str)
+        {
+            $p = '/(\d+)/';
+            preg_match($p,$str,$out);
+
+            $this->_sales = isset($out[1])?$out[1]:0;
+        }
+        return  $this->_sales;
+    }
+
+    public function getAllCommentNumber()
+    {
+        $str = parent::getAllCommentNumber();
+        if($str)
+        {
+            $p = '/(\d+)/';
+            preg_match($p,$str,$out);
+
+            $this->_allCommentNumber = isset($out[1])?$out[1]:0;
+        }
+        return  $this->_allCommentNumber;
+    }
+
+    public function getCategoryItemHot()
+    {
+        $data = parent::getCategoryItemHot();
+        $filter = './/span[@class="corner"]/@class';
+        $this->_category_item_hot = array();
+        foreach($data as $k=>$v)
+        {
+            foreach ($this->_xpath->query('.//dl/dt/p[2]/text()', $filter) as $child) {
+                $this->_category_item_hot[$k] = $child?1:0;
+            }
+        }
+        return $this->_category_item_hot;
+    }
+
+    public function getCategoryItemUrl()
+    {
+        $data = parent::getCategoryItemUrl();
+//        $sourceurl = parent::getUrl();
+//
+//        $arr = parse_url($sourceurl);
+//        $baseurl = $arr['scheme']."://".$arr['host'];
+        $baseurl = 'http://www.leju.com/?mod=api_projectlist&type=foucs_equan&aid=';
+
+        foreach($data as $k=>$v)
+        {
+            $tmp = parse_url($v);
+            parse_str($tmp['query'],$parr);
+            $this->_category_item_url[$k] = $baseurl.$parr['aid'].'city='.$parr['hsite'].'&hid='.$parr['hid'];
+        }
+        return $this->_category_item_url;
+    }
+    public function getCategoryItemArea()
+    {
+        $str = parent::getCategoryItemArea();
+        $data = parent::getCategoryItemUrL();
+        $this->_category_item_area = array();
+        foreach($data as $k=>$v)
+        {
+            $this->_category_item_area[$k] = $str;
+        }
+        return $this->_category_item_area;
+    }
+/*
     public function getCategoryItemSkuid()
     {
         $data = parent::getCategoryItemSkuid();
@@ -194,5 +278,5 @@ class lejuareaProductModel extends productXModel {
         }
         return $this->_name;
     }
-
+*/
 }

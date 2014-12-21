@@ -14,9 +14,28 @@
  *
  * @package model
  */
-class lejuareaProductModel extends productXModel {
-
-
+class lejunewhouseareaProductModel extends productXModel {
+    public function getCategoryItemUrl()
+    {
+        $data = parent::getCategoryItemUrl();
+        $sourceurl = parent::getUrl();
+        $arr = parse_url($sourceurl);
+        $baseurl = $arr['scheme']."://".$arr['host'];
+        foreach($data as $k=>$v)
+        {
+            if(strstr($v,'javascript'))
+                $v = $sourceurl;
+            if(!strstr($v,"http"))
+            {
+                $this->_category_item_url[$k] = $baseurl.$v;
+            }else{
+                $this->_category_item_url[$k] = $v;
+            }
+        }
+        $this->_category_item_url[] = $sourceurl;
+        return $this->_category_item_url;
+    }
+/*
     public function getCategoryItemSkuid()
     {
         $data = parent::getCategoryItemSkuid();
@@ -194,5 +213,5 @@ class lejuareaProductModel extends productXModel {
         }
         return $this->_name;
     }
-
+*/
 }

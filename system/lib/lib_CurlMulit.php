@@ -88,12 +88,28 @@ class CurlMulit {
 
         foreach ($curl as $k => $v) {
             if (curl_error($curl[$k]) == "") {
+
             	if($charset){
             		$texttmp = (string) curl_multi_getcontent($curl[$k]);
 //            		$text[$k] = mb_convert_encoding($texttmp, "utf-8",$charset);
                     $text[$k] = html_entity_decode(mb_convert_encoding($texttmp, 'UTF-8', $charset), ENT_QUOTES, 'UTF-8');
             	}else
-            		$text[$k] = (string) curl_multi_getcontent($curl[$k]);
+                {
+                    $texttmp = (string) curl_multi_getcontent($curl[$k]);
+                    $p = '/http-equiv="Content-Type" content="(.*?)"/';
+                    preg_match($p,$texttmp,$out);
+                    $tmp = isset($out[1])?strtolower($out[1]):"";
+                    $p2 = '/charset=(.*)/';
+                    preg_match($p2,$tmp,$out2);
+                    $charset = isset($out2[1])?strtolower($out2[1]):"";
+                    if(strpos($charset,'utf'))
+                        $text[$k] = $texttmp;
+                    else{
+                        $text[$k] = html_entity_decode(mb_convert_encoding($texttmp, 'UTF-8', $charset), ENT_QUOTES, 'UTF-8');
+                    }
+                }
+
+
             }
             curl_multi_remove_handle($handle, $curl[$k]);
             curl_close($curl[$k]);

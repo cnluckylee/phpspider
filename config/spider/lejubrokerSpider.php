@@ -9,13 +9,7 @@ $siteconfig = array(
 						elements::PORT => '27017',
 						elements::TIMEOUT => 0,
 						elements::DBNAME => 'leju'
-				),
-                'mongodbsec' => array(
-                    elements::HOST => 'master.mongo.cc',
-                    elements::PORT => '27017',
-                    elements::TIMEOUT => 0,
-                    elements::DBNAME => 'soufun5'
-                )
+				)
 		),
 		elements::CATEGORY => array(
 				elements::CATEGORY_URL => '',
@@ -76,8 +70,8 @@ $siteconfig = array(
 		elements::STID => 111,
         elements::HTML_ZIP =>'gzip',
 		elements::DATASOURCE => '1',
-		elements::COLLECTION_ITEM_NAME => 'Soufun_Items',
-		elements::COLLECTION_CATEGORY_NAME => 'soufun_category',
+		elements::COLLECTION_ITEM_NAME => 'lejubroker_Items',
+		elements::COLLECTION_CATEGORY_NAME => 'lejubroker_category',
         elements::ITEMPAGECHARSET => 'gbk',
         elements::CHARSET => '',
 		elements::MANAGER => 'living',

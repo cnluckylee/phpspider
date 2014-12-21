@@ -60,6 +60,7 @@ class spiderModel extends Model {
 //                $Categorylist = $Categorytmp;
 //            }else{
                 preg_match_all ( $preg, $page, $match );
+
                 if (is_array ( $matchnum )) {
                     $name = $matchnum ['name'];
                     $cid = $matchnum ['cid'];
@@ -177,7 +178,8 @@ class spiderModel extends Model {
 		$tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
-//        $job = 'sh';
+
+//       $job = 'http://www.leju.com/index.php?mod=sale_search&city=cc&district=%E5%8D%97%E5%85%B3%E5%8C%BA&p=';
 //        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
@@ -213,7 +215,6 @@ class spiderModel extends Model {
                 $totalpages = $this->curlmulit->getRegexpInfo($preg_pagetotals,$pageHtml [$Categoryurl],$Category [elements::CATEGORY_LIST_MATCH]);
             }else{
                 preg_match ( $preg_pagetotals, $pageHtml [$Categoryurl], $match_pagetotals );
-
                 foreach($match_pagetotals as $k=>$v)
                 {
                     $match_pagetotals[$k] = trim($v);
@@ -256,9 +257,10 @@ class spiderModel extends Model {
 				}
 //$tmpurls = array();
 
-                $tmpurls[$job] = $job;
+//                $tmpurls[$job] = $job;
 
                 $pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
+
                 /**
 				 * 能否抓去到数据检测,此代码保留
 				 */
@@ -285,20 +287,20 @@ class spiderModel extends Model {
                         $item_urls = isset ( $match_out [$match] ) ? $match_out [$match] : "";
                     }
                     $item_urls = array_unique ( $item_urls );
-
+                    if(!$page)
+                    print_r($tmpurls);
                     //加入错误日志
                     unset($tmpurls[$rurl]);
                     //加入列表页数据的获取并保存
                     if(isset($Category [elements::CATEGORY_ITEM_PREG]))
                     {
+
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
-
 //print_r($categorydata);
-
+//print_r($rurl);
 //print_r($page);
-
                         if($categorydata){
                             foreach($categorydata as $item)
                             {
@@ -357,6 +359,7 @@ class spiderModel extends Model {
 		$Category = Application::$_spider ['Category'];
 		$collection_item_name = Application::$_spider [elements::COLLECTION_ITEM_NAME];
         $urls = array();
+//$_GET['url'] = 'http://www.leju.com/?mod=api_projectlist&aid=198503&type=foucs_equan';
 		if(isset($_GET['debug']) && $_GET['debug']=='itemjob')
 		{
 				$urls = isset($_GET['url'])?trim($_GET['url']):"";

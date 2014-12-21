@@ -17,12 +17,9 @@ class lejubrokerModel extends spiderModel
         $this->mongodb->remove ( $collection_category_name, array () ); // 删除原始数据，保存最新的数据
         foreach($data as $k=>$v)
         {
-            $tmp = parse_url($v['source_url']);
-            $baseurl = $tmp['scheme'].'://'.$tmp['host'];
-
-            $v['promotion'] = array_unique($v['promotion']);
+            $v['price_url'] = array_unique($v['price_url']);
             $v['dprice'] = array_unique($v['dprice']);
-            foreach($v['promotion'] as $u)
+            foreach($v['price_url'] as $u)
             {
                 $tmp = str_replace("/","",$u);
                 $tmp = explode("-",$tmp);
@@ -32,7 +29,7 @@ class lejubrokerModel extends spiderModel
                 foreach($v['dprice'] as $kk=>$vv)
                 {
                     $u = substr($vv,0,strlen($vv)-1);
-                    $result[] = $baseurl.$u.'-'.$base2.'-'.$base3.'n';
+                    $result[] = $u.'-'.$base2.'-'.$base3.'n';
                 }
             }
 
