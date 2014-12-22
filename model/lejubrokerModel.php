@@ -8,13 +8,13 @@ class lejubrokerModel extends spiderModel
         $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
         $poolname = $this->spidername . 'Category';
         $sid = Application::$_spider ['stid'];
-        $data = $this->mongodb->find($collection,array('skuid'=>"浦东"));
+        $data = $this->mongodb->find($collection,array());
 
         $result = array();
         /**
          * 写入mongodb category集合
          */
-        $this->mongodb->remove ( $collection_category_name, array () ); // 删除原始数据，保存最新的数据
+        $this->mongodb->remove ( $collection_category_name, array ()); // 删除原始数据，保存最新的数据
         foreach($data as $k=>$v)
         {
             $v['price_url'] = array_unique($v['price_url']);
