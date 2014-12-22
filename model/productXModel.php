@@ -1464,11 +1464,11 @@ abstract class productXModel
             }
 
             if(isset($arr[elements::CATEGORY_ITEM_COMPANY]) && $arr[elements::CATEGORY_ITEM_COMPANY]){
-                $result[$k][elements::CATEGORY_ITEM_COMPANY] = $arr[elements::CATEGORY_ITEM_COMPANY];
+                $result[$k][elements::CATEGORY_ITEM_COMPANY] = $arr[elements::CATEGORY_ITEM_COMPANY][$k];
             }
 
             if(isset($arr[elements::CATEGORY_ITEM_DISTRICT]) && $arr[elements::CATEGORY_ITEM_DISTRICT]){
-                $result[$k][elements::CATEGORY_ITEM_DISTRICT] = $arr[elements::CATEGORY_ITEM_DISTRICT];
+                $result[$k][elements::CATEGORY_ITEM_DISTRICT] = $arr[elements::CATEGORY_ITEM_DISTRICT][$k];
             }
 
             if(isset($arr[elements::CATEGORYCOMMON]) && $arr[elements::CATEGORYCOMMON])
