@@ -20,7 +20,7 @@ $siteconfig = array(
 				elements::CATEGORY_LIST_PAGES_URL => 'http://esf.#job.fang.com/agenthome/-i3#i/',
 				elements::CATEGORY_LIST_PREG => '//span[@class="fy_text"]||/\/(\d+)/',
                 elements::TRANSFORM => false,
-                elements::TRANSFORMADDSPECIL => 'agenthome/',
+                elements::TRANSFORMADDSPECIL => '/agenthome/',
 				elements::CATEGORY_LIST_MATCH => 1,
 				elements::CATEGORY_PAGE_START => 1,
 				elements::CATEGORY_LIST_GOODS_PREG => '//div[@class="qxName"]/a/@href||2',
