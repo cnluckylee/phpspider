@@ -60,7 +60,6 @@ class spiderModel extends Model {
 //                $Categorylist = $Categorytmp;
 //            }else{
                 preg_match_all ( $preg, $page, $match );
-
                 if (is_array ( $matchnum )) {
                     $name = $matchnum ['name'];
                     $cid = $matchnum ['cid'];
@@ -68,10 +67,14 @@ class spiderModel extends Model {
                 } else {
                     $Categorytmp = $match [$matchnum];
                 }
+
                 // $Categorylist = array_slice($Categorytmp,1,12);
                 $Categorylist = array_unique ( $Categorytmp );
 //            }
-
+foreach($Categorylist as $k=>$v)
+{
+    $Categorylist[$k] = str_replace("soufun","fang",$v);
+}
             $mondata = array ();
             foreach ( $Categorylist as $name => $cid ) {
                 $this->pools->set ( $poolname, $cid );
@@ -179,7 +182,7 @@ class spiderModel extends Model {
         $jobs = array_values($tmp);
         $job = $jobs[0];
 
-//       $job = 'http://www.leju.com/index.php?mod=sale_search&city=cc&district=%E5%8D%97%E5%85%B3%E5%8C%BA&p=';
+//       $job = 'http://hz.esf.sina.com.cn/agent/m3-a1-b9-n';
 //        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
@@ -247,7 +250,7 @@ class spiderModel extends Model {
 				for($i = $s; $i <= $e; $i ++) {
                     if(isset($Category [elements::TRANSFORM]) && $Category [elements::TRANSFORM] == false)
                     {
-                        $url =$job.$i.$Category [elements::TRANSFORMADDSPECIL];;
+                        $url =$job.$Category [elements::TRANSFORMADDSPECIL];;
                     }else{
                         $url = $Category [elements::CATEGORY_LIST_PAGES_URL];
                         $url = str_replace ( '#job', $job, $url );
@@ -258,7 +261,7 @@ class spiderModel extends Model {
 //$tmpurls = array();
 
 //                $tmpurls[$job] = $job;
-
+//print_r($tmpurls);exit;
                 $pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
 
                 /**
@@ -377,6 +380,7 @@ class spiderModel extends Model {
         }
 
 		$pages = $this->curlmulit->remote ( $urls, null, false, Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
+
 // 		$fetchitems = array ();
         $tmpurls = $urls;
 		$Productmodel = $this->spidername . 'ProductModel';
