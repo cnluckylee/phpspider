@@ -30,6 +30,7 @@ $siteconfig = array(
                     elements::CATEGORY_ITEM_MATCHING =>'xpath',
                     elements::CATEGORY_ITEM_DPRICE =>'//div[@class="hall_people_house"]',
                     elements::CATEGORY_ITEM_SKUID =>'//div[@class="hall_people_house_name_l"]/a/@href||2',//昵称
+                    elements::CATEGORY_ITEM_URL =>'//div[@class="hall_people_house_name_l"]/a/@href||2',//昵称
                     elements::CATEGORY_ITEM_AREA =>'.//div[@class="hall_people_house_font"][2]',//服务楼盘
                     elements::CATEGORY_ITEM_MPRICE =>'.//img[contains(@src,"medal.png")]/@src',//金牌
                     elements::CATEGORY_ITEM_OPRICE =>'.//img[contains(@src,"renzheng.jpg")]/@src',//认证

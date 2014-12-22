@@ -29,6 +29,7 @@ $siteconfig = array(
                 elements::CATEGORY_ITEM_PREG => array(
                     elements::CATEGORY_ITEM_MATCHING =>'xpath',
                     elements::CATEGORY_ITEM_DPRICE =>'//div[@class="broker-lists-item"]',
+                    elements::CATEGORY_ITEM_URL => '//a[@class="c_default f14 mr5"]/@href||2',
                     elements::CATEGORY_ITEM_SKUID =>'//a[@class="c_default f14 mr5"]/@href||2',//昵称
                     elements::CATEGORY_ITEM_AREA =>'.//div[@class="hall_people_house_font"][2]',//服务楼盘
                     elements::CATEGORY_ITEM_MPRICE =>'.//img[contains(@src,"medal.png")]/@src',//金牌
