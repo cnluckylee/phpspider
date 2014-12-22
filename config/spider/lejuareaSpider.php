@@ -12,8 +12,8 @@ $siteconfig = array(
 				)
 		),
 		elements::CATEGORY => array(
-				elements::CATEGORY_URL => 'http://sh.esf.leju.com/agent/',
-				elements::CATEGORY_MATCH_PREG => '/href="http:\/\/(\w+?).esf.eju.com\/" target="_blank">(.*)<\/a>/',
+				elements::CATEGORY_URL => 'http://esf.sina.com.cn/city/',
+				elements::CATEGORY_MATCH_PREG => '/href="http:\/\/(\w+).esf.sina.com.cn"/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>2,'cid'=>1),
 				elements::CATEGORY_GROUP_SIZE => 1,
 				elements::CATEGORY_LIST_URL => 'http://#job.esf.sina.com.cn/agent/',
