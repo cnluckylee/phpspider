@@ -100,6 +100,20 @@ class lejunewhouselistProductModel extends productXModel {
         }
         return $this->_category_item_area;
     }
+
+    public function getProductID()
+    {
+        $str = parent::getUrl();
+        if(!$str)
+        {
+            $tmp = parse_url($str);
+            parse_str($tmp['query'],$parr);
+            $this->_productID = $parr['hid'];
+        }
+        return $this->_productID;
+    }
+
+
 /*
     public function getCategoryItemSkuid()
     {
