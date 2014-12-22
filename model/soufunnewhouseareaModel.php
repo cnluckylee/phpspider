@@ -44,8 +44,9 @@ class soufunnewhouseareaModel extends spiderModel
 
             $mondata = array ();
             foreach ( $Categorylist as $name => $cid ) {
-                $cid = 'newhouse.'.$cid.'/house/s/list/';
                 $cid = str_replace("soufun","fang",$cid);
+                $cid = str_replace("/","",$cid);
+                $cid = 'newhouse.'.$cid.'/house/s/list/';
                 $this->pools->set ( $poolname, $cid );
                 $mondata [] = array (
                     'name' => $name,
