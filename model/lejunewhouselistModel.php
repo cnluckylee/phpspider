@@ -19,7 +19,10 @@ class lejunewhouselistModel extends spiderModel
         {
             $cid = $v['Category_Item_Url'].'&p=';
             $name = $v['Category_Item_Name'];
-            $this->pools->set ( $poolname, $cid );
+            $tmp = parse_url($cid);
+            parse_str($tmp['query'],$parr);
+            $url = 'http://www.leju.com/index.php?mod=sale_search&city='.$parr['city'].'&district='.urlencode($parr['district']).'&p=';
+            $this->pools->set ( $poolname, $url );
             $mondata2 = array (
                 'name' => $name,
                 'cid' => $cid,
