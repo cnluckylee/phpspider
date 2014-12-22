@@ -104,7 +104,7 @@ class lejunewhouselistProductModel extends productXModel {
     public function getProductID()
     {
         $str = parent::getUrl();
-        if(!$str)
+        if($str)
         {
             $tmp = parse_url($str);
             parse_str($tmp['query'],$parr);

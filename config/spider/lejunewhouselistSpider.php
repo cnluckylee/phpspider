@@ -70,7 +70,7 @@ $siteconfig = array(
             'IssuedTime'=>'//div[@id="scroll_link3"]//p/strong/text()||1',//发行时间
             'Sold'=>'//div[@id="scroll_link3"]//p/em[1]/text()||1',//已售出
             'TotalSold'=>'//div[@id="scroll_link3"]//p/em[2]/text()||1',//发行量
-            'Ecoupon'=>'//div[@class="d_menu fl mr10"]//li[2]/p[2]/a/text()||1',//Ecoupon
+            'Ecoupon'=>'//div[@class="d_menu fl mr10"]//li[1]//p[2]/text()||1',//Ecoupon
             'ActiveTime'=>'//div[@class="d_menu fl mr10"]//li[2]//p[2]/text()||1',//活动时间
 
         ),
