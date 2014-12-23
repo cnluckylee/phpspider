@@ -146,4 +146,17 @@ class lejubrokerProductModel extends productXModel {
         $this->_baseurl = parent::getBaseUrl().'/agentshop/'.$this->getProductID().'-1-n';
         return $this->_baseurl;
     }
+
+    public function getCategoryItemCompany()
+    {
+        $skuids = parent::getCategoryItemSkuid();
+        $count = count($skuids);
+        $str  = parent::getCategoryItemCompany();
+        $this->_category_item_company = array();
+        for($i=0;$i<$count;$i++)
+        {
+            $this->_category_item_company[$i] = $str;
+        }
+        return $this->_category_item_company;
+    }
 }

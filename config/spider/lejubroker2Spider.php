@@ -8,7 +8,7 @@ $siteconfig = array(
 						elements::HOST => 'mongo.wcc.cc',
 						elements::PORT => '27017',
 						elements::TIMEOUT => 0,
-						elements::DBNAME => 'leju'
+						elements::DBNAME => 'lejutt'
 				)
 		),
 		elements::CATEGORY => array(
@@ -37,6 +37,7 @@ $siteconfig = array(
                     elements::CATEGORY_ITEM_HOT =>'.//p[@class="mt2"]/a[1]/text()',//出售数量
                     elements::CATEGORY_ITEM_SALE =>'.//p[@class="mt2"]/a[2]/text()',//出租数量
                     elements::CATEGORY_ITEM_DISTRICT =>'.//dd[1]/p[3]/a/text()',//所属门店
+                    elements::CATEGORY_ITEM_COMPANY=>'//li[@class="site-topsearch"]/a[@class="current"]/text()||1',//城市
                     elements::CATEGORYCOMMON =>array(
                         'UserName'=>'//a[@class="c_default f14 mr5"]/text()||2',//姓名
                         'ServiceArea'=>'//div[@class="broker-lists-item"]//dd/p[2]/text()||2',//区域

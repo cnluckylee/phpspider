@@ -36,6 +36,7 @@ $siteconfig = array(
                     elements::CATEGORY_ITEM_OPRICE =>'.//img[contains(@src,"renzheng.jpg")]/@src',//认证
                     elements::CATEGORY_ITEM_HOT =>'.//div[@class="hall_people_house_font"][5]/text()',//出售数量
                     elements::CATEGORY_ITEM_SALE =>'.//div[@class="hall_people_house_font"][5]/text()',//出租数量
+                    elements::CATEGORY_ITEM_COMPANY=>'//div[@class="item"]/a[@class="hover"]/text()||1',//城市
                     elements::CATEGORYCOMMON =>array(
                         'UserName'=>'//div[@class="hall_people_house_name_l"]/a/text()||2',//姓名
                         'ServiceArea'=>'.//div[@class="hall_people_house_font"][1]/text()||2',//区域
