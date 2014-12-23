@@ -67,6 +67,8 @@ class pools{
     {
         $spidername .='Bak';
         //判断是否已经添加进去了
-        $this->redis->hdel($spidername,$jobname);
+        $delarr = array();
+        $delarr[] = $jobname;
+        $this->redis->hdel($spidername,$delarr);
     }
 }
