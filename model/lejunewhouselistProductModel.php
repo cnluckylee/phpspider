@@ -85,7 +85,7 @@ class lejunewhouselistProductModel extends productXModel {
         {
             $tmp = parse_url($v);
             parse_str($tmp['query'],$parr);
-            $this->_category_item_url[$k] = $baseurl.$parr['aid'].'city='.$parr['hsite'].'&hid='.$parr['hid'];
+            $this->_category_item_url[$k] = $baseurl.$parr['aid'].'&city='.$parr['hsite'].'&hid='.$parr['hid'];
         }
         return $this->_category_item_url;
     }
