@@ -3,3 +3,5 @@
 2.加入cache机制，采用smarty思想，cachetime，cachefile ok
 3.加入cookie验证。
 4.加入列表页内容获取并保存。
+5.加入任务完成监控。
+6.加入retry机制。

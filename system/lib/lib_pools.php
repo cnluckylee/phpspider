@@ -50,6 +50,7 @@ class pools{
      */
     public function addjob($spidername,$jobname,$jobnum=1)
     {
+        $spidername .='Bak';
         //判断是否已经添加进去了
         $f = $this->redis->hexists($spidername,$jobname);
         if($f)
@@ -64,6 +65,7 @@ class pools{
      */
     public function deljob($spidername,$jobname)
     {
+        $spidername .='Bak';
         //判断是否已经添加进去了
         $this->redis->hdel($spidername,$jobname);
     }
