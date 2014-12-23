@@ -177,7 +177,7 @@ foreach($Categorylist as $k=>$v)
         $jobs = array_values($tmp);
         $job = $jobs[0];
 
-//       $job = 'http://hz.esf.sina.com.cn/agent/m3-a1-b9-n';
+//       $job = 'http://gz.esf.sina.com.cn/agent/a2-b23-n';
 //        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
@@ -220,6 +220,7 @@ foreach($Categorylist as $k=>$v)
                 $totalpages = $match_pagetotals ? $match_pagetotals [$Category [elements::CATEGORY_LIST_MATCH]] : 0;
             }
         }
+
 if(!$totalpages && $pageHtml){
     $this->log->errlog ( array (
         'job' => $job,
@@ -253,7 +254,7 @@ if(!$totalpages && $pageHtml){
 				for($i = $s; $i <= $e; $i ++) {
                     if(isset($Category [elements::TRANSFORM]) && $Category [elements::TRANSFORM] == false)
                     {
-                        $url =$job.$Category [elements::TRANSFORMADDSPECIL];;
+                        $url =$job.$i.$Category [elements::TRANSFORMADDSPECIL];
                     }else{
                         $url = $Category [elements::CATEGORY_LIST_PAGES_URL];
                         $url = str_replace ( '#job', $job, $url );
@@ -264,7 +265,7 @@ if(!$totalpages && $pageHtml){
 //$tmpurls = array();
 
 //                $tmpurls[$job] = $job;
-//print_r($tmpurls);exit;
+//print_r($tmpurls);
                 $pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
 
                 /**
@@ -307,6 +308,7 @@ if(!$totalpages && $pageHtml){
 //print_r($categorydata);
 //print_r($rurl);
 //print_r($page);
+
                         if($categorydata){
                             foreach($categorydata as $item)
                             {
@@ -321,6 +323,7 @@ if(!$totalpages && $pageHtml){
                     }
 
 				}
+
 				$s = $s + $pagesize;
 
                 if($tmpurls)
@@ -337,7 +340,6 @@ if(!$totalpages && $pageHtml){
                 sleep(1);
 			} while ( $s <= $totalpages );
 		}
-
 		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
 		$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
 		$jobs2 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
