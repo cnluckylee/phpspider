@@ -293,6 +293,24 @@ class soufunbrokerProductModel extends productXModel {
         return $this->_description;
     }
 
+    public function getCategoryItemCompany()
+    {
+        $skuids = parent::getCategoryItemSkuid();
+        $count = count($skuids);
+        $str  = parent::getCategoryItemCompany();
+        $this->_category_item_company = array();
+        if(!$str)
+        {
+            $filter = '//div[@class="bread"]/a[2]/text()||1';
+            $str = $this->_getRegexpInfo($filter,$this->getContent());
+            $str = str_replace("经纪人","",$str);
+        }
+        for($i=0;$i<$count;$i++)
+        {
+            $this->_category_item_company[$i] = $str;
+        }
+        return $this->_category_item_company;
+    }
     public function getIsbnCode()
     {
         $str = parent::getIsbnCode();
