@@ -225,6 +225,7 @@ if(!$totalpages && $pageHtml){
         'job' => $job,
         'Categoryurl' => $Categoryurl,
         'error' => 2,
+        'yy' =>'no total and have page',
         'addtime' => date ( 'Y-m-d H:i:s' )
     ) );
 }
