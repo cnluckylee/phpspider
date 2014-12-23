@@ -407,7 +407,7 @@ if(!$totalpages && $pageHtml){
 		}
         if($tmpurls)
         {
-            foreach($tmpurls as $url)
+            foreach($tmpurls as $k=>$url)
                 $this->log->errlog ( array (
                     'job' => $poolname,
                     'url' => $url,
