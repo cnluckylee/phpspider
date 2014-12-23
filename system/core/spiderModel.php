@@ -341,6 +341,7 @@ if(!$totalpages && $pageHtml){
 			} while ( $s <= $totalpages );
 		}
 		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
+        $this->pools->deljob($name,$job);//加入删除备份任务机制
 		$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
 		$jobs2 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
 
@@ -403,6 +404,8 @@ if(!$totalpages && $pageHtml){
 			{
 				print_r($spiderdata);exit;
 			}
+            $this->pools->deljob($poolname,$srouceurl);//加入删除备份任务机制
+            $this->redis->decr ( $this->spidername . 'ItemCurrent' );
             unset($tmpurls[$srouceurl]);
 		}
         if($tmpurls)
@@ -417,7 +420,6 @@ if(!$totalpages && $pageHtml){
                 ) );
         }
         sleep(1);
-		$this->redis->decr ( $this->spidername . 'ItemCurrent' );
 		exit ();
 	}
 	/**
