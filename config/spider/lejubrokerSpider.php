@@ -47,10 +47,15 @@ $siteconfig = array(
 		),
 		// item config
 		elements::ITEM_SKUID => '//input[@id="talkPageValue"]/@value||1',//昵称
+        elements::ITEM_NAME=>'//title/text()||1',//名称
+        elements::ITEM_BARCODE=>'//span[@class="num"]/text()||1',//Tel
+        elements::ITEM_TITLE=>'//div[@class="aa"]/p[@class="p2"]/text()||1',//所属公司
+        elements::ITEM_ISBN=>'//div[@class="remark"]/li[3]/text()||1',//
+        elements::ITEM_SALES=>'//div[@class="icon"]/img[contains(@src,"active0")]||2',//热度
         elements::ITEMCOMMON => array(
             'Tel' => '//div[@class="tel"]/span[@class="num"]/text()||1',
-            'Company' =>'//div[@class="aa"]/p[@class="p2"]/text()||1',//所属公司
-            'UserName' =>'//div[@class="shop"]/span/text()||1',
+            'Store' =>'//div[@class="about"]/li[4]/text()||1',//所属门店
+
         ),
 		elements::STID => 111,
         elements::HTML_ZIP =>'gzip',

@@ -126,18 +126,18 @@ class lejubrokerProductModel extends productXModel {
         }
         return $this->_category_item_sale;
     }
-    public  function getIsbnCode()
-    {
-        $str = parent::getIsbnCode();
-        $this->_isbnCode = str_replace("创建时间：","",$str);
-        return $this->_isbnCode;
-    }
+
     public function getProductID()
     {
         $str = parent::getUrl();
-        $p = '/tshop\/(\d+)-/';
+        $p = '/shop\/(\d+)/';
         preg_match($p,$str,$out);
+
+        $p2 = '/http:\/\/(\w+).esf/';
+        preg_match($p2,$str,$out2);
+        $domain = isset($out2[1])?$out2[1]:"";
         $this->_productID = isset($out[1])?$out[1]:"";
+        $this->_productID = $domain.'-'.$this->_productID;
         return $this->_productID;
     }
     public function getBaseUrl()
@@ -158,5 +158,56 @@ class lejubrokerProductModel extends productXModel {
             $this->_category_item_company[$i] = $str;
         }
         return $this->_category_item_company;
+    }
+
+    public function getName()
+    {
+        $str = parent::getName();
+        $p='/(.*?)的/';
+        preg_match($p,$str,$out);
+        $this->_name = isset($out[1])?$out[1]:"";
+        return $this->_name;
+    }
+    public function  getBarcode()
+    {
+        $this->_barcode = parent::getBarcode();
+        if(!$this->_barcode)
+        {
+            $filter = '//div[@class="more"]/span/text()||1';
+            $this->_barcode = $this->_getRegexpInfo($filter,$this->getContent());
+        }
+        return $this->_barcode;
+    }
+    public function getTitle()
+    {
+        $this->_title = parent::getTitle();
+        if(!$this->_title)
+        {
+            $filter = '//div[@class="about"]//a[@class="blu"]/text()||1';
+            $this->_title = $this->_getRegexpInfo($filter,$this->getContent());
+        }
+        return $this->_title;
+    }
+    public function getIsbnCode()
+    {
+        $this->_isbnCode = parent::getIsbnCode();
+        if(!$this->_isbnCode)
+        {
+            $filter = '//div[@class="main_xiangqing_left"]/p[1]/text()||1';
+            $this->_isbnCode = $this->_getRegexpInfo($filter,$this->getContent());
+            $this->_isbnCode = str_replace("创建时间：","",$this->_isbnCode);
+        }
+        return $this->_isbnCode;
+    }
+
+    public function getSales()
+    {
+        $arr = parent::getSales();
+        $this->_sales = "";
+        if($arr){
+            $this->_sales = count($arr);
+        }else
+            $this->_sales = "";
+        return $this->_sales;
     }
 }
