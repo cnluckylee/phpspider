@@ -147,12 +147,7 @@ foreach($Categorylist as $k=>$v)
 					$out = popen ( $cmd, "r" );
 					pclose ( $out );
 				}
-				$this->log->runlog ( array (
-						'start' => 0,
-						'add' => $runs,
-						'addtime' => date ( 'Y-m-d H:i:s' ),
-						'onstart' => 1 
-				) );
+
 			} else {
 				$this->spiderrun = false;
 				if ($jobname == 'Category') {
@@ -225,7 +220,14 @@ foreach($Categorylist as $k=>$v)
                 $totalpages = $match_pagetotals ? $match_pagetotals [$Category [elements::CATEGORY_LIST_MATCH]] : 0;
             }
         }
-
+if(!$totalpages && $pageHtml){
+    $this->log->errlog ( array (
+        'job' => $job,
+        'Categoryurl' => $Categoryurl,
+        'error' => 2,
+        'addtime' => date ( 'Y-m-d H:i:s' )
+    ) );
+}
         $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
 
         if($totalpages && $totalpages>0){
