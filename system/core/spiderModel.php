@@ -405,7 +405,6 @@ if(!$totalpages && $pageHtml){
 				print_r($spiderdata);exit;
 			}
             $this->pools->deljob($poolname,$srouceurl);//加入删除备份任务机制
-            $this->redis->decr ( $this->spidername . 'ItemCurrent' );
             unset($tmpurls[$srouceurl]);
 		}
         if($tmpurls)
@@ -419,6 +418,7 @@ if(!$totalpages && $pageHtml){
                     'addtime' => date ( 'Y-m-d H:i:s' )
                 ) );
         }
+        $this->redis->decr ( $this->spidername . 'ItemCurrent' );
         sleep(1);
 		exit ();
 	}
