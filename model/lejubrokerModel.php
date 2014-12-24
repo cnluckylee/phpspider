@@ -14,7 +14,7 @@ class lejubrokerModel extends spiderModel
         /**
          * 写入mongodb category集合
          */
-        $this->mongodb->remove ( $collection_category_name, array ()); // 删除原始数据，保存最新的数据
+        $this->mongodb->remove ( $collection_category_name, array () ); // 删除原始数据，保存最新的数据
         foreach($data as $k=>$v)
         {
             $v['price_url'] = array_unique($v['price_url']);
@@ -22,16 +22,19 @@ class lejubrokerModel extends spiderModel
             foreach($v['price_url'] as $u)
             {
 
-                $tmp =  explode("agent/",$u);
-                $tmp = str_replace("/","",$tmp[1]);
-                $tmp = explode("-",$tmp);
-                $base2 = isset($tmp[0])?$tmp[0]:"";
-                $base3 = isset($tmp[1])?$tmp[1]:"";
-                foreach($v['dprice'] as $kk=>$vv)
-                {
-                    $u = substr($vv,0,strlen($vv)-1);
-                    $result[] = $u.'-'.$base3.'-n';
-                }
+//                $tmp =  explode("agent/",$u);
+//                $tmp = str_replace("/","",$tmp[1]);
+//                $tmp = explode("-",$tmp);
+//                $base2 = isset($tmp[0])?$tmp[0]:"";
+//                $base3 = isset($tmp[1])?$tmp[1]:"";
+//                foreach($v['dprice'] as $kk=>$vv)
+//                {
+//                    $u = substr($vv,0,strlen($vv)-1);
+//                    $result[] = $u.'-'.$base3.'-n';
+//                }
+                $u2 = substr($u,0,strlen($u)-1);
+                $url = $u2.'-n';
+                $result[] = $url;
             }
 
             $Categorylist = array_unique ( $result );
@@ -92,9 +95,9 @@ class lejubrokerModel extends spiderModel
 */
     function tojson($cname)
     {
-        $cname = 'Soufun_Items';
+        $cname = 'lejubroker_category_list';
         $total = $this->mongodb->count($cname);
-        $collection = 'soufun_Items';
+        $collection = 'lejubrokerItem';
         $s = 0;
         $limit = 1000;
         $companys = array();
@@ -106,20 +109,29 @@ class lejubrokerModel extends spiderModel
             ) );
             foreach($mondata as $item)
             {
-                $skuid = $item['source_category_name'];
-                $companys[$skuid] += 1;
+
+               $str = $item['Category_Item_Skuid'];
+                $arr = explode("-",$str);
+                $p = '/shop\/(\d+)/';
+                preg_match($p,$str,$out);
+
+                $p2 = '/http:\/\/(\w+).esf/';
+                preg_match($p2,$str,$out2);
+                $domain = isset($out2[1])?$out2[1]:"";
+                $skuid = isset($out[1])?$out[1]:"";
+                $skuid = $domain.'-'.$skuid;
+                $d = $this->mongodbsec->findOne('lejubroker_Items',array('skuid'=>$skuid));
+                if(!$d)
+                {
+                    $this->redis->sadd($collection,$arr[0].'-4');
+                    $this->redis->hset('lejubrokerItemBak',$arr[0].'-4',1);
+                    echo "add :".$skuid."\n";
+                }
             }
             $s +=$limit;
             echo "has load:".$s."\n";
         }while($s<$total);
-        $str = '';
-        foreach($companys as $name=>$count)
-        {
-            $str .=$name.' '.$count."\n";
-        }
-        $file = fopen("test.txt","w");
-        fwrite($file,$str);
-        fclose($file);
+
         exit("over");
     }
 

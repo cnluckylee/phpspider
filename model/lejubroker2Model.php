@@ -21,25 +21,20 @@ class lejubroker2Model extends spiderModel
             $v['dprice'] = array_unique($v['dprice']);
             foreach($v['price_url'] as $u)
             {
-
-//                $tmp =  explode("agent/",$u);
-//                $tmp = str_replace("/","",$tmp[1]);
-//                $tmp = explode("-",$tmp);
-//                $base2 = isset($tmp[0])?$tmp[0]:"";
-//                $base3 = isset($tmp[1])?$tmp[1]:"";
-//                foreach($v['dprice'] as $kk=>$vv)
-//                {
-//                    $u = substr($vv,0,strlen($vv)-1);
-//                    $result[] = $u.'-'.$base3.'-n';
-//                }
-//            }
-                $u = substr($u,0,strlen($u)-1);
-                $url = $u.'-n';
+                $tmp =  explode("agent/",$u);
+                $tmp = str_replace("/","",$tmp[1]);
+                $tmp = explode("-",$tmp);
+                $base2 = isset($tmp[0])?$tmp[0]:"";
+                $base3 = isset($tmp[1])?$tmp[1]:"";
+                foreach($v['dprice'] as $kk=>$vv)
+                {
+                    $u = substr($vv,0,strlen($vv)-1);
+                    $result[] = $u.'-'.$base3.'-n';
+                }
+                $u2 = substr($u,0,strlen($u)-1);
+                $url = $u2.'-n';
                 $result[] = $url;
             }
-            
-
-
             $Categorylist = array_unique ( $result );
             $mondata2 = array ();
             foreach ( $Categorylist as $name => $cid ) {
