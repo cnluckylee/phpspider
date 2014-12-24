@@ -127,6 +127,23 @@ class lejubrokerProductModel extends productXModel {
         return $this->_category_item_sale;
     }
 
+    public function getCategoryItemUrL()
+    {
+        $data = parent::getCategoryItemUrL();
+        $this->_category_item_url = array();
+        foreach($data as $k=>$v)
+        {
+            $arr = explode("-",$v);
+            $url = $v;
+            if(isset($arr[0]) && $arr[0])
+            {
+                $url = $arr[0].'-4';
+            }
+            $this->_category_item_url[] = $url;
+        }
+        return $this->_category_item_url;
+    }
+
     public function getProductID()
     {
         $str = parent::getUrl();
