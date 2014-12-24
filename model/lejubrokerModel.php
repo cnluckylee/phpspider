@@ -8,8 +8,8 @@ class lejubrokerModel extends spiderModel
         $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
         $poolname = $this->spidername . 'Category';
         $sid = Application::$_spider ['stid'];
-        $data = $this->mongodb->find($collection,array());
-
+        $regex = new MongoRegex("/bj./");
+        $data = $this->mongodb->find($collection,array("skuid"=>$regex));
         $result = array();
         /**
          * 写入mongodb category集合
