@@ -86,8 +86,21 @@ class lejuareaProductModel extends productXModel {
         if(!$str)
         {
             $filter = '//li[@class="site-topsearch"]/a[@class="current"]/text()||1';
-            $this->_productID = $this->_getRegexpInfo($filter,$this->getContent());
+            $str = $this->_getRegexpInfo($filter,$this->getContent());
         }
+
+        if(!$str)
+        {
+            $filter2 = '//div[@class="list_jingji"]//div[@class="item"]/a[@class="hover"]/text()||1';
+            $str = $this->_getRegexpInfo($filter2,$this->getContent());
+        }
+        $sourceurl = parent::getUrl();
+        $arr = parse_url($sourceurl);
+        $baseurl = $arr['host'];
+        $p = '/(\w+).esf/';
+        preg_match($p,$baseurl,$out);
+        $bs = isset($out[1])?$out[1]:"";
+        $this->_productID = $bs.'-'.$str;
         return $this->_productID;
     }
 
@@ -194,5 +207,4 @@ class lejuareaProductModel extends productXModel {
         }
         return $this->_name;
     }
-
 }

@@ -90,6 +90,7 @@ class elements {
     const CATEGORYCOMMON = 'GategoryCommon';//分类通用方法
     const ITEMCOMMON = 'ItemCommon';//想起通用方法
     const STID = 'stid'; //网站编号
+    const CATEGORY_NO_ADD_PAGE = 'Gategory_No_Add_Page';
 
     /* 系统其他参数说明 */
     const DB = 'db'; //数据库选项

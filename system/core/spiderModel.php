@@ -177,7 +177,7 @@ foreach($Categorylist as $k=>$v)
         $jobs = array_values($tmp);
         $job = $jobs[0];
 
-//       $job = 'http://gz.esf.sina.com.cn/agent/a2-b23-n';
+//       $job = 'http://bj.esf.sina.com.cn';
 //        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
@@ -254,7 +254,10 @@ if(!$totalpages && $pageHtml){
 				for($i = $s; $i <= $e; $i ++) {
                     if(isset($Category [elements::TRANSFORM]) && $Category [elements::TRANSFORM] == false)
                     {
-                        $url =$job.$i.$Category [elements::TRANSFORMADDSPECIL];
+                        if(isset($Category [elements::CATEGORY_NO_ADD_PAGE]) && $Category [elements::CATEGORY_NO_ADD_PAGE])
+                            $url =$job.$Category [elements::TRANSFORMADDSPECIL];
+                        else
+                            $url =$job.$i.$Category [elements::TRANSFORMADDSPECIL];
                     }else{
                         $url = $Category [elements::CATEGORY_LIST_PAGES_URL];
                         $url = str_replace ( '#job', $job, $url );
@@ -301,7 +304,6 @@ if(!$totalpages && $pageHtml){
                     //加入列表页数据的获取并保存
                     if(isset($Category [elements::CATEGORY_ITEM_PREG]))
                     {
-
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );

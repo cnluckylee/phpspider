@@ -21,6 +21,7 @@ $siteconfig = array(
 				elements::CATEGORY_LIST_PREG => '//span[@class="all"]/text()||/\/(\d+)/',
 				elements::CATEGORY_LIST_MATCH => 1,
 				elements::CATEGORY_PAGE_START => 1,
+                elements::CATEGORY_NO_ADD_PAGE => true,
                 elements::TRANSFORM => false,
                 elements::TRANSFORMADDSPECIL => '/agent/',
 				elements::CATEGORY_LIST_GOODS_PREG => '//div[@class="item"]/a/@href||2',
