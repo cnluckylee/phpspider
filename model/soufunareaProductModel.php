@@ -54,4 +54,17 @@ class soufunareaProductModel extends productXModel {
         return  $this->_priceUrl;
     }
 
+    public function getProductID()
+    {
+        $str = parent::getProductID();
+        $sourceurl = parent::getUrl();
+        $data = parent::getPriceUrl();
+        $arr = parse_url($sourceurl);
+        $baseurl = $arr['host'];
+        $p = '/esf.(\w+).fang/';
+        preg_match($p,$baseurl,$out);
+        $s = isset($out[1])?$out[1]:"";
+        $this->_productID = $s.'-'.$str;
+        return $this->_productID;
+    }
 }
