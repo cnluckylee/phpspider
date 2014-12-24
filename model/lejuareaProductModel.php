@@ -130,7 +130,7 @@ class lejuareaProductModel extends productXModel {
             foreach($data as $k=>$v)
             {
                 if(strstr($v,'javascript'))
-                    $v = '/';
+                    $v = $sourceurl;
                 if(!strstr($v,"http"))
                 {
                     $this->_priceUrl[$k] = $baseurl.$v;
