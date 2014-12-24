@@ -92,12 +92,27 @@ class lejubroker2Model extends spiderModel
 */
     function tojson($cname)
     {
-        $cname = 'lejubroker2Item';
-        $data = $this->redis->smembers($cname);
-        foreach($data as $k=>$v)
-        {
-            $this->pools->set($cname,$v);
-        }
+        $cname = 'lejubroker2_category_list';
+        $total = $this->mongodb->count($cname);
+        $collection = 'lejubroker2Item';
+        $s = 0;
+        $limit = 1000;
+        $companys = array();
+        $tmp = array();
+        do {
+            $mondata = $this->mongodb->find ( $cname, array (), array (
+                "start" => $s,
+                "limit" => $limit
+            ) );
+            foreach($mondata as $item)
+            {
+                $str = $item['Category_Item_Url'];
+                $arr = explode("-",$str);
+                $this->pools->set($collection,$arr[0].'-4');
+            }
+            $s +=$limit;
+            echo "has load:".$s."\n";
+        }while($s<$total);
         exit("over");
     }
 
