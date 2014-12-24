@@ -49,27 +49,18 @@ $siteconfig = array(
 
 		),
 		// item config
-		elements::ITEM_TITLE => '//div[@class="shop"]/span/text()||1',//名称
-		elements::ITEM_SOURCE_CATEGORY_ID => '//div[@class="tel"]/span[@class="num"]/text()||1',//手机
-		elements::ITEM_SOURCE_CATEGORY_NAME=> '//div[@class="aa"]/p[@class="p2"]/text()||1',//所属公司
-		elements::ITEM_SKUID => '//input[@id="talkPageValue"]/@value||1',//昵称
-		elements::ITEM_NAME =>'',
-		elements::ITEM_SOURCE_BRAND_ID =>'',//所属区县
-		elements::ITEM_SOURCE_BRAND_NAME =>'',//服务区域
-		elements::ITEM_SOURCE_SELLER_ID =>'',//昵称
-		elements::ITEM_SOURCE_SELLER_NAME => '',//姓名
-		elements::ITEM_IMAGE_URL => '',
-		elements::ITEM_PROMOTION => '',//注册时间
-		elements::ITEM_SALES => '',//销量
-		elements::ITEM_DPRICE => '',//所属门店
-		elements::ITEM_OPRICE => '',//门店地址
-		elements::ITEM_PRICE_URL => '',//服务热线
-		elements::ITEM_STATUS => '',
-		elements::ITEM_DESCRIPTION =>'',//门店店长
-		elements::ITEM_CHARACTERS =>'',
-		elements::ITEM_ISBN => '//div[@class="main_xiangqing_left"]/p[1]/text()||1',//开店时间
-		elements::ITEM_BARCODE => '',//ID
-		elements::BASE_URL => '//div[@class="favorite"]/a[@class="shouye"]/@href||1',
+        elements::ITEM_SKUID => '//input[@id="talkPageValue"]/@value||1',//昵称
+        elements::ITEM_NAME=>'//meta[@name="keywords"]/@content||1',//名称
+        elements::ITEM_BARCODE=>'//span[@class="c_red bold"]/text()||1',//Tel
+        elements::ITEM_TITLE=>'//a[@class="c_default"]/text()||1',//所属公司
+        elements::ITEM_IMAGE_URL => '//a[@class="c_default"]/@href||1',//所属公司url
+        elements::ITEM_ISBN=>'//div[@class="broker-mod broker-mod-infos mt10"]//div[@class="broker-infos-list"]/dl[2]/dd/text()||1',//注册时间
+        elements::ITEM_SALES=>'//div[@class="icon"]/img[contains(@src,"active0")]||2',//热度
+        elements::ITEMCOMMON => array(
+            'Tel' => '//span[@class="c_red bold"]/text()||1',
+            'Store' =>'//dd[@class="lh24"]/p[5]/text()||1',//所属门店
+
+        ),
 		elements::STID => 111,
         elements::HTML_ZIP =>'gzip',
 		elements::DATASOURCE => '1',
