@@ -195,7 +195,7 @@ class lejubrokerProductModel extends productXModel {
         {
             $filter = '//div[@class="main_xiangqing_left"]/p[1]/text()||1';
             $this->_isbnCode = $this->_getRegexpInfo($filter,$this->getContent());
-            $this->_isbnCode = str_replace("创建时间：","",$this->_isbnCode);
+            $this->_isbnCode = str_replace(array("创建时间：","注册时间："),"",$this->_isbnCode);
         }
         return $this->_isbnCode;
     }

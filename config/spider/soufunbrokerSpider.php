@@ -9,6 +9,12 @@ $siteconfig = array(
             elements::PORT => '27017',
             elements::TIMEOUT => 0,
             elements::DBNAME => 'soufun'
+        ),
+        'mongodbsec' => array(
+            elements::HOST => 'mongo.wcc.cc',
+            elements::PORT => '27017',
+            elements::TIMEOUT => 0,
+            elements::DBNAME => 'soufun'
         )
     ),
     elements::CATEGORY => array(

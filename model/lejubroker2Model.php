@@ -93,28 +93,18 @@ class lejubroker2Model extends spiderModel
 */
     function tojson($cname)
     {
-        $cname = 'lejubroker2_category_list';
-        $total = $this->mongodb->count($cname);
-        $collection = 'lejubroker2Item';
-        $s = 0;
-        $limit = 1000;
-        $companys = array();
-        $tmp = array();
-        do {
-            $mondata = $this->mongodb->find ( $cname, array (), array (
-                "start" => $s,
-                "limit" => $limit
-            ) );
-            foreach($mondata as $item)
-            {
-                $str = $item['Category_Item_Url'];
-                $arr = explode("-",$str);
-                $this->pools->set($collection,$arr[0].'-4');
-            }
-            $s +=$limit;
-            echo "has load:".$s."\n";
-        }while($s<$total);
-        exit("over");
+        $cname = 'leju_area';
+
+        $data = $this->mongodb->find($cname,array());
+        $filename = 'leju_Data.csv';
+        $str = "名称 网站数量 抓取数量 URL"."\n";
+        foreach($data as $i)
+        {
+            $str.= $i['name']." "." ".$i['cid']."\n";
+        }
+        $file = fopen($filename,"a+");
+        fwrite($file,$str);
+        fclose($file);
     }
 
 }
