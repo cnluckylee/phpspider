@@ -184,7 +184,7 @@ foreach($Categorylist as $k=>$v)
         $jobs = array_values($tmp);
         $job = $jobs[0];
 
-//       $job = 'http://gz.esf.sina.com.cn/agent/n';
+//       $job = 'http://esf.dl.fang.com/agenthome';
 //        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
@@ -348,7 +348,7 @@ if(!$totalpages && $pageHtml){
                         'addtime' => date ( 'Y-m-d H:i:s' )
                     ) );
                 }
-//                sleep(1);
+                sleep(1);
 			} while ( $s <= $totalpages );
 		}
 //		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
