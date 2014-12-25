@@ -153,6 +153,8 @@ foreach($Categorylist as $k=>$v)
 				}
 
 			} else {
+                $this->redis->delete ( $this->spidername . 'CategoryCurrent' );
+                $this->redis->delete ( $this->spidername . 'CategoryTotalCurrent' );
 				$this->spiderrun = false;
 				if ($jobname == 'Category') {
 					$this->autostartitemmaster ();
@@ -163,7 +165,7 @@ foreach($Categorylist as $k=>$v)
 				}
 			}
 		} while ( $this->spiderrun );
-		$this->redis->delete ( $this->spidername . 'CategoryCurrent' );
+        $this->redis->delete ( $this->spidername . 'CategoryCurrent' );
 		$this->redis->delete ( $this->spidername . 'ItemCurrent' );
 		$this->redis->delete ( $this->spidername . 'Item' );
 		$this->redis->delete ( $this->spidername . 'ItemJobRun' );
