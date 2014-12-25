@@ -177,7 +177,7 @@ foreach($Categorylist as $k=>$v)
         $jobs = array_values($tmp);
         $job = $jobs[0];
 
-//       $job = 'http://bj.esf.sina.com.cn';
+       $job = 'http://cq.esf.sina.com.cn/agent/n';
 //        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
@@ -307,7 +307,7 @@ if(!$totalpages && $pageHtml){
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
-//print_r($categorydata);
+print_r($categorydata);
 //print_r($rurl);
 //print_r($page);
 
