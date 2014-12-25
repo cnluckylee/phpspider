@@ -8,7 +8,7 @@ class lejubrokerModel extends spiderModel
         $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
         $poolname = $this->spidername . 'Category';
         $sid = Application::$_spider ['stid'];
-        $regex = new MongoRegex("/bj./");
+        $regex = new MongoRegex("/bj-./");
         $data = $this->mongodb->find($collection,array("skuid"=>$regex));
         $result = array();
         /**
@@ -19,25 +19,41 @@ class lejubrokerModel extends spiderModel
         {
             $v['price_url'] = array_unique($v['price_url']);
             $v['dprice'] = array_unique($v['dprice']);
+//            echo  count($v['price_url'])." ". count($v['dprice']);
+            if(!$v['price_url'])
+            {
+                $v['price_url'] = $v['dprice'];
+                unset($v['dprice']);
+            }
             foreach($v['price_url'] as $u)
             {
-
                 $tmp =  explode("agent/",$u);
                 $tmp = str_replace("/","",$tmp[1]);
                 $tmp = explode("-",$tmp);
-                $base2 = isset($tmp[0])?$tmp[0]:"";
-                $base3 = isset($tmp[1])?$tmp[1]:"";
+                $a = isset($tmp[0])?'-'.$tmp[0]:"";
+                $b = isset($tmp[1])?'-'.$tmp[1]:"";
                 foreach($v['dprice'] as $kk=>$vv)
                 {
-                    $u = substr($vv,0,strlen($vv)-1);
-                    $result[] = $u.'-'.$base3.'-n';
+                    if($u!=$vv)
+                        $u2 = substr($vv,0,strlen($vv)-1);
+                    else
+                        $u2 = $vv;
+                    $result[] = $u2.$b.'-n';
                 }
-                $u2 = substr($u,0,strlen($u)-1);
-                $url = $u2.'-n';
-                $result[] = $url;
-            }
+                if(!isset($v['dprice']))
+                {
+                    if($a || $b)
+                        $url = substr($u,0,strlen($u)-1);
+                    else{
+                        $url = $u;
+                    }
+                    $url = $url.'-n';
+                    $result[] = $url;
+                }
 
+            }
             $Categorylist = array_unique ( $result );
+//            print_r($Categorylist);
             $mondata2 = array ();
             foreach ( $Categorylist as $name => $cid ) {
                 $this->pools->set ( $poolname, $cid );
