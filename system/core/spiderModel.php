@@ -112,16 +112,18 @@ foreach($Categorylist as $k=>$v)
 		$totalvalue = 0;
 		do {
 			$totalvalue = $this->pools->size ( $name );
-			$jobs = $this->redis->get ( $this->spidername . $jobname . 'Current' ); // 当前运行数
+//			$jobs = $this->redis->get ( $this->spidername . $jobname . 'Current' ); // 当前运行数
+            $jobs = $this->redis->hget ( $this->spidername . $jobname . 'Current' ,HOSTNAME);//获取以jobname为key下面该hostname机子的当前运行数
 			echo $this->spidername." Jobname:" . $jobname . "  totalvalue:" . $totalvalue . " jobs:" . $jobs . " maxjobs:" . $this->maxjobs . "\n";
 			if ($totalvalue > 0) {
 				$runs = $this->maxjobs;
 				// 刚起步程序
-				if (! $this->redis->exists ( $this->spidername . $jobname . 'Current' )) {
+				if (! $this->redis->hexists ( $this->spidername . $jobname . 'Current' ,HOSTNAME )) {
 					if ($totalvalue < $this->maxjobs)
 						$runs = $totalvalue;
 					$cmd = "./startworker " . $this->spidername . '  ' . $jobname . "job " . $runs;
-					$this->redis->incr ( $this->spidername . $jobname . 'Current', $runs );
+//					$this->redis->incr ( $this->spidername . $jobname . 'Current', $runs );
+                    $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,$runs);
 					$out = popen ( $cmd, "r" );
 					pclose ( $out );
 				} else if ($jobs >= $this->maxjobs) 				// 当前运行数大于最大运行数 自动暂停3秒
@@ -137,13 +139,15 @@ foreach($Categorylist as $k=>$v)
 					echo "cmd:" . $cmd . "\n";
 					$out = popen ( $cmd, "r" );
 					pclose ( $out );
-					$this->redis->incr ( $this->spidername . $jobname . 'Current', $runs );
+//					$this->redis->incr ( $this->spidername . $jobname . 'Current', $runs );
+                    $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,$runs);
 				} else if ($jobs <= 0) {
 					$runs = $this->maxjobs;
 					if ($totalvalue < $this->maxjobs)
 						$runs = $totalvalue;
 					$cmd = "./startworker " . $this->spidername . '  ' . $jobname . "job " . $runs;
-					$this->redis->incr ( $this->spidername . $jobname . 'Current', $runs );
+//					$this->redis->incr ( $this->spidername . $jobname . 'Current', $runs );
+                    $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,$runs);
 					$out = popen ( $cmd, "r" );
 					pclose ( $out );
 				}
@@ -172,12 +176,13 @@ foreach($Categorylist as $k=>$v)
 
         header("Content-type: text/html; charset=utf-8");
         $name = $this->spidername . 'Category';
+        $jobname = 'Category';
 		$spidername = str_replace ( 'Spider', "", $this->spidername );
 		$tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
 
-//       $job = 'http://bj.esf.sina.com.cn';
+       $job = 'http://gz.esf.sina.com.cn/agent/n';
 //        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
@@ -194,7 +199,8 @@ foreach($Categorylist as $k=>$v)
         if (! $pageHtml) {
 
 //			$this->autostartitemmaster ();
-			$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
+//			$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
+            $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
 			$this->log->errlog ( array (
 					'job' => $job,
 					'Categoryurl' => $Categoryurl,
@@ -276,7 +282,8 @@ if(!$totalpages && $pageHtml){
 				 */
 				if ($s == 0 && count ( $pages ) == 0) {
 					$this->master ( 'Item' );
-					$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
+//					$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
+                    $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
 					$this->log->errlog ( array (
 							'job' => $job,
 							'Categoryurl' => $Categoryurl,
@@ -307,7 +314,7 @@ if(!$totalpages && $pageHtml){
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
-//print_r($categorydata);
+print_r($categorydata);
 //print_r($rurl);
 //print_r($page);
 
@@ -339,13 +346,14 @@ if(!$totalpages && $pageHtml){
                         'addtime' => date ( 'Y-m-d H:i:s' )
                     ) );
                 }
-                sleep(1);
+//                sleep(1);
 			} while ( $s <= $totalpages );
 		}
-		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
+//		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
         $this->pools->deljob($name,$job);//加入删除备份任务机制
-		$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
-		$jobs2 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
+//		$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
+        $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
+//		$jobs2 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
 
 /*		$this->log->msglog ( array (
 				'job' => $job,
@@ -367,6 +375,7 @@ if(!$totalpages && $pageHtml){
 	function itemjob() {
         header("Content-type: text/html; charset=utf-8");
 		$poolname = $this->spidername . 'Item';
+        $jobname = 'Item';
 		$Category = Application::$_spider ['Category'];
 		$collection_item_name = Application::$_spider [elements::COLLECTION_ITEM_NAME];
         $urls = array();
@@ -420,7 +429,8 @@ if(!$totalpages && $pageHtml){
                     'addtime' => date ( 'Y-m-d H:i:s' )
                 ) );
         }
-        $this->redis->decr ( $this->spidername . 'ItemCurrent' );
+//        $this->redis->decr ( $this->spidername . 'ItemCurrent' );
+        $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
         sleep(1);
 		exit ();
 	}
@@ -468,6 +478,7 @@ if(!$totalpages && $pageHtml){
 	function updatejob() {
 		$poolname = $this->spidername . 'Update';
 		$collectionname = 'wcc_' . $this->spidername . '_items';
+        $jobname = 'Update';
 		$spiderconfig = Application::$_spider;
 		$Category = $spiderconfig ['Category'];
 		$updateconfig = isset ( $spiderconfig ['updatedata'] ) ? $spiderconfig ['updatedata'] : "";
@@ -494,7 +505,8 @@ if(!$totalpages && $pageHtml){
 				}
 			}
 		}
-		$this->redis->decr ( $this->spidername . 'UpdateCurrent' );
+//		$this->redis->decr ( $this->spidername . 'UpdateCurrent' );
+        $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
 		exit;
 	}
 
