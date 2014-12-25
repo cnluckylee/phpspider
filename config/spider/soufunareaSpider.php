@@ -26,7 +26,7 @@ $siteconfig = array(
 				elements::CATEGORY_LIST_GOODS_PREG => '//div[@class="qxName"]/a/@href||2',
 				elements::CATEGORY_LIST_GOODS_Match => 1,
                 elements::CATEGORY_MATCHING => 'xpath',
-
+                elements::CATEGORY_NO_ADD_PAGE => true,
                 elements::CATEGORY_ITEM_PREG => array(
                     elements::CATEGORY_ITEM_MATCHING =>'xpath',
                     elements::CATEGORY_ITEM_NAME =>'//div[@class="qxName"]/a/text()||2',
