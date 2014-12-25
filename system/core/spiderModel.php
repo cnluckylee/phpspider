@@ -112,9 +112,9 @@ foreach($Categorylist as $k=>$v)
 		$totalvalue = 0;
 		do {
 			$totalvalue = $this->pools->size ( $name );
-//			$jobs = $this->redis->get ( $this->spidername . $jobname . 'Current' ); // 当前运行数
+			$totaljobs = $this->redis->get ( $this->spidername . $jobname . 'TotalCurrent' ); // 当前运行总数
             $jobs = $this->redis->hget ( $this->spidername . $jobname . 'Current' ,HOSTNAME);//获取以jobname为key下面该hostname机子的当前运行数
-			echo $this->spidername." Jobname:" . $jobname . "  totalvalue:" . $totalvalue . " jobs:" . $jobs . " maxjobs:" . $this->maxjobs . "\n";
+			echo $this->spidername." Jobname:" . $jobname . "  TotalJobs:" . $totalvalue . " TotalRunJobs:".$totaljobs . " LocalRunJobs:" . $jobs . " LocalMaxjobs:" . $this->maxjobs ."\n";
 			if ($totalvalue > 0) {
 				$runs = $this->maxjobs;
 				// 刚起步程序
@@ -122,7 +122,7 @@ foreach($Categorylist as $k=>$v)
 					if ($totalvalue < $this->maxjobs)
 						$runs = $totalvalue;
 					$cmd = "./startworker " . $this->spidername . '  ' . $jobname . "job " . $runs;
-//					$this->redis->incr ( $this->spidername . $jobname . 'Current', $runs );
+					$this->redis->incr ( $this->spidername . $jobname . 'TotalCurrent', $runs );//当前运行总数有增加中
                     $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,$runs);
 					$out = popen ( $cmd, "r" );
 					pclose ( $out );
@@ -139,14 +139,14 @@ foreach($Categorylist as $k=>$v)
 					echo "cmd:" . $cmd . "\n";
 					$out = popen ( $cmd, "r" );
 					pclose ( $out );
-//					$this->redis->incr ( $this->spidername . $jobname . 'Current', $runs );
+					$this->redis->incr ( $this->spidername . $jobname . 'TotalCurrent', $runs );//当前运行总数有增加中
                     $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,$runs);
 				} else if ($jobs <= 0) {
 					$runs = $this->maxjobs;
 					if ($totalvalue < $this->maxjobs)
 						$runs = $totalvalue;
 					$cmd = "./startworker " . $this->spidername . '  ' . $jobname . "job " . $runs;
-//					$this->redis->incr ( $this->spidername . $jobname . 'Current', $runs );
+					$this->redis->incr ( $this->spidername . $jobname . 'TotalCurrent', $runs );//当前运行总数有增加中
                     $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,$runs);
 					$out = popen ( $cmd, "r" );
 					pclose ( $out );
@@ -182,7 +182,7 @@ foreach($Categorylist as $k=>$v)
         $jobs = array_values($tmp);
         $job = $jobs[0];
 
-       $job = 'http://gz.esf.sina.com.cn/agent/n';
+//       $job = 'http://gz.esf.sina.com.cn/agent/n';
 //        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
@@ -199,7 +199,7 @@ foreach($Categorylist as $k=>$v)
         if (! $pageHtml) {
 
 //			$this->autostartitemmaster ();
-//			$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
+			$this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
             $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
 			$this->log->errlog ( array (
 					'job' => $job,
@@ -282,7 +282,7 @@ if(!$totalpages && $pageHtml){
 				 */
 				if ($s == 0 && count ( $pages ) == 0) {
 					$this->master ( 'Item' );
-//					$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
+					$this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
                     $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
 					$this->log->errlog ( array (
 							'job' => $job,
@@ -314,7 +314,7 @@ if(!$totalpages && $pageHtml){
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
-print_r($categorydata);
+//print_r($categorydata);
 //print_r($rurl);
 //print_r($page);
 
@@ -351,7 +351,7 @@ print_r($categorydata);
 		}
 //		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
         $this->pools->deljob($name,$job);//加入删除备份任务机制
-//		$this->redis->decr ( $this->spidername . 'CategoryCurrent' );
+		$this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
         $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
 //		$jobs2 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
 
@@ -429,7 +429,7 @@ print_r($categorydata);
                     'addtime' => date ( 'Y-m-d H:i:s' )
                 ) );
         }
-//        $this->redis->decr ( $this->spidername . 'ItemCurrent' );
+        $this->redis->decr ( $this->spidername . 'ItemTotalCurrent' );
         $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
         sleep(1);
 		exit ();
@@ -505,7 +505,7 @@ print_r($categorydata);
 				}
 			}
 		}
-//		$this->redis->decr ( $this->spidername . 'UpdateCurrent' );
+		$this->redis->decr ( $this->spidername . 'UpdateTotalCurrent' );
         $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
 		exit;
 	}
