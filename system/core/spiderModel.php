@@ -191,14 +191,21 @@ foreach($Categorylist as $k=>$v)
             $Categoryurl = str_replace ( "#job", $job, $Category [elements::CATEGORY_LIST_URL] );
 
         $totalpages = $this->getcategorytotalpages($Categoryurl,$job,$jobname,$Category);
-
-        $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
-
+        /**
+         * 有总页数就记录总页数到category集合
+         * 否则就kill job
+         */
         if($totalpages && $totalpages>0){
+            $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
             $this->mongodb->update ( $collection_category_name,
                 array ('cid' => $job),
                 array('$set'=>array('totalcount'=>$totalpages)),
                 array("upsert"=>1,"multiple"=>true));
+        }else{
+            //kill job
+            $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
+            $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
+            exit();
         }
 
 		$s = isset ( $Category [elements::CATEGORY_PAGE_START] ) ? $Category[elements::CATEGORY_PAGE_START] : 0;
@@ -233,7 +240,7 @@ foreach($Categorylist as $k=>$v)
 				 * 能否抓去到数据检测,此代码保留
 				 */
 				if ($s == 0 && count ( $pages ) == 0) {
-					$this->master ( 'Item' );
+//					$this->master ( 'Item' );
 					$this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
                     $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
 					$this->log->errlog ( array (
@@ -315,16 +322,17 @@ foreach($Categorylist as $k=>$v)
         // 首先获取下该分类下面的总页数
         $pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
         if (! $pageHtml) {
-//			$this->autostartitemmaster ();
-            $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
-            $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
+////			$this->autostartitemmaster ();
+//            $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
+//            $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
             $this->log->errlog ( array (
                 'job' => $job,
                 'Categoryurl' => $Categoryurl,
                 'error' => 2,
+                'yy' =>'not find page',
                 'addtime' => date ( 'Y-m-d H:i:s' )
             ) );
-            exit ();
+            return 0;
         }
 
         if(isset(Application::$_spider [elements::TOTALPAGES])&&Application::$_spider [elements::TOTALPAGES]>0)
@@ -344,6 +352,8 @@ foreach($Categorylist as $k=>$v)
             }
         }
         if(!$totalpages && $pageHtml){
+//            $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
+//            $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
             $this->log->errlog ( array (
                 'job' => $job,
                 'Categoryurl' => $Categoryurl,
@@ -351,6 +361,7 @@ foreach($Categorylist as $k=>$v)
                 'yy' =>'no total and have page',
                 'addtime' => date ( 'Y-m-d H:i:s' )
             ) );
+            return 0;
         }
         return $totalpages;
     }
