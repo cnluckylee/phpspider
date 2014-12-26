@@ -18,7 +18,7 @@ $siteconfig = array(
 				elements::CATEGORY_GROUP_SIZE => 1,
 				elements::CATEGORY_LIST_URL => '',
 				elements::CATEGORY_LIST_PAGES_URL => '',
-				elements::CATEGORY_LIST_PREG => '//span[@class="all"]/text()||/\/(\d+)/',
+				elements::CATEGORY_LIST_PREG => '/totalPage\s+=\s+(\d+);/',
 				elements::CATEGORY_LIST_MATCH => 1,
 				elements::CATEGORY_PAGE_START => 1,
                 elements::TRANSFORM => false,

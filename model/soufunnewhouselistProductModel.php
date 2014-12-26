@@ -22,7 +22,9 @@ class soufunnewhouselistProductModel extends productXModel {
 
         $nodes = $this->_xpath->query($filter);
         $address = $this->_config[\elements::CATEGORY_ITEM_AREA];
+        $tags = './/p[@class="sf_status"]/a/text()';
         $this->_category_item_area = array();
+        $this->_category_item_dprice = array();
         foreach ($nodes as $k=>$node) {
 
             //address
@@ -49,15 +51,25 @@ class soufunnewhouselistProductModel extends productXModel {
                 }
             }
 
+            //TAGS
+            foreach ($this->_xpath->query($tags, $node) as $child) {
+
+                if($child->nodeValue)
+                    $this->_category_item_dprice[$k][] = $child->nodeValue;
+            }
         }
 
-        return $this->_category_item_area;
+        return $this->_category_item_dprice;
     }
 
     public function getCategoryCommon()
     {
         $data = parent::getCategoryItemOprice();
         $this->_categorycommon = array();
+        if(!$data){
+            $filter = '//span[@class="shoucang"]/@onclick||2';
+            $data = $this->_getRegexpInfo($filter,$this->getContent());
+        }
         foreach($data as $k=>$nodes)
         {
             $str = str_replace(array("PostSelect(",");","'"),"",$nodes);
@@ -69,6 +81,8 @@ class soufunnewhouselistProductModel extends productXModel {
                 $this->_categorycommon['Name'][$k] = $arr[2];
                 $this->_categorycommon['Num'][$k] = $arr[1];
                 $this->_categorycommon['Category_Item_Url'][$k] = intval($arr[1]);
+                $this->_categorycommon['City'][$k] = $arr[4];
+//                $this->_categorycommon['Category_Item_Url'][$k] = $arr[8];
             }
         }
 
