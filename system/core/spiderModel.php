@@ -279,7 +279,14 @@ foreach($Categorylist as $k=>$v)
                                 $item['job'] = $job;
                                 if($item[\elements::CATEGORY_ITEM_URL])
                                      $this->pools->set ( $poolname, $item[\elements::CATEGORY_ITEM_URL] );//将category_item_url加入任务池中 2014.12.20 22:32
-                                $this->mongodb->insert($this->spidername.'_category_list',$item);
+                                $f = $this->mongodb->insert($this->spidername.'_category_list',$item);
+                                //怀疑这里有问题
+                                if(!$f)
+                                {
+                                    $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
+                                    $this->pools->deljob($name,$job);//加入删除备份任务机制
+                                    $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
+                                }
                             }
                         }
 
