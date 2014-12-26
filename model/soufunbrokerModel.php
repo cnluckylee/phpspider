@@ -8,7 +8,9 @@ class soufunbrokerModel extends spiderModel
         $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
         $poolname = $this->spidername . 'Category';
         $sid = Application::$_spider ['stid'];
-        $data = $this->mongodb->find($collection,array());
+//        $regex = new MongoRegex("/.esf.nb.fang./");
+        $data = $this->mongodb->find($collection,array());//"source_url"=>$regex
+
 
         /**
          * 写入mongodb category集合
@@ -17,20 +19,27 @@ class soufunbrokerModel extends spiderModel
         $this->mongodb->remove ( $collection_category_name, array () ); // 删除原始数据，保存最新的数据
         foreach($data as $k=>$v)
         {
+
             $result = array();
+            $baseurl = str_replace(array("-i31-j310/","-i31-j310"),"",$v['source_url']);
+            $result[] = $baseurl.'-j310-i3';
+            $companys = array_merge($v['dprice'],$v['characters']);
+
             if($v['price_url'])
             {
                 $urls = array_unique($v['price_url']);
-                $v['dprice'] = array_unique($v['dprice']);
+
+                $companys = array_unique($companys);
                 foreach($urls as $u)
                 {
-
                     $baseurl2 = str_replace(array("/-j310-i31","/-i31-j310/","-i31-j310"),"",$u);
-                    foreach($v['dprice'] as $kk=>$vv)
+                    $result[] = $baseurl2.'-j310-i3';
+                    foreach($companys as $kk=>$vv)
                     {
                         if($vv && $vv!="不限")
                         {
                             $jjgs = '-c5'.urlencode(mb_convert_encoding($vv, 'GB2312', 'UTF-8'));
+//                            $jjgs = '-c5'.$vv;
                             $result[] = $baseurl2.$jjgs.'-i3';
                         }else if($vv!="不限"){
                             $result[] = $baseurl2.'-j310-i3';
@@ -38,17 +47,17 @@ class soufunbrokerModel extends spiderModel
                     }
                 }
             }else{
-                $baseurl = str_replace(array("-i31-j310/","-i31-j310"),"",$v['source_url']);
-                $result[] = $baseurl.'-j310-i3';
-                foreach($v['dprice'] as $kk=>$vv)
+                foreach($companys as $kk=>$vv)
                 {
                     if($vv && $vv!="不限"){
                         $jjgs = '-c5'.urlencode(mb_convert_encoding($vv, 'GB2312', 'UTF-8'));
+//                        $jjgs = '-c5'.$vv;
                         $result[] = $baseurl.$jjgs.'-j310-i3';
                     }
                 }
             }
             $Categorylist = array_unique ( $result );
+
             $mondata2 = array ();
             foreach ( $Categorylist as $name => $cid ) {
                 $this->pools->set ( $poolname, $cid );

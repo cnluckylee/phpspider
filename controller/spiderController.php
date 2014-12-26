@@ -88,6 +88,22 @@ class spiderController extends Controller {
         	
         }
 
+        /**
+         * categoryretry
+         */
+        public function retrycategory()
+        {
+            $this->model->retry('Category');
+        }
+
+        /**
+         * categoryretry
+         */
+        public function retryitem()
+        {
+            $this->model->retry('Item');
+        }
+
     /**
      * 转json
      */
