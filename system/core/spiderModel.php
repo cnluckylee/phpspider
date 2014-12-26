@@ -175,7 +175,6 @@ foreach($Categorylist as $k=>$v)
 		exit ( "stack all over\n" );
 	}
 	function CategroyJob() {
-
         header("Content-type: text/html; charset=utf-8");
         $name = $this->spidername . 'Category';
         $jobname = 'Category';
@@ -183,13 +182,6 @@ foreach($Categorylist as $k=>$v)
 		$tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
-
-
-//       $job = 'http://newhouse.anqing.fang.com/house/s/list/c6y-b9';
-
-//        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
-
-//        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
 		$poolname = $this->spidername . 'Item';
 		$Category = Application::$_spider [elements::CATEGORY];
 
@@ -235,10 +227,6 @@ foreach($Categorylist as $k=>$v)
                     }
                     $tmpurls [$url] = $url;
 				}
-//$tmpurls = array();
-
-//                $tmpurls[$job] = $job;
-//print_r($tmpurls);
                 $pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
 
                 /**
@@ -268,8 +256,7 @@ foreach($Categorylist as $k=>$v)
                         $item_urls = isset ( $match_out [$match] ) ? $match_out [$match] : "";
                     }
                     $item_urls = array_unique ( $item_urls );
-                    if(!$page)
-                    print_r($tmpurls);
+
                     //加入错误日志
                     unset($tmpurls[$rurl]);
                     //加入列表页数据的获取并保存
@@ -278,10 +265,6 @@ foreach($Categorylist as $k=>$v)
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
-//print_r($categorydata);
-//print_r($rurl);
-//print_r($page);
-
                         if($categorydata){
                             foreach($categorydata as $item)
                             {
@@ -296,9 +279,7 @@ foreach($Categorylist as $k=>$v)
                     }
 
 				}
-
 				$s = $s + $pagesize;
-
                 if($tmpurls)
                 {
                     foreach($tmpurls as $url)
@@ -310,22 +291,12 @@ foreach($Categorylist as $k=>$v)
                         'addtime' => date ( 'Y-m-d H:i:s' )
                     ) );
                 }
+                sleep(1);
 			} while ( $s <= $totalpages );
 		}
-        sleep(1);
-//		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
+        $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
         $this->pools->deljob($name,$job);//加入删除备份任务机制
 		$this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
-        $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
-//		$jobs2 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
-
-/*		$this->log->msglog ( array (
-				'job' => $job,
-				'runjobs1' => $jobs1,
-				'runjobs2' => $jobs2,
-				'addtime' => date ( 'Y-m-d H:i:s' ) 
-		) );
-*/
 //		$this->autostartitemmaster ();
 		exit ();
 	}
@@ -346,7 +317,7 @@ foreach($Categorylist as $k=>$v)
         if (! $pageHtml) {
 //			$this->autostartitemmaster ();
             $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
-            $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
+            $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
             $this->log->errlog ( array (
                 'job' => $job,
                 'Categoryurl' => $Categoryurl,

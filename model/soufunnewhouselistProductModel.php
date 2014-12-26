@@ -93,12 +93,25 @@ class soufunnewhouselistProductModel extends productXModel {
         $str = parent::getCategoryItemUrL();
         if(!$str)
         {
-           $this->_category_item_skuid = array();
+           $this->_category_item_url = array();
            $filter = '//strong[@class="f14px"]/a/@href||2';
-            $this->_category_item_skuid = $this->_category_item_url = $this->_getRegexpInfo($filter,$this->getContent());
+            $this->_category_item_url = $this->_category_item_url = $this->_getRegexpInfo($filter,$this->getContent());
         }
         return $this->_category_item_url;
     }
+
+    public function getCategoryItemSkuid()
+    {
+        $str = parent::getCategoryItemSkuid();
+        if(!$str)
+        {
+            $this->_category_item_skuid = array();
+            $filter = '//strong[@class="f14px"]/a/@href||2';
+            $this->_category_item_skuid = $this->_category_item_url = $this->_getRegexpInfo($filter,$this->getContent());
+        }
+        return $this->_category_item_skuid;
+    }
+
     public function getCategoryItemName()
     {
         $data = parent::getCategoryItemName();
