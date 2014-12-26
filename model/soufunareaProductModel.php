@@ -67,4 +67,15 @@ class soufunareaProductModel extends productXModel {
         $this->_productID = $s.'-'.$str;
         return $this->_productID;
     }
+
+    public function getPrice()
+    {
+        $this->_price = parent::getPrice();
+        if(!$this->_price)
+        {
+            $filter = '//ul[@class="info ml25"]/li[1]/a/text()||2';
+            $this->_price = $this->_getRegexpInfo($filter,$this->getContent());
+        }
+        return $this->_price;
+    }
 }
