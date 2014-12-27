@@ -34,32 +34,29 @@ class soufunnewhouselistModel extends spiderModel
     }
 
     function getcategorytotalpages($Categoryurl,$job,$jobname,$Category) {
-
-        $xpath = $Category [elements::CATEGORY_MATCHING];
         // 首先获取下该分类下面的总页数
         $pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
         if (! $pageHtml) {
 //			$this->autostartitemmaster ();
-            $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
-            $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
+
             $this->log->errlog ( array (
                 'job' => $job,
                 'Categoryurl' => $Categoryurl,
                 'error' => 2,
                 'addtime' => date ( 'Y-m-d H:i:s' )
             ) );
-            exit ();
+            return 0;
         }
 
 
-            $preg_pagetotals = $Category [elements::CATEGORY_LIST_PREG];
+        $preg_pagetotals = $Category [elements::CATEGORY_LIST_PREG];
 
-            preg_match ( $preg_pagetotals, $pageHtml [$Categoryurl], $match_pagetotals );
-            foreach($match_pagetotals as $k=>$v)
-            {
-                $match_pagetotals[$k] = trim($v);
-            }
-            $totalpages = $match_pagetotals ? $match_pagetotals [$Category [elements::CATEGORY_LIST_MATCH]] : 0;
+        preg_match ( $preg_pagetotals, $pageHtml [$Categoryurl], $match_pagetotals );
+        foreach($match_pagetotals as $k=>$v)
+        {
+            $match_pagetotals[$k] = trim($v);
+        }
+        $totalpages = $match_pagetotals ? $match_pagetotals [$Category [elements::CATEGORY_LIST_MATCH]] : 0;
 
 
         if(!$totalpages && $pageHtml){

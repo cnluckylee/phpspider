@@ -42,6 +42,7 @@ $siteconfig = array(
         elements::ITEM_OPRICE =>'//div[@class="item_jingji"]/a/text()||2',
         elements::ITEM_DPRICE =>'//div[@class="item_jingji"]/a/@href||2',
         elements::BASE_URL => 'http://sh.esf.leju.com/',
+
 		elements::STID => 121,
         elements::HTML_ZIP =>'gzip',
 		elements::DATASOURCE => '1',

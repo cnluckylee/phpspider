@@ -182,6 +182,7 @@ foreach($Categorylist as $k=>$v)
 		$tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
+//        $job = 'http://newhouse.fang.com/house/s/list/c6y-b9';
 		$poolname = $this->spidername . 'Item';
 		$Category = Application::$_spider [elements::CATEGORY];
 
@@ -195,6 +196,7 @@ foreach($Categorylist as $k=>$v)
          * 有总页数就记录总页数到category集合
          * 否则就kill job
          */
+
         if($totalpages && $totalpages>0){
             $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
             $this->mongodb->update ( $collection_category_name,
@@ -278,6 +280,7 @@ foreach($Categorylist as $k=>$v)
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
+//print_r($categorydata);
                         if($categorydata){
                             foreach($categorydata as $item)
                             {
