@@ -202,9 +202,12 @@ foreach($Categorylist as $k=>$v)
                 array('$set'=>array('totalcount'=>$totalpages)),
                 array("upsert"=>1,"multiple"=>true));
         }else{
-            //kill job
-            $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
-            $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
+            //kill job,防止超减
+            $getrunjobs = $this->redis->hget ( $this->spidername . 'CategoryCurrent',HOSTNAME);
+            if($getrunjobs>0){
+                $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
+                $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
+            }
             exit();
         }
 
@@ -241,8 +244,11 @@ foreach($Categorylist as $k=>$v)
 				 */
 				if ($s == 0 && count ( $pages ) == 0) {
 //					$this->master ( 'Item' );
-					$this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
-                    $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
+                    $getrunjobs = $this->redis->hget ( $this->spidername . 'CategoryCurrent',HOSTNAME);
+                    if($getrunjobs>0){
+                        $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
+                        $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
+                    }
 					$this->log->errlog ( array (
 							'job' => $job,
 							'Categoryurl' => $Categoryurl,
@@ -283,9 +289,11 @@ foreach($Categorylist as $k=>$v)
                                 //怀疑这里有问题
                                 if(!$f)
                                 {
-                                    $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
-                                    $this->pools->deljob($name,$job);//加入删除备份任务机制
-                                    $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
+                                    $getrunjobs = $this->redis->hget ( $this->spidername . 'CategoryCurrent',HOSTNAME);
+                                    if($getrunjobs>0){
+                                        $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
+                                        $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
+                                    }
                                 }
                             }
                         }
@@ -633,5 +641,20 @@ foreach($Categorylist as $k=>$v)
             fclose($file);
             $s +=$limit;
         }while($s<$total);
+    }
+
+    /**
+     * @param $jobname
+     */
+
+    function retry($jobname)
+    {
+        $poolname = $this->spidername.$jobname;
+        $data = $this->pools->getUnfinished($this->spidername,$jobname);
+        foreach($data as $job)
+        {
+            $this->pools->set($poolname,$job);
+            echo "load: ".$job."\n";
+        }
     }
 }
