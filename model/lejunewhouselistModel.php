@@ -50,12 +50,14 @@ class lejunewhouselistModel extends spiderModel
             ) );
             foreach($mondata as $item)
             {
-                $url = $item['Category_Item_url'];
+
+                $url = $item['Category_Item_Url'];
                 if(strstr($url,"&city"))
                     $url2 = $url;
                 else{
                     $url = str_replace("city","&city",$url);
-                    $this->mongodb->update($cname,array('_id'=>$item['_id']),array('$set'=>array('Category_Item_url'=>$url)));
+                    $item['Category_Item_Url'] = $url;
+                    $this->mongodb->update($cname,array('_id'=>$item['_id']),$item);
                     $url2 = $url;
                 }
                 $this->pools->set($collection,$url2);
