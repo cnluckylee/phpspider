@@ -168,6 +168,23 @@ class lejubroker2ProductModel extends productXModel {
         $this->_name = isset($out[1])?$out[1]:"";
         return $this->_name;
     }
+
+    public function getCategoryItemUrL()
+    {
+        $data = parent::getCategoryItemUrL();
+        $this->_category_item_url = array();
+        foreach($data as $k=>$v)
+        {
+            $arr = explode("-",$v);
+            $url = $v;
+            if(isset($arr[0]) && $arr[0])
+            {
+                $url = $arr[0].'-4';
+            }
+            $this->_category_item_url[] = $url;
+        }
+        return $this->_category_item_url;
+    }
  /*   public function  getBarcode()
     {
         $this->_barcode = parent::getBarcode();

@@ -111,9 +111,9 @@ class lejubrokerModel extends spiderModel
 */
     function tojson($cname)
     {
-        $cname = 'lejubroker_category_list';
+        $cname = 'lejubroker2_category_list';
         $total = $this->mongodb->count($cname);
-        $collection = 'lejubrokerItem';
+        $collection = 'lejubroker2Item';
         $s = 0;
         $limit = 1000;
         $companys = array();
@@ -125,24 +125,9 @@ class lejubrokerModel extends spiderModel
             ) );
             foreach($mondata as $item)
             {
-
-               $str = $item['Category_Item_Skuid'];
+               $str = $item['Category_Item_Url'];
                 $arr = explode("-",$str);
-                $p = '/shop\/(\d+)/';
-                preg_match($p,$str,$out);
-
-                $p2 = '/http:\/\/(\w+).esf/';
-                preg_match($p2,$str,$out2);
-                $domain = isset($out2[1])?$out2[1]:"";
-                $skuid = isset($out[1])?$out[1]:"";
-                $skuid = $domain.'-'.$skuid;
-                $d = $this->mongodbsec->findOne('lejubroker_Items',array('skuid'=>$skuid));
-                if(!$d)
-                {
-                    $this->redis->sadd($collection,$arr[0].'-4');
-                    $this->redis->hset('lejubrokerItemBak',$arr[0].'-4',1);
-                    echo "add :".$skuid."\n";
-                }
+                $this->redis->hset($collection.'Bak',$arr[0].'-4',1);
             }
             $s +=$limit;
             echo "has load:".$s."\n";
