@@ -34,4 +34,15 @@ class lejunewhouselistModel extends spiderModel
         echo "do over"."\n";
         exit;
     }
+
+    public function  tojson($cname)
+    {
+        $cname = 'lejunewhouselistItem';
+        $data = $this->redis->smembers($cname);
+        foreach($data as $k=>$v)
+        {
+            $this->pools->set($cname,$v);
+        }
+        exit("do over");
+    }
 }
