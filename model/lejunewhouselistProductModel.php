@@ -10,7 +10,7 @@
 
 
 /**
- * product model for jin dong website.
+ * product model for leju website.
  *
  * @package model
  */
@@ -23,14 +23,7 @@ class lejunewhouselistProductModel extends productXModel {
         return  $this->_barcode;
     }
 
-    public function getSales2()
-    {
-        $str = parent::getSales2();
-        $this->_sales = 0;
-        if(strstr($str,'e_ico6'))
-            $this->_sales = 1;
-        return  $this->_sales;
-    }
+
 
     public function getSales()
     {
@@ -112,11 +105,22 @@ class lejunewhouselistProductModel extends productXModel {
         }
         return $this->_productID;
     }
+
+    public function getIsbnCode()
+    {
+        $str = parent::getUrl();
+        if($str)
+        {
+            $tmp = parse_url($str);
+            parse_str($tmp['query'],$parr);
+            $this->_isbnCode = $parr['aid'];
+        }
+        return $this->_isbnCode;
+    }
+
+
     public function getItemCommon()
     {
-
-
-
         if (is_null($this->_itemcommon)) {
             $commons = $this->_config[\elements::ITEMCOMMON];
             $sourceurl = parent::getUrl();

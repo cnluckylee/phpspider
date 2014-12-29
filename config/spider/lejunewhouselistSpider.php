@@ -45,10 +45,11 @@ $siteconfig = array(
 		// item config
 		elements::ITEM_NAME => '//div[@class="area"]/a/text()||2',
         elements::ITEM_PRICE_URL => '//div[@class="area"]/a/@href||2',
-        elements::ITEM_SKUID =>'//div[@class="line "]/div[@class="item"]/a[@class="hover"]/text()||1',
+        elements::ITEM_SKUID =>'//div[@class="line "]/div[@class="item"]/a[@class="hover"]/text()||1',//hid
         elements::ITEM_OPRICE =>'//div[@class="item_jingji"]/a/text()||2',
         elements::ITEM_DPRICE =>'//div[@class="item_jingji"]/a/@href||2',
         elements::ITEM_BARCODE=>'//span[@id="ejuEndTime"]/@seconds||1',
+        elements::ITEM_ISBN =>'',//aid
         elements::ITEM_PROMOTION=>'//p[@class][2]/span[@class="e_wbk e_jz1"]/text()||1',
         elements::ITEM_SALES =>'//div[@class="d_menu fl mr10"]//li[3]//p[2]/a/text()||1',
         elements::ITEM_COMMENT_NUMBER_ALL =>'//div[@class="d_menu fl mr10"]//li[4]//p[2]/text()||1',//关注数
