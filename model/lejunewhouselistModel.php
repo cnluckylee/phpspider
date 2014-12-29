@@ -50,6 +50,7 @@ class lejunewhouselistModel extends spiderModel
             ) );
             foreach($mondata as $item)
             {
+
                 $url = $item['Category_Item_Url'];
                 if(strstr($url,"&city"))
                     $url2 = $url;
@@ -66,7 +67,7 @@ class lejunewhouselistModel extends spiderModel
                 $city = $parr2['city'];
 
                 $url2 = $baseurl.$parr['aid'].'&city='.$city.'&hid='.$parr['hid'];
-                $item['Category_Item_Url'] = $url;
+                $item['Category_Item_Url'] = $url2;
                 $this->mongodb->update($cname,array('_id'=>$item['_id']),$item);
                 $this->pools->set($collection,$url2);
             }
