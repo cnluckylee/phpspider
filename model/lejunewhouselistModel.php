@@ -37,12 +37,31 @@ class lejunewhouselistModel extends spiderModel
 
     public function  tojson($cname)
     {
-        $cname = 'lejunewhouselistItem';
-        $data = $this->redis->smembers($cname);
-        foreach($data as $k=>$v)
-        {
-            $this->pools->set($cname,$v);
-        }
-        exit("do over");
+        $cname = 'lejunewhouselist_category_list';
+        $total = $this->mongodb->count($cname);
+        $collection = 'lejunewhouselistItem';
+        $s = 0;
+        $limit = 1000;
+
+        do {
+            $mondata = $this->mongodb->find ( $cname, array (), array (
+                "start" => $s,
+                "limit" => $limit
+            ) );
+            foreach($mondata as $item)
+            {
+                $url = $item['Category_Item_url'];
+                if(strstr($url,"&city"))
+                    $url2 = $url;
+                else{
+                    $url = str_replace("city","&city",$url);
+                    $this->mongodb->update($cname,array('_id'=>$item['_id']),array('$set'=>array('Category_Item_url'=>$url)));
+                    $url2 = $url;
+                }
+                $this->pools->set($collection,$url2);
+            }
+            echo "has load".$s."\n";
+            $s +=$limit;
+        }while($s<$total);
     }
 }
