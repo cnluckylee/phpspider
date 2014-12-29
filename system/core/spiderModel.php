@@ -175,6 +175,7 @@ foreach($Categorylist as $k=>$v)
 		exit ( "stack all over\n" );
 	}
 	function CategroyJob() {
+
         header("Content-type: text/html; charset=utf-8");
         $name = $this->spidername . 'Category';
         $jobname = 'Category';
@@ -182,35 +183,68 @@ foreach($Categorylist as $k=>$v)
 		$tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
-//        $job = 'http://newhouse.fang.com/house/s/list/c6y-b9';
+
+//       $job = 'http://esf.dl.fang.com/agenthome';
+//        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
+
+//        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
 		$poolname = $this->spidername . 'Item';
 		$Category = Application::$_spider [elements::CATEGORY];
-
+		$xpath = $Category [elements::CATEGORY_MATCHING];
         if(isset($Category [elements::TRANSFORM]) && $Category [elements::TRANSFORM] === false)
             $Categoryurl = $job.$Category [elements::TRANSFORMADDSPECIL];
         else
             $Categoryurl = str_replace ( "#job", $job, $Category [elements::CATEGORY_LIST_URL] );
 
-        $totalpages = $this->getcategorytotalpages($Categoryurl,$job,$jobname,$Category);
-        /**
-         * 有总页数就记录总页数到category集合
-         * 否则就kill job
-         */
+		// 首先获取下该分类下面的总页数
+		$pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
+        if (! $pageHtml) {
+
+//			$this->autostartitemmaster ();
+			$this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
+            $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
+			$this->log->errlog ( array (
+					'job' => $job,
+					'Categoryurl' => $Categoryurl,
+					'error' => 2,
+					'addtime' => date ( 'Y-m-d H:i:s' )
+			) );
+			exit ();
+		}
+
+        if(isset(Application::$_spider [elements::TOTALPAGES])&&Application::$_spider [elements::TOTALPAGES]>0)
+            $totalpages = Application::$_spider [elements::TOTALPAGES];
+        else{
+            $preg_pagetotals = $Category [elements::CATEGORY_LIST_PREG];
+            if(strtolower($xpath) == 'xpath')
+            {
+                $totalpages = $this->curlmulit->getRegexpInfo($preg_pagetotals,$pageHtml [$Categoryurl],$Category [elements::CATEGORY_LIST_MATCH]);
+            }else{
+                preg_match ( $preg_pagetotals, $pageHtml [$Categoryurl], $match_pagetotals );
+                foreach($match_pagetotals as $k=>$v)
+                {
+                    $match_pagetotals[$k] = trim($v);
+                }
+                $totalpages = $match_pagetotals ? $match_pagetotals [$Category [elements::CATEGORY_LIST_MATCH]] : 0;
+            }
+        }
+
+if(!$totalpages && $pageHtml){
+    $this->log->errlog ( array (
+        'job' => $job,
+        'Categoryurl' => $Categoryurl,
+        'error' => 2,
+        'yy' =>'no total and have page',
+        'addtime' => date ( 'Y-m-d H:i:s' )
+    ) );
+}
+        $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
 
         if($totalpages && $totalpages>0){
-            $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
             $this->mongodb->update ( $collection_category_name,
                 array ('cid' => $job),
                 array('$set'=>array('totalcount'=>$totalpages)),
                 array("upsert"=>1,"multiple"=>true));
-        }else{
-            //kill job,防止超减
-            $getrunjobs = $this->redis->hget ( $this->spidername . 'CategoryCurrent',HOSTNAME);
-            if($getrunjobs>0){
-                $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
-                $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
-            }
-            exit();
         }
 
 		$s = isset ( $Category [elements::CATEGORY_PAGE_START] ) ? $Category[elements::CATEGORY_PAGE_START] : 0;
@@ -239,23 +273,24 @@ foreach($Categorylist as $k=>$v)
                     }
                     $tmpurls [$url] = $url;
 				}
+//$tmpurls = array();
+
+//                $tmpurls[$job] = $job;
+//print_r($tmpurls);
                 $pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
 
                 /**
 				 * 能否抓去到数据检测,此代码保留
 				 */
 				if ($s == 0 && count ( $pages ) == 0) {
-//					$this->master ( 'Item' );
-                    $getrunjobs = $this->redis->hget ( $this->spidername . 'CategoryCurrent',HOSTNAME);
-                    if($getrunjobs>0){
-                        $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
-                        $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
-                    }
+					$this->master ( 'Item' );
+					$this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
+                    $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
 					$this->log->errlog ( array (
 							'job' => $job,
 							'Categoryurl' => $Categoryurl,
 							'error' => 1,
-							'addtime' => date ( 'Y-m-d H:i:s' ) 
+							'addtime' => date ( 'Y-m-d H:i:s' )
 					) );
 					exit ();
 				}
@@ -271,7 +306,8 @@ foreach($Categorylist as $k=>$v)
                         $item_urls = isset ( $match_out [$match] ) ? $match_out [$match] : "";
                     }
                     $item_urls = array_unique ( $item_urls );
-
+                    if(!$page)
+                    print_r($tmpurls);
                     //加入错误日志
                     unset($tmpurls[$rurl]);
                     //加入列表页数据的获取并保存
@@ -281,6 +317,9 @@ foreach($Categorylist as $k=>$v)
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
 //print_r($categorydata);
+//print_r($rurl);
+//print_r($page);
+
                         if($categorydata){
                             foreach($categorydata as $item)
                             {
@@ -288,23 +327,16 @@ foreach($Categorylist as $k=>$v)
                                 $item['job'] = $job;
                                 if($item[\elements::CATEGORY_ITEM_URL])
                                      $this->pools->set ( $poolname, $item[\elements::CATEGORY_ITEM_URL] );//将category_item_url加入任务池中 2014.12.20 22:32
-                                $f = $this->mongodb->insert($this->spidername.'_category_list',$item);
-                                //怀疑这里有问题
-                                if(!$f)
-                                {
-                                    $getrunjobs = $this->redis->hget ( $this->spidername . 'CategoryCurrent',HOSTNAME);
-                                    if($getrunjobs>0){
-                                        $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
-                                        $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
-                                    }
-                                }
+                                $this->mongodb->insert($this->spidername.'_category_list',$item);
                             }
                         }
 
                     }
 
 				}
+
 				$s = $s + $pagesize;
+
                 if($tmpurls)
                 {
                     foreach($tmpurls as $url)
@@ -316,73 +348,25 @@ foreach($Categorylist as $k=>$v)
                         'addtime' => date ( 'Y-m-d H:i:s' )
                     ) );
                 }
-                sleep(1);
+                sleep(3);
 			} while ( $s <= $totalpages );
 		}
-        $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
+//		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
         $this->pools->deljob($name,$job);//加入删除备份任务机制
 		$this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
+        $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
+//		$jobs2 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
+
+/*		$this->log->msglog ( array (
+				'job' => $job,
+				'runjobs1' => $jobs1,
+				'runjobs2' => $jobs2,
+				'addtime' => date ( 'Y-m-d H:i:s' )
+		) );
+*/
 //		$this->autostartitemmaster ();
 		exit ();
 	}
-
-    /**
-     * 获取分类页面总页数
-     * @param $Categoryurl
-     * @param $job
-     * @param $jobname
-     * @param $Category
-     * @return int|null|string
-     */
-    function getcategorytotalpages($Categoryurl,$job,$jobname,$Category)
-    {
-        $xpath = $Category [elements::CATEGORY_MATCHING];
-        // 首先获取下该分类下面的总页数
-        $pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
-        if (! $pageHtml) {
-////			$this->autostartitemmaster ();
-//            $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
-//            $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
-            $this->log->errlog ( array (
-                'job' => $job,
-                'Categoryurl' => $Categoryurl,
-                'error' => 2,
-                'yy' =>'not find page',
-                'addtime' => date ( 'Y-m-d H:i:s' )
-            ) );
-            return 0;
-        }
-
-        if(isset(Application::$_spider [elements::TOTALPAGES])&&Application::$_spider [elements::TOTALPAGES]>0)
-            $totalpages = Application::$_spider [elements::TOTALPAGES];
-        else{
-            $preg_pagetotals = $Category [elements::CATEGORY_LIST_PREG];
-            if(strtolower($xpath) == 'xpath')
-            {
-                $totalpages = $this->curlmulit->getRegexpInfo($preg_pagetotals,$pageHtml [$Categoryurl],$Category [elements::CATEGORY_LIST_MATCH]);
-            }else{
-                preg_match ( $preg_pagetotals, $pageHtml [$Categoryurl], $match_pagetotals );
-                foreach($match_pagetotals as $k=>$v)
-                {
-                    $match_pagetotals[$k] = trim($v);
-                }
-                $totalpages = $match_pagetotals ? $match_pagetotals [$Category [elements::CATEGORY_LIST_MATCH]] : 0;
-            }
-        }
-        if(!$totalpages && $pageHtml){
-//            $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
-//            $this->redis->hincrby ( $this->spidername . 'CategoryCurrent',HOSTNAME,-1);
-            $this->log->errlog ( array (
-                'job' => $job,
-                'Categoryurl' => $Categoryurl,
-                'error' => 2,
-                'yy' =>'no total and have page',
-                'addtime' => date ( 'Y-m-d H:i:s' )
-            ) );
-            return 0;
-        }
-        return $totalpages;
-    }
 	function autostartitemmaster($jobname = 'Item') {
 		if (! $this->redis->exists ( $this->spidername . $jobname . 'JobRun' )) {
 			$this->redis->set ( $this->spidername . $jobname . 'JobRun', 1 );
@@ -401,7 +385,7 @@ foreach($Categorylist as $k=>$v)
 		if(isset($_GET['debug']) && $_GET['debug']=='itemjob')
 		{
 				$urls = isset($_GET['url'])?trim($_GET['url']):"";
-		}else			
+		}else
 			$urls = $this->pools->get ( $poolname, $Category [elements::CATEGORY_GROUP_SIZE] );
 
         $site_conversion_rules = $this->getsite_conversion_rules();
@@ -489,7 +473,7 @@ foreach($Categorylist as $k=>$v)
 		$this->autostartitemmaster ( 'Update' );
 		exit ('Update Stack over');
 	}
-	
+
 	/**
 	 * updatejob
 	 */
@@ -503,7 +487,7 @@ foreach($Categorylist as $k=>$v)
 		if (! $updateconfig) {
 			exit ( $this->spidername . "'s updateconfig not find" );
 		}
-		$strs = $this->pools->get ( $poolname, $Category ['Category_Group_Size'] );		
+		$strs = $this->pools->get ( $poolname, $Category ['Category_Group_Size'] );
 		$priceurls = $sourceurls = array ();
 		$Productmodel = $this->spidername . 'ProductModel';
 		foreach ( $strs as $str ) {
@@ -644,20 +628,5 @@ foreach($Categorylist as $k=>$v)
             fclose($file);
             $s +=$limit;
         }while($s<$total);
-    }
-
-    /**
-     * @param $jobname
-     */
-
-    function retry($jobname)
-    {
-        $poolname = $this->spidername.$jobname;
-        $data = $this->pools->getUnfinished($this->spidername,$jobname);
-        foreach($data as $job)
-        {
-            $this->pools->set($poolname,$job);
-            echo "load: ".$job."\n";
-        }
     }
 }
