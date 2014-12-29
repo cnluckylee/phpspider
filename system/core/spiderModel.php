@@ -382,7 +382,7 @@ if(!$totalpages && $pageHtml){
 		$Category = Application::$_spider ['Category'];
 		$collection_item_name = Application::$_spider [elements::COLLECTION_ITEM_NAME];
         $urls = array();
-//$_GET['url'] = 'http://www.leju.com/?mod=api_projectlist&aid=198503&type=foucs_equan';
+//$_GET['url'] = 'http://project.leju.com/house.php?city=sh&hid=104367&aid=192325';
 		if(isset($_GET['debug']) && $_GET['debug']=='itemjob')
 		{
 				$urls = isset($_GET['url'])?trim($_GET['url']):"";
@@ -400,7 +400,6 @@ if(!$totalpages && $pageHtml){
         }
 
 		$pages = $this->curlmulit->remote ( $urls, null, false, Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
-
 // 		$fetchitems = array ();
         $tmpurls = $urls;
 		$Productmodel = $this->spidername . 'ProductModel';
@@ -629,5 +628,20 @@ if(!$totalpages && $pageHtml){
             fclose($file);
             $s +=$limit;
         }while($s<$total);
+    }
+
+    /**
+     * @param $jobname
+     */
+
+    function retry($jobname)
+    {
+        $poolname = $this->spidername.$jobname;
+        $data = $this->pools->getUnfinished($this->spidername,$jobname);
+        foreach($data as $job)
+        {
+            $this->pools->set($poolname,$job);
+            echo "load: ".$job."\n";
+        }
     }
 }

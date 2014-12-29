@@ -41,7 +41,6 @@ $siteconfig = array(
                         'PropertyType'=>'//div[@class="txt"]/h3/p[2]/text()||2',
                     ),
                 )
-
 		),
 		// item config
 		elements::ITEM_NAME => '//div[@class="area"]/a/text()||2',
@@ -53,12 +52,6 @@ $siteconfig = array(
         elements::ITEM_PROMOTION=>'//p[@class][2]/span[@class="e_wbk e_jz1"]/text()||1',
         elements::ITEM_SALES =>'//div[@class="d_menu fl mr10"]//li[3]//p[2]/a/text()||1',
         elements::ITEM_COMMENT_NUMBER_ALL =>'//div[@class="d_menu fl mr10"]//li[4]//p[2]/text()||1',//关注数
-
-        elements::BASE_URL => 'http://sh.esf.leju.com/',
-//        elements::ITEM_SALES=>'//i[@class="e_ico6 mt3"]/@class||1',//是否E金券
-		elements::STID => 121,
-        elements::HTML_ZIP =>'gzip',
-		elements::DATASOURCE => '1',
 		elements::COLLECTION_ITEM_NAME => 'Lejunewhouse_List_Items',
 		elements::COLLECTION_CATEGORY_NAME => 'lejunewhouselist_category',
         elements::ITEMCOMMON =>array(
@@ -70,10 +63,15 @@ $siteconfig = array(
             'IssuedTime'=>'//div[@id="scroll_link3"]//p/strong/text()||1',//发行时间
             'Sold'=>'//div[@id="scroll_link3"]//p/em[1]/text()||1',//已售出
             'TotalSold'=>'//div[@id="scroll_link3"]//p/em[2]/text()||1',//发行量
-            'Ecoupon'=>'//div[@class="d_menu fl mr10"]//li[1]//p[2]/text()||1',//Ecoupon
+            'Ecoupon'=>'//div[@class="d_menu fl mr10"]//li[1]//p[2]/a/text()||1',//Ecoupon
             'ActiveTime'=>'//div[@class="d_menu fl mr10"]//li[2]//p[2]/text()||1',//活动时间
-
         ),
+        elements::ITEM_SALES=>'//p[@class="infor"]/span[1]/em/text()||1',//访问人数
+        elements::ITEM_NAME=>'//p[@class="infor"]/span[2]/text()||1',//更新时间
+        elements::BASE_URL => 'http://sh.esf.leju.com/',
+        elements::STID => 121,
+        elements::HTML_ZIP =>'gzip',
+        elements::DATASOURCE => '1',
         elements::ITEMPAGECHARSET => 'utf-8',
         elements::CHARSET => 'utf-8',
 		elements::MANAGER => 'living',
