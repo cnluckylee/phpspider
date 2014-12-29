@@ -4,13 +4,13 @@
 $CONFIG['system']['db'] = array(
     'mongodb' => array(
         'host' => 'mongo.wcc.cc',
-        'port' => 27017,
+        'port' => 3376,
         'timeout' => 0,
         'dbname' => 'wcc_online_data'
     ),
     'redis' => array(
         'host' => 'redis.wcc.cc',
-        'port' => 6379,
+        'port' => 3362,
         'timeout' => 0
     ),
 /*		

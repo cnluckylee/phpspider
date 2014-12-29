@@ -71,4 +71,18 @@ class pools{
         $delarr[] = $jobname;
         $this->redis->hdel($spidername,$delarr);
     }
+
+    /**
+     * 获取未正常完成的任务，并记录次数,每获取一次加1
+     */
+    public function getUnfinished($spidername,$jobname)
+    {
+        $rkey = $spidername.$jobname.'Bak';
+        $jobs = $this->redis->hkeys($rkey);
+        foreach($jobs as $job)
+        {
+            $this->redis->hincrby($rkey,$job,1);
+        }
+        return $jobs;
+    }
 }

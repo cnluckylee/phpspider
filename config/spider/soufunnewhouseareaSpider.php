@@ -6,7 +6,7 @@ $siteconfig = array(
 		elements::DB => array(
 				'mongodb' => array(
 						elements::HOST => 'mongo.wcc.cc',
-						elements::PORT => '27017',
+						elements::PORT => '3376',
 						elements::TIMEOUT => 0,
 						elements::DBNAME => 'soufun'
 				)
@@ -26,6 +26,7 @@ $siteconfig = array(
 				elements::CATEGORY_LIST_GOODS_PREG => '//ul[@class="district clearfix"]/li/a/@href||2',
 				elements::CATEGORY_LIST_GOODS_Match => 1,
                 elements::CATEGORY_MATCHING => 'xpath',
+                elements::CATEGORY_NO_ADD_PAGE => true,
                 elements::CATEGORY_ITEM_PREG => array(
                     elements::CATEGORY_ITEM_MATCHING =>'xpath',
                     elements::CATEGORY_ITEM_SKUID =>'//div[@id="sjina_C01_08"]//div[@class="con_cy fl ml20"][1]/a/@href||2',
@@ -35,13 +36,10 @@ $siteconfig = array(
                 )
 
 		),
-		// item config
-		elements::ITEM_NAME => '//a[@class="fl"][1]/text()||1',
-        elements::ITEM_SKUID =>'//a[@class="fl"][1]/text()||1',
-        elements::ITEM_PROMOTION =>'//div[@id="sjina_C01_24"]/a/@href||2',
-        elements::ITEM_CHARACTERS =>'//div[@id="sjina_C01_24"]/a/text()||2',
-        elements::BASE_URL => 'http://sh.esf.leju.com/',
-		elements::STID => 121,
+    /**
+     * 不需要item
+     */
+    elements::STID => 121,
         elements::HTML_ZIP =>'gzip',
 		elements::DATASOURCE => '1',
         elements::TOTALPAGES =>1,

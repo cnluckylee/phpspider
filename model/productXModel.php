@@ -1215,6 +1215,37 @@ abstract class productXModel
         return $this->_baseurl;
     }
 
+    /**
+     * @param $url
+     * @return DOMXPath
+     */
+    public function getXpathByUrl($url)
+    {
+        $urls[$url] = $url;
+        $this->curlmulit = new CurlMulit ();
+        $tcontent = $this->curlmulit->remote ( $urls, null, false, Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
+        $content = $tcontent[$url];
+        $dom = new DOMDocument('1.0','utf-8');
+        $content = $this->loadNprepare($content,'utf-8');
+        @$dom->loadHTML($content);
+        $dom->encoding = 'utf8';
+        $xpath = new DOMXPath($dom);
+        return $xpath;
+    }
+
+    /**
+     * @param $url
+     * @return content
+     */
+    public function getContentByUrl($url)
+    {
+        $urls[$url] = $url;
+        $this->curlmulit = new CurlMulit ();
+        $tcontent = $this->curlmulit->remote ( $urls, null, false, Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
+        $content = $tcontent[$url];
+        return $content;
+    }
+
 
     /**
      * export the product model's properties to array

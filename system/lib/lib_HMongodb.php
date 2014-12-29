@@ -165,6 +165,7 @@ class HMongodb {
 			return true;
 		} catch ( MongoCursorException $e ) {
 			$this->error = $e->getMessage ();
+//            print_r($record);
 			return false;
 		}
 	}

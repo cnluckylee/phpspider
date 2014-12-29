@@ -34,4 +34,45 @@ class lejunewhouselistModel extends spiderModel
         echo "do over"."\n";
         exit;
     }
+
+    public function  tojson($cname)
+    {
+        $cname = 'lejunewhouselist_category_list';
+        $total = $this->mongodb->count($cname);
+        $collection = 'lejunewhouselistItem';
+        $s = 0;
+        $limit = 1000;
+        $baseurl = 'http://project.leju.com/house.php?&aid=';
+        do {
+            $mondata = $this->mongodb->find ( $cname, array (), array (
+                "start" => $s,
+                "limit" => $limit
+            ) );
+            foreach($mondata as $item)
+            {
+
+                $url = $item['Category_Item_Url'];
+                if(strstr($url,"&city"))
+                    $url2 = $url;
+                else{
+                    $url = str_replace("city","&city",$url);
+                }
+                $url2 = $url;
+                $tmp = parse_url($url2);
+                parse_str($tmp['query'],$parr);
+
+
+                $tmp2 = parse_url($item['Category_Source_Url']);
+                parse_str($tmp2['query'],$parr2);
+                $city = $parr2['city'];
+
+                $url2 = $baseurl.$parr['aid'].'&city='.$city.'&hid='.$parr['hid'];
+                $item['Category_Item_Url'] = $url2;
+                $this->mongodb->update($cname,array('_id'=>$item['_id']),$item);
+                $this->pools->set($collection,$url2);
+            }
+            echo "has load".$s."\n";
+            $s +=$limit;
+        }while($s<$total);
+    }
 }

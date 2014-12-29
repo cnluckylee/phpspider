@@ -18,6 +18,7 @@ define('CONTROLLER_PATH', ROOT_PATH . '/controller');
 define('MODEL_PATH', ROOT_PATH . '/model');
 define('VIEW_PATH', ROOT_PATH . '/view');
 define('LOG_PATH', ROOT_PATH . '/log/');
+define('HOSTNAME',gethostname());
 
 final class Application {
 

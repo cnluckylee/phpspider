@@ -6,14 +6,14 @@ $siteconfig = array(
 		elements::DB => array(
 				'mongodb' => array(
 						elements::HOST => 'mongo.wcc.cc',
-						elements::PORT => '27017',
+						elements::PORT => '3376',
 						elements::TIMEOUT => 0,
 						elements::DBNAME => 'soufun'
 				)
 		),
 		elements::CATEGORY => array(
 				elements::CATEGORY_URL => 'http://img1.soufun.com/secondhouse/image/esfnew/scripts/citys.js?v=3.201412041',
-				elements::CATEGORY_MATCH_PREG => '/"name": "(.*)", "spell": "(.*)", "url": "http:\/\/esf.(\w+)\.soufun\.com\/"/',
+				elements::CATEGORY_MATCH_PREG => '/"name": "(.*)", "spell": "(.*)", "url": "(.*)"/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>1,'cid'=>3),
 				elements::CATEGORY_GROUP_SIZE => 2,
 				elements::CATEGORY_LIST_URL => 'http://esf.#job.fang.com/agenthome/',
@@ -76,7 +76,7 @@ $siteconfig = array(
 		elements::COLLECTION_ITEM_NAME => 'soufunesflist_items',
 		elements::COLLECTION_CATEGORY_NAME => 'soufunesflist_category',
         elements::ITEMPAGECHARSET => 'gbk',
-        elements::CHARSET => '',
+        elements::CHARSET => 'utf-8',
 		elements::MANAGER => 'living',
 		elements::UPDATEDATA=>array(
 				elements::ITEM_DPRICE,

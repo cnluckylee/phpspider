@@ -10,7 +10,7 @@
 
 
 /**
- * product model for jin dong website.
+ * product model for leju website.
  *
  * @package model
  */
@@ -23,14 +23,7 @@ class lejunewhouselistProductModel extends productXModel {
         return  $this->_barcode;
     }
 
-    public function getSales2()
-    {
-        $str = parent::getSales2();
-        $this->_sales = 0;
-        if(strstr($str,'e_ico6'))
-            $this->_sales = 1;
-        return  $this->_sales;
-    }
+
 
     public function getSales()
     {
@@ -79,7 +72,7 @@ class lejunewhouselistProductModel extends productXModel {
 //
 //        $arr = parse_url($sourceurl);
 //        $baseurl = $arr['scheme']."://".$arr['host'];
-        $baseurl = 'http://www.leju.com/?mod=api_projectlist&type=foucs_equan&aid=';
+        $baseurl = 'http://project.leju.com/house.php?&aid=';
 
         foreach($data as $k=>$v)
         {
@@ -113,19 +106,63 @@ class lejunewhouselistProductModel extends productXModel {
         return $this->_productID;
     }
 
+    public function getIsbnCode()
+    {
+        $str = parent::getUrl();
+        if($str)
+        {
+            $tmp = parse_url($str);
+            parse_str($tmp['query'],$parr);
+            $this->_isbnCode = $parr['aid'];
+        }
+        return $this->_isbnCode;
+    }
+
+
+    public function getItemCommon()
+    {
+        if (is_null($this->_itemcommon)) {
+            $commons = $this->_config[\elements::ITEMCOMMON];
+            $sourceurl = parent::getUrl();
+            $tmp = parse_url($sourceurl);
+            parse_str($tmp['query'],$parr);
+            $equanurl = 'http://www.leju.com/?mod=api_projectlist&aid='.$parr['aid'].'&type=foucs_equan';
+            $xpath = $this->getXpathByUrl($equanurl);
+            foreach($commons as $key=>$filter)
+            {
+                $this->_itemcommon[$key] = $this->_getRegexpInfo($filter, $xpath);
+            }
+
+            $diliaourl = 'http://www.leju.com/?mod=api_projectlist&aid='.$parr['aid'].'&type=diliao';
+            $xpath2 = $this->getXpathByUrl($diliaourl);
+            $commons2 = array(
+                'Address'=>'//ul[@class="d_detail"]/li[1]//label/@title||1',
+                'Apartment'=>'//ul[@class="d_detail"]/li[3]/text()||1',
+                'Developers'=>'//ul[@class="d_detail"]/li[4]/text()||1',
+            );
+            foreach($commons2 as $key=>$filter)
+            {
+                $this->_itemcommon[$key] = $this->_getRegexpInfo($filter, $xpath2);
+            }
+        }
+
+        return $this->_itemcommon;
+    }
+
+    public function getName()
+    {
+        $str = parent::getName();
+        if($str)
+        {
+            $p = '/(\d+)-(\d+)-(\d+)/';
+            preg_match($p,$str,$out);
+            $this->_name = isset($out[0])?$out[0]:"";
+        }
+        return $this->_name;
+    }
 
 /*
-    public function getCategoryItemSkuid()
-    {
-        $data = parent::getCategoryItemSkuid();
-        if(!$data)
-        {
-            $this->_category_item_skuid = array();
-            $filter = '//li[@class="site-topsearch"][1]/a/@href||2';
-            $this->_category_item_skuid = $this->_getRegexpInfo($filter,$this->getContent());
-        }
-        return $this->_category_item_skuid;
-    }
+
 
     public function getCategoryItemUrl()
     {
@@ -282,15 +319,6 @@ class lejunewhouselistProductModel extends productXModel {
         return $this->_price;
     }
 
-    public function getName()
-    {
-        $data = parent::getName();
-        if(!$data)
-        {
-            $filter = '//li[@class="site-topsearch"][1]/a/text()||2';
-            $this->_name = $this->_getRegexpInfo($filter,$this->getContent());
-        }
-        return $this->_name;
-    }
+
 */
 }
