@@ -72,7 +72,7 @@ class lejunewhouselistProductModel extends productXModel {
 //
 //        $arr = parse_url($sourceurl);
 //        $baseurl = $arr['scheme']."://".$arr['host'];
-        $baseurl = 'http://www.leju.com/?mod=api_projectlist&type=foucs_equan&aid=';
+        $baseurl = 'http://project.leju.com/house.php?&aid=';
 
         foreach($data as $k=>$v)
         {

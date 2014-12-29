@@ -42,7 +42,7 @@ class lejunewhouselistModel extends spiderModel
         $collection = 'lejunewhouselistItem';
         $s = 0;
         $limit = 1000;
-
+        $baseurl = 'http://project.leju.com/house.php?&aid=';
         do {
             $mondata = $this->mongodb->find ( $cname, array (), array (
                 "start" => $s,
@@ -50,16 +50,18 @@ class lejunewhouselistModel extends spiderModel
             ) );
             foreach($mondata as $item)
             {
-
                 $url = $item['Category_Item_Url'];
                 if(strstr($url,"&city"))
                     $url2 = $url;
                 else{
                     $url = str_replace("city","&city",$url);
-                    $item['Category_Item_Url'] = $url;
-                    $this->mongodb->update($cname,array('_id'=>$item['_id']),$item);
-                    $url2 = $url;
                 }
+                $url2 = $url;
+                $tmp = parse_url($url2);
+                parse_str($tmp['query'],$parr);
+                $url2 = $baseurl.$parr['aid'].'&city='.$parr['hsite'].'&hid='.$parr['hid'];
+                $item['Category_Item_Url'] = $url;
+                $this->mongodb->update($cname,array('_id'=>$item['_id']),$item);
                 $this->pools->set($collection,$url2);
             }
             echo "has load".$s."\n";
