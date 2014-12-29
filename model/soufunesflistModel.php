@@ -81,7 +81,6 @@ class soufunesflistModel extends spiderModel
         $itemtotals = $data['allcount'];
         // 首先获取下该分类下面的总页数
         $totalpages = ceil($itemtotals/40);
-        $totalpages = 10;
         if(!$totalpages && $pageHtml){
             $this->log->errlog ( array (
                 'job' => $job,
