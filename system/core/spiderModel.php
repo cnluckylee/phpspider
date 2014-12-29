@@ -348,7 +348,8 @@ if(!$totalpages && $pageHtml){
                         'addtime' => date ( 'Y-m-d H:i:s' )
                     ) );
                 }
-                sleep(3);
+                $s = rand(1,5);
+                sleep($s);
 			} while ( $s <= $totalpages );
 		}
 //		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
