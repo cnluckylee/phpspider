@@ -144,10 +144,11 @@ class soufunesflistModel extends spiderModel
                                 $this->mongodb->insert($this->spidername.'_category_list',$item);
                             }
                         }
+                    //加入错误日志
+                    unset($tmpurls[$rurl]);
                 }
 
                 $s = $s + $pagesize;
-
                 if($tmpurls)
                 {
                     foreach($tmpurls as $url)
