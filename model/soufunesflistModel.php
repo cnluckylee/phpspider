@@ -57,7 +57,7 @@ class soufunesflistModel extends spiderModel
         $tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
-        $sourceurl = $Categoryurl = $job.'newsecond/Map/Interfaces/getHouseData.aspx?businesstype=&purpose=&comarea=&district=&pricemax=&pricemin=&areamax=&areamin=&room=&source=&page=1&x1=&y1=&x2=&y2=&v=2014.12.18.20&pagesize=40&page=';
+        $sourceurl = $Categoryurl = $job.'newsecond/Map/Interfaces/getHouseData.aspx?businesstype=&purpose=&comarea=&district=&pricemax=&pricemin=&areamax=&areamin=&room=&source=&x1=&y1=&x2=&y2=&v=2014.12.18.20&pagesize=20&page=';
         $poolname = $this->spidername . 'Item';
         $pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
         if (! $pageHtml) {
@@ -77,7 +77,7 @@ class soufunesflistModel extends spiderModel
         $data = json_decode($jsondata,true);
         $itemtotals = $data['allcount'];
         // 首先获取下该分类下面的总页数
-        $totalpages = ceil($itemtotals/40);
+        $totalpages = ceil($itemtotals/20);
         if(!$totalpages && $pageHtml){
             $this->log->errlog ( array (
                 'job' => $job,
