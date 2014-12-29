@@ -2,6 +2,7 @@
 
 class soufunesflistModel extends spiderModel
 {
+    /*
     public function  getCategory()
     {
         $collection = 'soufunbroker_category_list';
@@ -12,9 +13,6 @@ class soufunesflistModel extends spiderModel
         $total = $this->mongodb->count($collection);
         $s = 0;
         $limit = 1000;
-        /**
-         * 写入mongodb category集合
-         */
         if($total>0)
             $this->mongodb->remove ( $collection_category_name, array () ); // 删除原始数据，保存最新的数据
         do {
@@ -23,7 +21,6 @@ class soufunesflistModel extends spiderModel
                 "start" => $s,
                 "limit" => $limit
             ) );
-
             foreach($mondata as $item)
             {
                 $sourceurl = $item['Category_Item_Url'];
@@ -49,6 +46,7 @@ class soufunesflistModel extends spiderModel
         }while($s<$total);
         exit;
     }
+*/
 
     function CategroyJob() {
         header("Content-type: text/html; charset=utf-8");
@@ -59,7 +57,6 @@ class soufunesflistModel extends spiderModel
         $tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
-        $job = 'http://esf.fang.com/';
         $sourceurl = $Categoryurl = $job.'newsecond/Map/Interfaces/getHouseData.aspx?businesstype=&purpose=&comarea=&district=&pricemax=&pricemin=&areamax=&areamin=&room=&source=&page=1&x1=&y1=&x2=&y2=&v=2014.12.18.20&pagesize=40&page=';
         $poolname = $this->spidername . 'Item';
         $pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
