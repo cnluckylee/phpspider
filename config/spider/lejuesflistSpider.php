@@ -12,8 +12,8 @@ $siteconfig = array(
 				)
 		),
 		elements::CATEGORY => array(
-				elements::CATEGORY_URL => 'http://img1.soufun.com/secondhouse/image/esfnew/scripts/citys.js?v=3.201412041',
-				elements::CATEGORY_MATCH_PREG => '/"name": "(.*)", "spell": "(.*)", "url": "http:\/\/esf.(\w+)\.soufun\.com\/"/',
+                elements::CATEGORY_URL => 'http://esf.baidu.com/',
+                elements::CATEGORY_MATCH_PREG => '/href="http:\/\/esf.baudy.com/(\w+)">(.*?)<\/a>/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>1,'cid'=>3),
 				elements::CATEGORY_GROUP_SIZE => 2,
 				elements::CATEGORY_LIST_URL => 'http://#job.esf.fang.com/agenthome/',
@@ -77,8 +77,8 @@ $siteconfig = array(
 		elements::DATASOURCE => '1',
 		elements::COLLECTION_ITEM_NAME => 'leju_esf_list_items',
 		elements::COLLECTION_CATEGORY_NAME => 'leju_esf_list_category',
-        elements::ITEMPAGECHARSET => 'gbk',
-        elements::CHARSET => '',
+        elements::ITEMPAGECHARSET => 'utf-8',
+        elements::CHARSET => 'utf-8',
 		elements::MANAGER => 'living',
 		elements::UPDATEDATA=>array(
 				elements::ITEM_DPRICE,
