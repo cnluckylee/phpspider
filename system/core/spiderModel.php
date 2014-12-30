@@ -184,7 +184,9 @@ foreach($Categorylist as $k=>$v)
         $jobs = array_values($tmp);
         $job = $jobs[0];
 
+
 //       $job = 'http://esf.dl.fang.com/agenthome';
+
 //        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a035-b012974/-j310-i3';
@@ -250,6 +252,7 @@ if(!$totalpages && $pageHtml){
 		$s = isset ( $Category [elements::CATEGORY_PAGE_START] ) ? $Category[elements::CATEGORY_PAGE_START] : 0;
 		$pagesize = $Category [elements::CATEGORY_GROUP_SIZE];
 		if ($totalpages > 0) {
+            $totalpages +=1;
 			$randtimes = ceil ( $totalpages / $pagesize );
 			// 循环获取商品的url地址
 			do {
@@ -259,7 +262,7 @@ if(!$totalpages && $pageHtml){
 					$e = $s + $pagesize;
 				}
 				$tmpurls = array ();
-				for($i = $s; $i <= $e; $i ++) {
+				for($i = $s; $i < $e; $i ++) {
                     if(isset($Category [elements::TRANSFORM]) && $Category [elements::TRANSFORM] == false)
                     {
                         if(isset($Category [elements::CATEGORY_NO_ADD_PAGE]) && $Category [elements::CATEGORY_NO_ADD_PAGE])
@@ -332,11 +335,8 @@ if(!$totalpages && $pageHtml){
                         }
 
                     }
-
-				}
-
+                }
 				$s = $s + $pagesize;
-
                 if($tmpurls)
                 {
                     foreach($tmpurls as $url)
@@ -348,7 +348,7 @@ if(!$totalpages && $pageHtml){
                         'addtime' => date ( 'Y-m-d H:i:s' )
                     ) );
                 }
-                $s = rand(1,5);
+                $s = rand(1,3);
                 sleep($s);
 			} while ( $s <= $totalpages );
 		}
