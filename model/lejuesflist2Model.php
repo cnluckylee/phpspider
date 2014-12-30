@@ -43,7 +43,7 @@ class lejuesflist2Model extends spiderModel
         $tmp = $this->pools->get($name);
         $jobs = array_values($tmp);
         $job = $jobs[0];
-        $job = 'http://m.leju.com/?site=touch&ctl=js&act=fy_list&city=sh&topic_status=0&callback=jsonp1&page=';
+        
         $poolname = $this->spidername . 'Item';
         $Category = Application::$_spider [elements::CATEGORY];
         $run = true;
