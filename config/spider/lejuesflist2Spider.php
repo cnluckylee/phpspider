@@ -64,8 +64,8 @@ $siteconfig = array(
 		elements::DATASOURCE => '1',
 		elements::COLLECTION_ITEM_NAME => 'leju_esf_list2_items',
 		elements::COLLECTION_CATEGORY_NAME => 'leju_esf_list2_category',
-        elements::ITEMPAGECHARSET => 'gbk',
-        elements::CHARSET => 'gbk',
+        elements::ITEMPAGECHARSET => 'utf-8',
+        elements::CHARSET => 'utf-8',
 		elements::MANAGER => 'living',
 		elements::UPDATEDATA=>array(
 				elements::ITEM_DPRICE,
