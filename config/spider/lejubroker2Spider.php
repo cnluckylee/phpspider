@@ -55,7 +55,7 @@ $siteconfig = array(
         elements::ITEM_TITLE=>'//a[@class="c_default"]/text()||1',//所属公司
         elements::ITEM_IMAGE_URL => '//a[@class="c_default"]/@href||1',//所属公司url
         elements::ITEM_ISBN=>'//div[@class="broker-mod broker-mod-infos mt10"]//div[@class="broker-infos-list"]/dl[2]/dd/text()||1',//注册时间
-        elements::ITEM_SALES=>'//div[@class="icon"]/img[contains(@src,"active0")]||2',//热度
+        elements::ITEM_SALES=>'//div[@class="icon"]/img[contains(@src,"active1")]||2',//热度
         elements::ITEMCOMMON => array(
             'Tel' => '//span[@class="c_red bold"]/text()||1',
             'Store' =>'//dd[@class="lh24"]/p[5]/text()||1',//所属门店
