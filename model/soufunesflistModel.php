@@ -160,8 +160,8 @@ class soufunesflistModel extends spiderModel
                             'addtime' => date ( 'Y-m-d H:i:s' )
                         ) );
                 }
-                $s = rand(1,5);
-                sleep($s);
+                $sleep = rand(1,3);
+                sleep($sleep);
             } while ( $s <= $totalpages );
         }
         $this->pools->deljob($name,$job);//加入删除备份任务机制
