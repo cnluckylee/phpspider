@@ -14,7 +14,7 @@
  *
  * @package model
  */
-class soufunesflistProductModel extends productXModel {
+class soufunesflist2ProductModel extends productXModel {
     public function getCategoryItemArea()
     {
         $str = parent::getCategoryItemArea();
