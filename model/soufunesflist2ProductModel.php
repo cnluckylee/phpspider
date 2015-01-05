@@ -135,6 +135,9 @@ class soufunesflist2ProductModel extends productXModel {
             }else  if(strpos($arr[1],'月'))
             {
                 $c = ' month';
+            }else  if(strpos($arr[1],'分'))
+            {
+                $c = ' minutes';
             }else  if(strpos($arr[1],'秒'))
             {
                 $c = ' seconds';

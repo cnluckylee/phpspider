@@ -51,7 +51,6 @@ $siteconfig = array(
 		elements::ITEM_STATUS => '',
         elements::ITEM_COMMENT_NUMBER_ALL =>'//div[@class="title"]/p',
         elements::ITEM_COMMENT_NUMBER_DISSATISFY=>'//div[@class="title"]/p',
-        elements::ITEM_COMMENT_NUMBER_DISSATISFY=>'//div[@class="title"]/p',
         elements::ITEM_PROMOTION=>'//dl[@class="mt10"]/dd',
         elements::ITEMCOMMON=>array(
             'City'=>'//input[@id="talkCity"]/@value||1',
