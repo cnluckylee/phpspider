@@ -138,6 +138,7 @@ class soufunesflistModel extends spiderModel
                             {
                                 $item[\elements::CATEGORY_ITEM_URL] = $job.$item['houseurl'];
                                 $item[\elements::CATEGORY_ITEM_SKUID] = $item['houseid'];
+                                $item['registtime'] = $this->tools->getSourceUpdateTime($item['registdate']);
                                 $item['job'] = $rurl;
                                 $item['create_time'] = date('Y-m-d H:i:s');
                                 if($item[\elements::CATEGORY_ITEM_URL])
