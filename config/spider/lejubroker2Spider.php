@@ -41,9 +41,7 @@ $siteconfig = array(
                     elements::CATEGORYCOMMON =>array(
                         'UserName'=>'//a[@class="c_default f14 mr5"]/text()||2',//姓名
                         'ServiceArea'=>'//div[@class="broker-lists-item"]//dd/p[2]/text()||2',//区域
-
                         'Tel'=>'//span[@class="bold c_red"]/text()||2',
-
                     ),
                 )
 

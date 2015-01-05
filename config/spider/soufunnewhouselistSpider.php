@@ -47,26 +47,27 @@ $siteconfig = array(
         elements::ITEM_PROMOTION=>'//div[@class="besic_inform"]//tr',
         elements::ITEM_CHARACTERS=>'',//ajax获取评论
         elements::ITEM_COMMENT_NUMBER_ALL =>'',//评论数
+        elements::ITEM_DESCRIPTION=>'//p[@id="qdds_bendtime"]/text()||1',
         elements::ITEMCOMMON =>array(
-            'Name'=>'//a[@class="ts_linear"]/text()||1',
-            'RegistrTime'=>'//p[@id="qdds_bendtime"]/text()||1',
-            'Discount'=>'//p[@class="ad_text"]/text()||1',
-            'LatestOpen'=>'//a[@id="xfxq_C03_09"]/text()||1',
-            'Address'=>'//input[@id="txt_developer"]@value||1',
-            'Apartment' =>'//div[@id="xfxq_C03_12"]/p/a/text()||2',
-            'Launchtime' =>'//a[@id="xfxq_B04_18"]/text()||1',
-            'OpeningTime' =>'//a[@id="xfxq_B04_17"]/text()||1',
+            'Name'=>'//a[@class="ts_linear"]/text()||1',//楼盘名称
+            'RegistrTime'=>'//p[@id="qdds_bendtime"]/text()||1',//注册时间
+            'Discount'=>'//p[@class="ad_text"]/text()||1',//优惠情况
+            'LatestOpen'=>'//a[@id="xfxq_C03_09"]/text()||1',//最近开盘时间
+            'Address'=>'//input[@id="txt_developer"]@value||1',//地址
+            'Apartment' =>'//div[@id="xfxq_C03_12"]/p/a/text()||2',//
+            'Launchtime' =>'//a[@id="xfxq_B04_18"]/text()||1',//推出时间
+            'OpeningTime' =>'//a[@id="xfxq_B04_17"]/text()||1',//开盘时间
             'PropertyType' =>'//ul[@class="information"]/li[2]/div[@class="infow2"][1]/text()||1',//物业类型
             'ConstCategory' =>'//ul[@class="information"]/li[2]/div[@class="infow2"][2]/text()||1',//建筑类别
-            'Developer' =>'//input[@id="txt_developer"]/@value||1',
+            'Developer' =>'//input[@id="txt_developer"]/@value||1',//开发商
             'FixStatus' =>'//input[@id="txt_fix_status"]/@value||1',//装修状况
             'SalesStatus'=>'//input[@id="txt_sale_date"]/@value||1',//销售状况
             'SaleRate'=>'//input[@id="txt_sale_rate"]/@value||1',//是否在售
             'AvePrice'=>'//input[@id="txt_aveprice"]/@value||1',//均价
             'MinPrice'=>'//input[@id="txt_minprice"]/@value||1',//最低价
             'MaxPrice'=>'//input[@id="txt_maxprice"]/@value||1',//最低价
-
         ),
+
     /**
      * 不需要item
      */

@@ -139,6 +139,7 @@ class soufunesflistModel extends spiderModel
                                 $item[\elements::CATEGORY_ITEM_URL] = $job.$item['houseurl'];
                                 $item[\elements::CATEGORY_ITEM_SKUID] = $item['houseid'];
                                 $item['job'] = $rurl;
+                                $item['create_time'] = date('Y-m-d H:i:s');
                                 if($item[\elements::CATEGORY_ITEM_URL])
                                     $this->pools->set ( $poolname, $item[\elements::CATEGORY_ITEM_URL] );//将category_item_url加入任务池中 2014.12.20 22:32
                                 $this->mongodb->insert($this->spidername.'_category_list',$item);

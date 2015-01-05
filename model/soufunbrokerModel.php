@@ -289,7 +289,6 @@ class soufunbrokerModel extends spiderModel
             $s +=$limit;
         }while($s<$total);
     }
-*/
     function tojson($cname)
     {
         $cname = 'soufunbroker_err_log';
@@ -311,6 +310,68 @@ class soufunbrokerModel extends spiderModel
             echo "has load:".$s."\n";
         }while($s<$total);
 
+        exit("all over");
+    }
+*/
+    //计算每个城市的经纪人数量
+    function tojson($cname)
+    {
+        $data = $this->mongodb->find('soufun_area',array());
+        $collection = $cname = 'soufunbroker_category_list';
+        $str = '城市 抓取数量 URL'."\n";
+        $filename = 'soufun_agent.csv';
+
+        $i=0;
+//        foreach($data as $q)
+//        {
+//            $domain = str_replace(array("http://","/"),"",$q['cid']);
+//            $regex = new MongoRegex("/.".$domain."./");
+//            $total = $this->mongodb->count($collection,array("Category_Item_Url"=>$regex));
+//            $str .= $q['name']." ".$total." ".$domain.'/agenthome/'."\n";
+//            echo $q['name']." ".$total." ".$domain.'/agenthome/'."\n";
+////            if($i>10)
+////                break;
+////            $i++;
+//        }
+        $total = $this->mongodb->count($collection);
+        $s = 0;
+        $limit = 1000;
+//        do {
+//            $mondata = $this->mongodb->find ( $cname, array (), array (
+//                "start" => $s,
+//                "limit" => $limit
+//            ) );
+//            foreach($mondata as $v)
+//            {
+//                $url = $v['Category_Item_Url'];
+//                $tmp = parse_url($url);
+//                $domainurl = $tmp['host'];
+//                $this->redis->hincrby('tmptotal',$domainurl,1);
+//            }
+//            $s +=$limit;
+//            echo "has load:".$s."\n";
+//        }while($s<$total);
+        $datas = $this->redis->hgetall('tmptotal');
+
+        foreach($data as $q)
+        {
+            $domain = str_replace(array("http://","/"),"",$q['cid']);
+//            $regex = new MongoRegex("/.".$domain."./");
+//            $total = $this->mongodb->count($collection,array("Category_Item_Url"=>$regex));
+            $total = $datas[$domain];
+            $total = $total>0?$total:0;
+            unset($datas[$domain]);
+            $str .= $q['name']." ".$total." ".$domain.'/agenthome/'."\n";
+            echo $q['name']." ".$total." ".$domain.'/agenthome/'."\n";
+        }
+print_r($datas);
+//        foreach($datas as $k=>$v)
+//        {
+//            $str .= $k." ".$v."\n";
+//        }
+        $file = fopen($filename,"a+");
+        fwrite($file,$str);
+        fclose($file);
         exit("all over");
     }
 
