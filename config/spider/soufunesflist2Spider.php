@@ -34,9 +34,9 @@ $siteconfig = array(
                     elements::CATEGORY_ITEM_DPRICE =>'//div[@class="house"]',
                     elements::CATEGORY_ITEM_SALE =>'//dd[@class="pfm"]/text()||2',
                     elements::CATEGORY_ITEM_REVIEWS =>'',
-                    elements::CATEGORY_ITEM_HOT =>'//p[@class="grey"]/text()||2',
-                    elements::CATEGORY_ITEM_SKUID =>'//input[@id="talkPageValue"]/@value||1',
-                    elements::CATEGORY_ITEM_AREA =>'//a[contains(@href,"links.htm")]/@href||1',
+                    elements::CATEGORY_ITEM_HOT =>'//p[@class="grey"]/text()||2',//更新时间
+                    elements::CATEGORY_ITEM_SKUID =>'//p[@class="housetitle"]/a/@href||2',
+                    elements::CATEGORY_ITEM_AREA =>'.//dl/dt/p[2]/text()',//小区地址
                     elements::CATEGORYCOMMON =>array(
                         'imgurl' =>'//div[@class="pic"]/a/img/@src||2',
                     ),
@@ -45,31 +45,35 @@ $siteconfig = array(
 		),
 		// item config
 		elements::ITEM_TITLE => '//div[@class="title"]/h1/text()||1',
-		elements::ITEM_SOURCE_CATEGORY_ID => '//input[@id="talkAgentPhone"]/@value||1',
-		elements::ITEM_SOURCE_CATEGORY_NAME=> '//div[@class="inforTxt"]/dl[2]/dd[9]/text()||1',
 		elements::ITEM_SKUID => '//input[@id="HouseID"]/@value||1',
-		elements::ITEM_NAME =>'//div[@class="inforTxt"]/dl[2]/dd[8]/text()||1',
-		elements::ITEM_SOURCE_BRAND_ID =>'//div[@class="inforTxt"]/dl[2]/dd[7]/text()||1',
-		elements::ITEM_SOURCE_BRAND_NAME =>'//div[@class="inforTxt"]/dl[2]/dd[6]/text()||1',
-		elements::ITEM_SOURCE_SELLER_ID =>'//input[@id="AgentID"]/@value||1',
-		elements::ITEM_SOURCE_SELLER_NAME => '//div[@class="inforTxt"]/dl[2]/dd[4]/text()||1',
-		elements::ITEM_IMAGE_URL => '//div[@class="inforTxt"]/dl[2]/dd[3]/text()||1',
-		elements::ITEM_PROMOTION => '//dd[@class="gray6"][3]/text()||1',
 		elements::ITEM_SALES => '//ul[@class="cont02 mb10"]/li[2]/a/text()||1',
-		elements::ITEM_DPRICE => '//span[@class="yellow21b"]/text()||1',
-		elements::ITEM_OPRICE => '//dd[@class="gray6"][1]/span/text()||1',
 		elements::ITEM_PRICE_URL => '//div[@class="imgWP"]//a[@class="mr10"][1]/@href||1',
 		elements::ITEM_STATUS => '',
-        elements::ITEM_MPRICE => '//div[@class="inforTxt"]/dl[2]/dd[5]/text()||1',
-		elements::ITEM_DESCRIPTION =>'//dd[@class="gray6"][4]/span/text()||1',
-		elements::ITEM_CHARACTERS =>'//input[@id="talkProjName"]/@value||1',
-		elements::ITEM_ISBN => '//div[@class="inforTxt"]/dl[2]/dd[1]/text()||1',
-		elements::ITEM_BARCODE => '//div[@class="inforTxt"]/dl[2]/dd[2]/text()||1',
         elements::ITEM_COMMENT_NUMBER_ALL =>'//div[@class="title"]/p',
         elements::ITEM_COMMENT_NUMBER_DISSATISFY=>'//div[@class="title"]/p',
         elements::ITEM_COMMENT_NUMBER_DISSATISFY=>'//div[@class="title"]/p',
-        elements::ITEM_SOURCE_CATEGORY_ID =>'//span[@class="sheshi"]/text()||1',
-		elements::BASE_URL => 'http://sh.soufun.com/',
+        elements::ITEM_PROMOTION=>'//dl[@class="mt10"]/dd',
+        elements::ITEMCOMMON=>array(
+            'City'=>'//input[@id="talkCity"]/@value||1',
+            'Price'=>'//span[@class="yellow21b"]/text()||1',
+            'FirstPrice'=>'//dd[@class="gray6"][1]/span/text()||1',
+            'Property'=>'//div[@class="inforTxt"]/dl[2]/dd[7]/text()||1',
+            'Name'=>'//input[@id="talkProjName"]/@value||1',
+            'BuildYear'=>'//div[@class="inforTxt"]/dl[2]/dd[1]/text()||1',
+            'Face'=>'//div[@class="inforTxt"]/dl[2]/dd[2]/text()||1',
+            'Size'=>'//input[@id="talkMianJi"]/@value||1',//户型
+            'Decoration'=>'//div[@class="inforTxt"]/dl[2]/dd[5]/text()||1',//装修
+            'AgentID'=>'//input[@id="talkAgentID"]/@value||1',
+            'AgentTel'=>'//input[@id="talkAgentPhone"]/@value||1',
+            'AgentName'=>'//input[@id="talkAgentName"]/@value||1',
+            'Apartment'=>'//input[@id="talkHuXing"]/@value||1',//户型
+            'Floor'=>'//div[@class="inforTxt"]/dl[2]/dd[3]/text()||1',//楼层
+            'Structure'=>'//div[@class="inforTxt"]/dl[2]/dd[4]/text()||1',//结构
+            'Facilities'=>'//span[@class="sheshi"]/text()||1',//配套设施
+            'BuildCategory'=>'//div[@class="inforTxt"]/dl[2]/dd[6]/text()||1',//建筑类别
+            'LookTime'=>'//div[@class="inforTxt"]/dl[2]/dd[9]/text()||1',//看房时间
+        ),
+
 		elements::STID => 113,
         elements::HTML_ZIP =>'gzip',
 		elements::DATASOURCE => '1',

@@ -17,8 +17,17 @@
 class soufunesflist2ProductModel extends productXModel {
     public function getCategoryItemArea()
     {
-        $str = parent::getCategoryItemArea();
-        $this->_category_item_area = str_replace("/links.htm","",$str);
+        $filter = $this->_config[\elements::CATEGORY_ITEM_DPRICE];
+        $nodes = $this->_xpath->query($filter);
+        $this->_category_item_area = array();
+        $filter2 = $this->_config[\elements::CATEGORY_ITEM_AREA];
+        foreach ($nodes as $k=>$node) {
+            foreach ($this->_xpath->query($filter2, $node) as $child) {
+                $tmp = trim(str_replace(array(" ","\r\n"),array(""," "),$child->nodeValue));
+                $arr = explode(" ",$tmp);
+                $this->_category_item_area[$k] = trim($arr[1]);
+            }
+        }
         return $this->_category_item_area;
     }
 
@@ -26,9 +35,13 @@ class soufunesflist2ProductModel extends productXModel {
     {
         $arrs = parent::getCategoryItemOprice();
         $this->_category_item_oprice = array();
+        $i=0;
         foreach($arrs as $k=>$v)
         {
-            $this->_category_item_oprice[$k] = str_replace(array(" ","\r\n"),"",$v);
+            if($v){
+                $this->_category_item_oprice[$i] = str_replace(array(" ","\r\n"),"",$v);
+                $i++;
+            }
         }
         return $this->_category_item_oprice;
     }
@@ -49,9 +62,13 @@ class soufunesflist2ProductModel extends productXModel {
         $filter = $this->_config[\elements::CATEGORY_ITEM_DPRICE];
         $nodes = $this->_xpath->query($filter);
         $this->_category_item_dprice = array();
+        $this->_category_item_area = array();
         foreach ($nodes as $k=>$node) {
             foreach ($this->_xpath->query('.//dl/dt/p[2]/text()', $node) as $child) {
-                $this->_category_item_dprice[$k] = trim(str_replace(array(" ","\r\n"),array(""," "),$child->nodeValue));
+                $tmp = trim(str_replace(array(" ","\r\n"),array(""," "),$child->nodeValue));
+                $arr = explode(" ",$tmp);
+                $this->_category_item_dprice[$k] = $arr[0];
+                $this->_category_item_area[$k] = $arr[1];
             }
         }
         return $this->_category_item_dprice;
@@ -77,19 +94,15 @@ class soufunesflist2ProductModel extends productXModel {
         $this->_category_item_url = array();
         foreach($data as $k=>$v)
         {
-            $url = trim($v);
-            $skuid = str_replace("/a/","",$v);
-            $this->_category_item_url[$k] = $baseurl.'/agent/Agentnew/AloneService.aspx?managername='.$skuid;
+            $this->_category_item_url[$k] = $baseurl.$v;
         }
         return  $this->_category_item_url;
     }
 
     public function  getAllCommentNumber()
     {
-
         $filter = $this->_config[\elements::ITEM_COMMENT_NUMBER_ALL];
         $nodes = $this->_xpath->query($filter);
-
         foreach($nodes as $node)
         {
             $str = $node->textContent;
@@ -104,6 +117,7 @@ class soufunesflist2ProductModel extends productXModel {
     {
         $filter = $this->_config[\elements::ITEM_COMMENT_NUMBER_ALL];
         $nodes = $this->_xpath->query($filter);
+
         foreach($nodes as $node)
         {
             $str = $node->textContent;
@@ -114,19 +128,23 @@ class soufunesflist2ProductModel extends productXModel {
             $c = '';
             if(strpos($arr[1],'天'))
             {
-                $c = 'day';
+                $c = ' day';
             }else  if(strpos($arr[1],'时'))
             {
-                $c = 'hour';
+                $c = ' hour';
             }else  if(strpos($arr[1],'月'))
             {
-                $c = 'month';
+                $c = ' month';
+            }else  if(strpos($arr[1],'秒'))
+            {
+                $c = ' seconds';
             }
-            $this->_dissatisfyCommentNumber = date('Y-m-d H:i:s',strtotime("-".$num.$c));
+            $this->_dissatisfyCommentNumber = date('Y-m-d H:i:s',strtotime("-".$num.$c,strtotime($arr[0])));
         }
-
         return $this->_dissatisfyCommentNumber;
     }
+
+
 
     public function  getGeneralCommentNumber()
     {
@@ -136,7 +154,7 @@ class soufunesflist2ProductModel extends productXModel {
         {
             $str = $node->textContent;
             $arr = explode("发布时间：",$str);
-            $this->_generalCommentNumber = $arr[1];
+            $this->_generalCommentNumber = trim(str_replace(array(" ","\r\n"),"",$arr[1]));
         }
         return $this->_generalCommentNumber;
     }
@@ -148,15 +166,33 @@ class soufunesflist2ProductModel extends productXModel {
         return $this->_title;
     }
 
-    public function getMPrice()
+    public function getPromotion()
     {
+        $filter = $this->_config[\elements::ITEM_PROMOTION];
+        $nodes = $this->_xpath->query($filter);
+        $key = './/span';
+        $val = './/text()';
+        $val2 = './/a/text()';
+        foreach($nodes as $node)
+        {
+            foreach ($this->_xpath->query($key, $node) as $child) {
+              $k = str_replace("：","",$child->nodeValue);
+            }
 
-        if (is_null($this->_mprice)) {
-            $filter = $this->_config[\elements::ITEM_MPRICE];
-            $this->_mprice = $this->_getRegexpInfo($filter, $this->getContent());
+            foreach ($this->_xpath->query($val, $node) as $child2) {
+                $v= $child2->nodeValue;
+            }
+            if($k == '二 手 房' || $k == '租 房'){
+                foreach ($this->_xpath->query($val2, $node) as $child3) {
+                    $v2= $child3->nodeValue;
+                }
+                $v = $v2.$v;
+            }
+
+            $this->_promotion[$k]=$v;
         }
-        return $this->_mprice;
-
+        return $this->_promotion;
     }
+
 
 }
