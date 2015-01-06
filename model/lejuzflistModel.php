@@ -70,7 +70,6 @@ class lejuzflistModel extends spiderModel
         $tmp = $this->pools->get($name);
         $jobs = array_values($tmp);
         $job = $jobs[0];
-
         $poolname = $this->spidername . 'Item';
         $Category = Application::$_spider [elements::CATEGORY];
         $tmp = parse_url($job);

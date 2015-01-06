@@ -46,25 +46,17 @@ $siteconfig = array(
 
 		),
 		// item config
-		elements::ITEM_TITLE => '//div[@class="titlebg"]/span/text()||1',
-        elements::ITEMCOMMON =>array(
+		elements::ITEM_SKUID => '//div[@class="id"]/text()||1',
+		elements::ITEM_PROMOTION => '//div[@class="about"][2]/div[@class="full"][3]/text()||1',
+        elements::ITEMCOMMON=>array(
+            'SourceUpdateTime'=>'//div[@class="time"]/text()||1',
         ),
-		elements::ITEM_SOURCE_CATEGORY_ID => '//div[@class="hsource-intro-infos pt10 pl20 fl"]//li[2]/text()||1',//户型
-		elements::ITEM_SOURCE_CATEGORY_NAME=> '//div[@class="hsource-intro-infos pt10 pl20 fl"]//li[3]/span[2]/text()||1',//楼层
-		elements::ITEM_SKUID => '//div[@class="bread"]/div[@class="f"]/text()||1',
-		elements::ITEM_NAME =>'//div[@class="hsource-intro-infos pt10 pl20 fl"]//li[4]/text()||1',//朝向
-		elements::ITEM_SOURCE_BRAND_ID =>'//div[@class="hsource-intro-infos pt10 pl20 fl"]//li[5]/text()||1',//类型
-		elements::ITEM_SOURCE_BRAND_NAME =>'//li[@class="CommunityName"]/a/text()||1',
-		elements::ITEM_SOURCE_SELLER_ID =>'//a[@rel="external nofollow"]/@href||1',
-		elements::ITEM_SOURCE_SELLER_NAME => '//p[@class="mt5 bold c_000 tc"]/a[@rel="external nofollow"]/text()||1',
-		elements::ITEM_IMAGE_URL => '//span[@class="phone-num"]/text()||1',//Tel
-		elements::ITEM_PROMOTION => '//table[@class="new-community-info-table"]//tr',
 		elements::STID => 123,
         elements::HTML_ZIP =>'gzip',
 		elements::DATASOURCE => '1',
 		elements::COLLECTION_ITEM_NAME => 'leju_zf_list_items',
 		elements::COLLECTION_CATEGORY_NAME => 'leju_zf_list_category',
-        elements::ITEMPAGECHARSET => 'utf-8',
+        elements::ITEMPAGECHARSET => 'gbk',
         elements::CHARSET => 'utf-8',
 		elements::MANAGER => 'living',
 		elements::UPDATEDATA=>array(
