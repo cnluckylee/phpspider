@@ -1513,8 +1513,6 @@ abstract class productXModel
             if($baseurl)
                 $result[$k]['baseurl'] = $baseurl;
             $result[$k]['create_time'] = date('Y-m-d H:i:s');
-            //临时去除
-//            unset($result[$k][elements::CATEGORY_ITEM_DPRICE]);
         }
         return $result;
 

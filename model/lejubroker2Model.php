@@ -111,7 +111,6 @@ class lejubroker2Model extends spiderModel
     function tojson($cname)
     {
         $cname = 'leju_area';
-
         $data = $this->mongodb->find($cname,array());
         $filename = 'leju_Data.csv';
         $str = "名称 网站数量 抓取数量 URL"."\n";

@@ -38,10 +38,9 @@ $siteconfig = array(
                     elements::CATEGORY_ITEM_SALE =>'.//div[@class="hall_people_house_font"][5]/text()',//出租数量
                     elements::CATEGORY_ITEM_COMPANY=>'//div[@class="item"]/a[@class="hover"]/text()||1',//城市
                     elements::CATEGORYCOMMON =>array(
-                        'UserName'=>'//div[@class="hall_people_house_name_l"]/a/text()||2',//姓名
-                        'ServiceArea'=>'.//div[@class="hall_people_house_font"][1]/text()||2',//区域
-                        'Stores' => './/div[@class="hall_people_house_font"][3]/a/text()||2',//所在门店
-                        'Tel'=>'.//span[@class="hall_people_red"]/text()||2',
+                        'ServiceArea'=>'/服务区域：(.*)	服/',//区域
+                        'Stores' => '/所在门店：(.*)/',//所在门店
+                        'Tel'=>'/手机：(\d+)/',
                     ),
                 )
 		),
