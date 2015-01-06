@@ -150,7 +150,7 @@ class lejuesflist2Model extends spiderModel
                         'addtime' => date('Y-m-d H:i:s')
                     ));
             }
-            sleep(1);
+//            sleep(1);
             $s = $s + $pagesize;
         } while ($s <= $totalpages);
         $this->pools->deljob($name, $job); //加入删除备份任务机制
