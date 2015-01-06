@@ -185,7 +185,9 @@ foreach($Categorylist as $k=>$v)
         $job = $jobs[0];
 
 
+
 //       $job = 'http://esf.dl.fang.com/agenthome';
+
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
 
@@ -213,45 +215,13 @@ foreach($Categorylist as $k=>$v)
 			) );
 			exit ();
 		}
-
-        if(isset(Application::$_spider [elements::TOTALPAGES])&&Application::$_spider [elements::TOTALPAGES]>0)
-            $totalpages = Application::$_spider [elements::TOTALPAGES];
-        else{
-            $preg_pagetotals = $Category [elements::CATEGORY_LIST_PREG];
-            if(strtolower($xpath) == 'xpath')
-            {
-                $totalpages = $this->curlmulit->getRegexpInfo($preg_pagetotals,$pageHtml [$Categoryurl],$Category [elements::CATEGORY_LIST_MATCH]);
-            }else{
-                preg_match ( $preg_pagetotals, $pageHtml [$Categoryurl], $match_pagetotals );
-                foreach($match_pagetotals as $k=>$v)
-                {
-                    $match_pagetotals[$k] = trim($v);
-                }
-                $totalpages = $match_pagetotals ? $match_pagetotals [$Category [elements::CATEGORY_LIST_MATCH]] : 0;
-            }
-        }
-
-if(!$totalpages && $pageHtml){
-    $this->log->errlog ( array (
-        'job' => $job,
-        'Categoryurl' => $Categoryurl,
-        'error' => 2,
-        'yy' =>'no total and have page',
-        'addtime' => date ( 'Y-m-d H:i:s' )
-    ) );
-}
-        $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
-
-        if($totalpages && $totalpages>0){
-            $this->mongodb->update ( $collection_category_name,
-                array ('cid' => $job),
-                array('$set'=>array('totalcount'=>$totalpages)),
-                array("upsert"=>1,"multiple"=>true));
-        }
+        //获取分类列表页总页数，如果获取不到则自动停止，并做好相应记录
+        $totalpages = $this->getcategorylisttotalpages($Category,$xpath,$pageHtml,$Categoryurl,$job,$jobname);
 
 		$s = isset ( $Category [elements::CATEGORY_PAGE_START] ) ? $Category[elements::CATEGORY_PAGE_START] : 0;
 		$pagesize = $Category [elements::CATEGORY_GROUP_SIZE];
 		if ($totalpages > 0) {
+            $totalpages +=1;
 			$randtimes = ceil ( $totalpages / $pagesize );
 			// 循环获取商品的url地址
 			do {
@@ -261,7 +231,7 @@ if(!$totalpages && $pageHtml){
 					$e = $s + $pagesize;
 				}
 				$tmpurls = array ();
-				for($i = $s; $i <= $e; $i ++) {
+				for($i = $s; $i < $e; $i ++) {
                     if(isset($Category [elements::TRANSFORM]) && $Category [elements::TRANSFORM] == false)
                     {
                         if(isset($Category [elements::CATEGORY_NO_ADD_PAGE]) && $Category [elements::CATEGORY_NO_ADD_PAGE])
@@ -318,9 +288,6 @@ if(!$totalpages && $pageHtml){
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
-print_r($categorydata);
-//print_r($rurl);
-//print_r($page);
 
                         if($categorydata){
                             foreach($categorydata as $item)
@@ -334,11 +301,8 @@ print_r($categorydata);
                         }
 
                     }
-
-				}
-
+                }
 				$s = $s + $pagesize;
-
                 if($tmpurls)
                 {
                     foreach($tmpurls as $url)
@@ -350,28 +314,66 @@ print_r($categorydata);
                         'addtime' => date ( 'Y-m-d H:i:s' )
                     ) );
                 }
-
-                $s = rand(1,5);
-                sleep($s);
-
+                $sleep = rand(1,3);
+                sleep($sleep);
 			} while ( $s <= $totalpages );
 		}
-//		$jobs1 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
         $this->pools->deljob($name,$job);//加入删除备份任务机制
 		$this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
         $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
-//		$jobs2 = $this->redis->get ( $this->spidername . 'CategoryCurrent' );
-
-/*		$this->log->msglog ( array (
-				'job' => $job,
-				'runjobs1' => $jobs1,
-				'runjobs2' => $jobs2,
-				'addtime' => date ( 'Y-m-d H:i:s' )
-		) );
-*/
 //		$this->autostartitemmaster ();
 		exit ();
 	}
+
+    /**
+     * 获取分类列表页页面总数
+     * @param $Category
+     * @param $xpath
+     * @param $pageHtml
+     * @param $Categoryurl
+     * @return int|null|string
+     */
+    function getcategorylisttotalpages($Category,$xpath,$pageHtml,$Categoryurl,$job,$jobname)
+    {
+        if(isset(Application::$_spider [elements::TOTALPAGES])&&Application::$_spider [elements::TOTALPAGES]>0)
+            $totalpages = Application::$_spider [elements::TOTALPAGES];
+        else{
+            $preg_pagetotals = $Category [elements::CATEGORY_LIST_PREG];
+            if(strtolower($xpath) == 'xpath')
+            {
+                $totalpages = $this->curlmulit->getRegexpInfo($preg_pagetotals,$pageHtml [$Categoryurl],$Category [elements::CATEGORY_LIST_MATCH]);
+            }else{
+                preg_match ( $preg_pagetotals, $pageHtml [$Categoryurl], $match_pagetotals );
+                foreach($match_pagetotals as $k=>$v)
+                {
+                    $match_pagetotals[$k] = trim($v);
+                }
+                $totalpages = $match_pagetotals ? $match_pagetotals [$Category [elements::CATEGORY_LIST_MATCH]] : 0;
+            }
+        }
+        if(!$totalpages){
+            $this->log->errlog ( array (
+                'job' => $job,
+                'Categoryurl' => $Categoryurl,
+                'error' => 2,
+                'yy' =>'no total and have page',
+                'addtime' => date ( 'Y-m-d H:i:s' )
+            ) );
+            $this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
+            $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
+            exit;
+        }else{
+            $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
+            $this->mongodb->update ( $collection_category_name,
+                array ('cid' => $job),
+                array('$set'=>array('totalcount'=>$totalpages)),
+                array("upsert"=>1,"multiple"=>true));
+        }
+
+        return $totalpages;
+    }
+
+    //master 控制器
 	function autostartitemmaster($jobname = 'Item') {
 		if (! $this->redis->exists ( $this->spidername . $jobname . 'JobRun' )) {
 			$this->redis->set ( $this->spidername . $jobname . 'JobRun', 1 );

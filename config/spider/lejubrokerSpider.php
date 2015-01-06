@@ -40,7 +40,7 @@ $siteconfig = array(
                     elements::CATEGORYCOMMON =>array(
                         'UserName'=>'//div[@class="hall_people_house_name_l"]/a/text()||2',//姓名
                         'ServiceArea'=>'.//div[@class="hall_people_house_font"][1]/text()||2',//区域
-                        'Stores' => './/div[@class="hall_people_house_font"][3]/text()||2',//服务楼盘
+                        'Stores' => './/div[@class="hall_people_house_font"][3]/a/text()||2',//所在门店
                         'Tel'=>'.//span[@class="hall_people_red"]/text()||2',
                     ),
                 )

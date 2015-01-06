@@ -1,7 +1,8 @@
-<?php 
+<?php
 
-class soufunzflistModel extends spiderModel
+class soufunesflist2Model extends spiderModel
 {
+
     public function  getCategory()
     {
         $collection = 'soufunbroker_category_list';
@@ -25,7 +26,7 @@ class soufunzflistModel extends spiderModel
                 $sourceurl = $item['Category_Item_Url'];
                 $arr = parse_url($sourceurl);
                 $baseurl = $arr['scheme']."://".$arr['host'];
-                $result[] = $baseurl.'/agent/agentnew/AloneRentHList.aspx?&agentid='.$item['Category_Item_Name'].'&housetype=rent&page=';
+                $result[] = $baseurl.'/agent/agentnew/AloneesfHList.aspx?&agentid='.$item['Category_Item_Name'].'&pricemax=&page=';
             }
             $Categorylist = array_unique ( $result );
 

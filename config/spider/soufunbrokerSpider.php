@@ -5,7 +5,7 @@ $siteconfig = array(
     elements::NAME => '搜房网',
     elements::DB => array(
         'mongodb' => array(
-            elements::HOST => 'mongo.wcc.cc',
+            elements::HOST => 'master.mongo.cc',
             elements::PORT => '3376',
             elements::TIMEOUT => 0,
             elements::DBNAME => 'soufun'
@@ -52,7 +52,6 @@ $siteconfig = array(
             elements::CATEGORY_ITEM_COMPANY =>'//div[@class="qxName"]/a[@class="orange"]/text()||1',
             elements::CATEGORY_ITEM_DISTRICT =>'//ul[@class="info ml25"]/li[2]/a[@class="orange"]/text()||1',
             elements::CATEGORYCOMMON =>array(
-
                 'UserName' =>'//p[@class="housetitle"]/a/text()||2',
             ),
         )

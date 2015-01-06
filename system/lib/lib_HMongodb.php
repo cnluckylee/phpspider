@@ -207,9 +207,14 @@ class HMongodb {
 	 *
 	 * 返回值：表的记录数
 	 */
-	function count($table_name) {
+	function count($table_name,$query_condition=null) {
 		$dbname = $this->curr_db_name;
-		return $this->mongo->$dbname->$table_name->count ();
+        if($query_condition){
+            $cursor = $this->mongo->$dbname->$table_name->find ( $query_condition, array() );
+            return $cursor->count();
+        }
+        else
+		    return $this->mongo->$dbname->$table_name->count ();
 	}
 	
 	/**

@@ -17,6 +17,7 @@ class Model {
     protected $spiderrun = 1;//spider运行控制
 	protected $maxjobs = 10;//最大运行数
 	protected $runpages = 2;//最大每次抓取页面数
+    protected $tools = null;//工具库
 	final public function __construct() {
 		header ( 'Content-type:text/html;chartset=utf-8' );
 		// 初始化mysql
@@ -58,6 +59,7 @@ class Model {
 		$this->curlmulit = new CurlMulit ();
 		$this->pools = $this->load ( 'pools', true );
 		$this->pools->init ( $this->redis );
+        $this->tools = $this->load ( 'tools', true );
 		$this->spidername = Application::$_spidername;
 		$this->spider = Application::$_spider;
 		$this->log = $this->load ( 'log');

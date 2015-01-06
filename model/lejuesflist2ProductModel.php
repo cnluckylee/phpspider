@@ -14,7 +14,7 @@
  *
  * @package model
  */
-class lejuesflistProductModel extends productXModel {
+class lejuesflist2ProductModel extends productXModel {
 
     public  function getImageUrl()
     {

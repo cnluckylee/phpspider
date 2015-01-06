@@ -150,6 +150,7 @@ class soufunnewhouselistProductModel extends productXModel {
         }
         return $this->_barcode;
     }
+
     public function getPromotion()
     {
         $source_url = parent::getUrl();
@@ -250,6 +251,12 @@ class soufunnewhouselistProductModel extends productXModel {
         return $this->_characters;
     }
 
+    public function  getDescription()
+    {
+        $str = parent::getDescription();
+        $this->_description = str_replace(" ","",$str);
+        return $this->_description;
+    }
     public  function getAllCommentNumber()
     {
         $this->_allCommentNumber = count($this->_characters);
