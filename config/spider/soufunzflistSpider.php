@@ -37,6 +37,10 @@ $siteconfig = array(
                     elements::CATEGORY_ITEM_SALE =>'//dd[@class="pfm"]/text()||2',
                     elements::CATEGORY_ITEM_HOT =>'//p[@class="grey"]/text()||2',
                     elements::CATEGORY_ITEM_AREA =>'.//dl/dt/p[2]/text()',
+                ),
+                elements::CATEGORYCOMMON=>array(
+                    "Price"=>'//strong[@class="redfont"]/text()||2',
+
                 )
 
 		),
