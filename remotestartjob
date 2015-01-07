@@ -2,4 +2,4 @@
 controller=$1
 action=$2
 i=$3
-nohup php -f index.php $controller $action $i  > /dev/null &
+nohup php -f ./index.php $controller $action $i  > /dev/null &
