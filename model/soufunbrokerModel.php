@@ -357,7 +357,7 @@ class soufunbrokerModel extends spiderModel
         {
             $arr = parse_url($q['cid']);
             $domain = $arr['host'];
-            $domain = str_replace(array("http://","/"),"",$q['cid']);
+            $domain = str_replace(array("http://","/"),"",$q['cid']); 
             $regex = new MongoRegex("/.".$domain."./");
             $total = $this->mongodb->count($collection,array("Category_Item_Url"=>$regex));
 //            $total = $datas[$domain];
