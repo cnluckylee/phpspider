@@ -362,7 +362,7 @@ class soufunbrokerModel extends spiderModel
             $total = $this->mongodb->count($collection,array("Category_Item_Url"=>$regex));
 //            $total = $datas[$domain];
             $total = $total>0?$total:0;
-//            unset($datas[$domain]);
+//            unset($datas[$domain]); 
             $str .= $q['name']." ".$total." ".$domain.'/agenthome/'."\n";
             echo $q['name']." ".$total." ".$domain.'/agenthome/'."\n";
         }
