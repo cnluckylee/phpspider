@@ -12,6 +12,7 @@ class soufunareaModel extends spiderModel
         $sid = Application::$_spider ['stid'];
         // 清理Category现场
         $this->pools->del ( $poolname );
+        $this->redis->delete ( $this->spidername . 'CategoryTotalCurrent' );
         $this->redis->delete ( $this->spidername . 'CategoryCurrent' );
         $this->redis->delete ( $this->spidername . 'ItemCurrent' );
         $this->redis->delete ( $this->spidername . 'Item' );
