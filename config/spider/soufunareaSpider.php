@@ -8,11 +8,11 @@ $siteconfig = array(
 						elements::HOST => 'mongo.wcc.cc',
 						elements::PORT => '3376',
 						elements::TIMEOUT => 0,
-						elements::DBNAME => 'soufun'
+						elements::DBNAME => 'soufun2'
 				)
 		),
 		elements::CATEGORY => array(
-				elements::CATEGORY_URL => 'http://img1.soufun.com/secondhouse/image/esfnew/scripts/citys.js?v=3.201412041',
+				elements::CATEGORY_URL => 'http://esf.sz.fang.com/newsecond/esfcities.aspx',
 				elements::CATEGORY_MATCH_PREG => '/"spell": "(\w+)", "url": "(.*)"/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>1,'cid'=>2),
 				elements::CATEGORY_GROUP_SIZE => 1,
@@ -53,7 +53,7 @@ $siteconfig = array(
 		elements::COLLECTION_ITEM_NAME => 'Soufun_Area_Items',
 		elements::COLLECTION_CATEGORY_NAME => 'soufun_area',
         elements::ITEMPAGECHARSET => 'gbk',
-        elements::CHARSET => '',
+        elements::CHARSET => 'gbk',
 		elements::MANAGER => 'living',
 		elements::UPDATEDATA=>array(
 				elements::ITEM_DPRICE,
