@@ -15,7 +15,7 @@ $siteconfig = array(
 		),
 		elements::CATEGORY => array(
                 elements::CATEGORY_URL => 'http://esf.baidu.com/',
-                elements::CATEGORY_MATCH_PREG => '/href="http:\/\/esf.baudy.com/(\w+)">(.*?)<\/a>/',
+                elements::CATEGORY_MATCH_PREG => '/href="http:\/\/esf.baidu.com/(\w+)">(.*?)<\/a>/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>1,'cid'=>3),
 				elements::CATEGORY_GROUP_SIZE => 2,
 				elements::CATEGORY_LIST_URL => 'http://#job.esf.fang.com/agenthome/',

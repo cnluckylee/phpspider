@@ -41,15 +41,22 @@ class lejubroker3ProductModel extends productXModel {
             foreach($commons as $key=>$filter)
             {
                 preg_match($filter,$node->nodeValue,$out);
+
                 if(isset($out[1]) && $out[1])
                 {
-                    $this->_common[$key][$i] = trim($out[1]);
+                    $tmp = explode("		",trim($out[1]));
+                    $this->_common[$key][$i] = $tmp[0];
                 }
             }
             $i++;
         }
         $filter = '//div[@class="hall_people_house_name_l"]/a/text()||2';
         $this->_common['UserName'] = $this->_getRegexpInfo($filter, $this->getContent());
+        if(!$this->_common['UserName'])
+        {
+            $filter = '//div[@id="siteHouseList"]/div//strong/a/text()||2';
+            $this->_common['UserName'] = $this->_getRegexpInfo($filter, $this->getContent());
+        }
         return $this->_common;
     }
 
@@ -59,13 +66,12 @@ class lejubroker3ProductModel extends productXModel {
         $nodes = $this->_xpath->query($filter);
         $filter2 = $this->_config[\elements::CATEGORY_ITEM_AREA];
         $this->_category_item_area = array();
+        $i=0;
         foreach ($nodes as $k=>$node) {
-            $p = '/服务楼盘：(.*?)所在门店/';
-            preg_match($p,$node->nodeValue,$out);
-            if(isset($out[1]) && $out[1])
-            {
-                $this->_category_item_area[$k] = explode(" ",trim($out[1]));
+            foreach ($this->_xpath->query($filter2, $node) as $child2) {
+                $this->_category_item_area[$i][] = $child2->nodeValue;
             }
+            $i++;
         }
         return $this->_category_item_area;
     }
@@ -101,7 +107,7 @@ class lejubroker3ProductModel extends productXModel {
         }
         return $this->_category_item_oprice;
     }
-
+/*
     public function getCategoryItemHot()
     {
         $filter = $this->_config[\elements::CATEGORY_ITEM_DPRICE];
@@ -149,7 +155,7 @@ class lejubroker3ProductModel extends productXModel {
         }
         return $this->_category_item_sale;
     }
-
+*/
     public function getCategoryItemUrL()
     {
         $data = parent::getCategoryItemUrL();

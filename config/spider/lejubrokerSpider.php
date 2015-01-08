@@ -12,7 +12,7 @@ $siteconfig = array(
 				)
 		),
 		elements::CATEGORY => array(
-				elements::CATEGORY_URL => '',
+				elements::CATEGORY_URL => 'http://esf.baidu.com/',
 				elements::CATEGORY_MATCH_PREG => '',
 				elements::CATEGORY_MATCH_MATCH => array(),
 				elements::CATEGORY_GROUP_SIZE => 2,

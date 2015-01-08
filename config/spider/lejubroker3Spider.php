@@ -31,17 +31,18 @@ $siteconfig = array(
                     elements::CATEGORY_ITEM_DPRICE =>'//div[@class="broker-lists-item"]',
                     elements::CATEGORY_ITEM_URL => '//a[@class="c_default f14 mr5"]/@href||2',
                     elements::CATEGORY_ITEM_SKUID =>'//a[@class="c_default f14 mr5"]/@href||2',//昵称
-                    elements::CATEGORY_ITEM_AREA =>'.//div[@class="hall_people_house_font"][2]',//服务楼盘
+                    elements::CATEGORY_ITEM_AREA =>'.//a[@class="mr5"]/text()',//服务楼盘
                     elements::CATEGORY_ITEM_MPRICE =>'.//img[contains(@src,"medal.png")]/@src',//金牌
                     elements::CATEGORY_ITEM_OPRICE =>'.//span[@class="ico-06"]/@class',//认证
-                    elements::CATEGORY_ITEM_HOT =>'.//p[@class="mt2"]/a[1]/text()',//出售数量
-                    elements::CATEGORY_ITEM_SALE =>'.//p[@class="mt2"]/a[2]/text()',//出租数量
-                    elements::CATEGORY_ITEM_DISTRICT =>'.//dd[1]/p[3]/a/text()',//所属门店
+                    elements::CATEGORY_ITEM_HOT =>'//p[@class="mt2"]/a[1]/text()',//出售数量
+                    elements::CATEGORY_ITEM_SALE =>'//p[@class="mt2"]/a[2]/text()',//出租数量
+
                     elements::CATEGORY_ITEM_COMPANY=>'//li[@class="site-topsearch"]/a[@class="current"]/text()||1',//城市
                     elements::CATEGORYCOMMON =>array(
-                        'ServiceArea'=>'/服务区域：(.*)	服/',//区域
+                        'ServiceArea'=>'/服务区域：(.*)\s/',//区域
                         'Stores' => '/所在门店：(.*)/',//所在门店
                         'Tel'=>'/手机：(\d+)/',
+                        //'ServingCell'=>'/服务小区：(.*)				/',
                     ),
                 )
 		),
