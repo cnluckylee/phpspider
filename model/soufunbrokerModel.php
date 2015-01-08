@@ -333,9 +333,9 @@ class soufunbrokerModel extends spiderModel
 ////                break;
 ////            $i++;
 //        }
-        $total = $this->mongodb->count($collection);
-        $s = 0;
-        $limit = 1000;
+//        $total = $this->mongodb->count($collection);
+//        $s = 0;
+//        $limit = 1000;
 //        do {
 //            $mondata = $this->mongodb->find ( $cname, array (), array (
 //                "start" => $s,
@@ -351,20 +351,22 @@ class soufunbrokerModel extends spiderModel
 //            $s +=$limit;
 //            echo "has load:".$s."\n";
 //        }while($s<$total);
-        $datas = $this->redis->hgetall('tmptotal');
+//        $datas = $this->redis->hgetall('tmptotal');
 
         foreach($data as $q)
         {
+            $arr = parse_url($q['cid']);
+            $domain = $arr['host'];
             $domain = str_replace(array("http://","/"),"",$q['cid']);
-//            $regex = new MongoRegex("/.".$domain."./");
-//            $total = $this->mongodb->count($collection,array("Category_Item_Url"=>$regex));
-            $total = $datas[$domain];
+            $regex = new MongoRegex("/.".$domain."./");
+            $total = $this->mongodb->count($collection,array("Category_Item_Url"=>$regex));
+//            $total = $datas[$domain];
             $total = $total>0?$total:0;
-            unset($datas[$domain]);
+//            unset($datas[$domain]);
             $str .= $q['name']." ".$total." ".$domain.'/agenthome/'."\n";
             echo $q['name']." ".$total." ".$domain.'/agenthome/'."\n";
         }
-print_r($datas);
+//print_r($datas);
 //        foreach($datas as $k=>$v)
 //        {
 //            $str .= $k." ".$v."\n";
