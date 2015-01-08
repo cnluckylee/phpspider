@@ -20,6 +20,7 @@ class spiderModel extends Model {
         $sid = Application::$_spider ['stid'];
 		// 清理Category现场
 		$this->pools->del ( $poolname );
+        $this->redis->delete ( $this->spidername . 'CategoryTotalCurrent' );
 		$this->redis->delete ( $this->spidername . 'CategoryCurrent' );
 		$this->redis->delete ( $this->spidername . 'ItemCurrent' );
 		$this->redis->delete ( $this->spidername . 'Item' );
@@ -165,6 +166,7 @@ foreach($Categorylist as $k=>$v)
 				}
 			}
 		} while ( $this->spiderrun );
+        $this->redis->delete ( $this->spidername . 'CategoryTotalCurrent' );
         $this->redis->delete ( $this->spidername . 'CategoryCurrent' );
 		$this->redis->delete ( $this->spidername . 'ItemCurrent' );
 		$this->redis->delete ( $this->spidername . 'Item' );
@@ -185,7 +187,7 @@ foreach($Categorylist as $k=>$v)
         $job = $jobs[0];
 
 
-//       $job = 'http://esf.sh.fang.com/agent/agentnew/AloneEsfHList.aspx?&agentid=160288471&page=';
+//       $job = 'http://www.leju.com/index.php?mod=sale_search&city=zz&p=';
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
 
@@ -201,7 +203,6 @@ foreach($Categorylist as $k=>$v)
 		// 首先获取下该分类下面的总页数
 		$pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
         if (! $pageHtml) {
-
 //			$this->autostartitemmaster ();
 			$this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
             $this->redis->hincrby ( $this->spidername . $jobname . 'Current',HOSTNAME,-1);
@@ -213,6 +214,7 @@ foreach($Categorylist as $k=>$v)
 			) );
 			exit ();
 		}
+
         //获取分类列表页总页数，如果获取不到则自动停止，并做好相应记录
         $totalpages = $this->getcategorylisttotalpages($Category,$xpath,$pageHtml,$Categoryurl,$job,$jobname);
 
@@ -243,10 +245,8 @@ foreach($Categorylist as $k=>$v)
                     }
                     $tmpurls [$url] = $url;
 				}
-//$tmpurls = array();
 
-//                $tmpurls[$job] = $job;
-//print_r($tmpurls);
+
                 $pages = $this->curlmulit->remote ( $tmpurls, null, false ,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
 
                 /**
@@ -267,7 +267,9 @@ foreach($Categorylist as $k=>$v)
 				$preg = $Category [elements::CATEGORY_LIST_GOODS_PREG];
 				$match = $Category [elements::CATEGORY_LIST_GOODS_Match];
                 $baseurl = '';
+
 				foreach ( $pages as $rurl => $page ) {
+
                     if(strtolower($Category[elements::CATEGORY_ITEM_PREG][elements::CATEGORY_ITEM_MATCHING]) == 'xpath')
                     {
                         $item_urls = $this->curlmulit->getRegexpInfo2($preg,$page);
@@ -286,7 +288,8 @@ foreach($Categorylist as $k=>$v)
                         $Productmodel = $this->spidername . 'ProductModel';
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
-//print_r($categorydata);exit;
+//print_r($categorydata);
+//exit;
 //print_r($rurl);
 //print_r($page);
 
