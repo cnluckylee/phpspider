@@ -316,6 +316,7 @@ class soufunbrokerModel extends spiderModel
     //计算每个城市的经纪人数量
     function tojson($cname)
     {
+        $this->tojsond();exit;
         $data = $this->mongodb->find('soufun_area',array());
         $collection = $cname = 'soufunbroker_category_list';
         $str = '城市 抓取数量 URL'."\n";
@@ -373,6 +374,73 @@ class soufunbrokerModel extends spiderModel
         $file = fopen($filename,"a+");
         fwrite($file,$str);
         fclose($file);
+        exit("all over");
+    }
+
+    //计算每个城市的经纪人数量
+    function tojsond()
+    {
+        $data = $this->mongodb->find('soufun_area',array());
+        $collection = $cname = 'soufunbroker_category_list';
+        $str = "城市\t经纪人姓名\t所属公司\t所属门店\t联系电话\t服务区县\t服务商圈\t职业特长\t黄钻数\t是否为专家\t是否通过职业认证\t";
+        $str .="是否通过身份认证\t是否通过名片认证\tURL\t"."\n";
+        $filename = 'soufun_broker_detail.csv';
+        $i=0;
+        $citys = array();
+        $tmp = $this->mongodb->find('soufun_area',array());
+        foreach($tmp as $k=>$v)
+        {
+            $arr = parse_url($v['cid']);
+            $domain = $arr['host'];
+            $citys[$domain] = $v['name'];
+        }
+        $total = $this->mongodb->count($cname);
+        $s = 0;
+        $limit = 1000;
+        do {
+            $mondata = $this->mongodb->find ( $cname, array (), array (
+                "start" => $s,
+                "limit" => $limit
+            ) );
+            foreach($mondata as $v)
+            {
+                $url = $v['Category_Item_Url'];
+                $skuid = $v['Category_Item_Skuid'];
+                $d = $this->mongodb->findOne("soufunbroker_Items",array('skuid'=>$skuid));
+                if($d)
+                {
+                    $tmp = parse_url($url);
+                    $domain = $tmp['host'];
+                    $ct = $citys[$domain];
+                    $ssgs = $d['source_category_name']?$d['source_category_name']:"无";
+                    $ssmd = $d['dprice']?$d['dprice']:"无";
+                    $tel = $d['source_category_id']?$d['source_category_id']:"无";
+                    $qy = $d['brand_id']?$d['brand_id']:"无";
+                    $sq = $d['brand_name']?$d['brand_name']:"无";
+                    $tc = $v['Category_Item_Hot']?$v['Category_Item_Hot']:"无";
+                    $zj = $v['Category_Item_Sale']?'是':'否';
+                    $zyrz = in_array("已通过职业资格认证",$v['Category_Item_Reviews'])?"是":"否";
+                    $sfrz = in_array("已通过身份认证",$v['Category_Item_Reviews'])?"是":"否";
+                    $mprz = in_array("已通过名片认证",$v['Category_Item_Reviews'])?"是":"否";
+                    $zs = $v['Category_Item_Area']?$v['Category_Item_Area']:"无";
+                    $str .= $ct."\t".$v['UserName']."\t".$ssgs."\t".$ssmd."\t".$tel."\t".$qy."\t".$sq."\t".$tc."\t".$zs."\t".$zj."\t";
+                    $str .= $zyrz."\t".$sfrz."\t".$mprz."\t".$url."\t";
+                }
+
+            }
+            $s +=$limit;
+            echo "has load:".$s."\n";
+            if($s>1000)
+            {
+                $file = fopen($filename,"a+");
+                fwrite($file,$str);
+                fclose($file);
+            }
+        }while($s<$total);
+
+
+
+
         exit("all over");
     }
 
