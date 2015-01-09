@@ -5,10 +5,10 @@ $siteconfig = array(
     elements::NAME => '搜房网',
     elements::DB => array(
         'mongodb' => array(
-            elements::HOST => 'master.mongo.cc',
+            elements::HOST => 'mongo.wcc.cc',
             elements::PORT => '3376',
             elements::TIMEOUT => 0,
-            elements::DBNAME => 'soufun'
+            elements::DBNAME => 'soufun2'
         ),
         'mongodbsec' => array(
             elements::HOST => 'mongo.wcc.cc',

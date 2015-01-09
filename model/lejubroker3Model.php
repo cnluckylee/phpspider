@@ -1,6 +1,6 @@
 <?php 
 
-class lejubrokerModel extends spiderModel
+class lejubroker3Model extends spiderModel
 {
     function getCategory() {
         header("Content-type: text/html; charset=utf-8");
@@ -102,101 +102,17 @@ class lejubrokerModel extends spiderModel
 */
     function tojson($cname)
     {
-        $cname = 'lejubroker2_category_list';
-        $total = $this->mongodb->count($cname);
-        $cityt = $this->mongodb->find('leju_area',array());
-        $city = array();
-        foreach($cityt as $k=>$v)
+        $cname = 'leju_area';
+        $data = $this->mongodb->find($cname,array());
+        $filename = 'leju_Data.csv';
+        $str = "名称 网站数量 抓取数量 URL"."\n";
+        foreach($data as $i)
         {
-            $s = str_replace(array("http://",".sina.com.cn"),"",$v['cid']);
-            $city[$s] = $v['name'];
+            $str.= $i['name']." "." ".$i['cid']."\n";
         }
-
-        $collection = 'lejubrokerItem';
-        $s = $i= 0;
-        $limit = 1000;
-        $companys = array();
-        $tmp = array();
-        $filename = 'lejubroker_detail.csv';
-        $str = "城市\t名称\t服务区域\t服务楼盘\t所在门店\t手机\t出租数量\t出售数量\t评分等级\t诚信认证\t注册时间\tURL"."\n";
-        $i=0;
-        do {
-            $mondata = $this->mongodb->find ( $cname, array (), array (
-                "start" => $s,
-                "limit" => $limit
-            ) );
-            foreach($mondata as $item)
-            {
-
-                    $itemurl = $item['Category_Item_Skuid'];
-                    $arr = explode("-",$itemurl);
-                    $p = '/shop\/(\d+)/';
-                    preg_match($p,$itemurl,$out);
-
-                    $p2 = '/http:\/\/(\w+).esf/';
-                    preg_match($p2,$itemurl,$out2);
-                    $domain = isset($out2[1])?$out2[1]:"";
-                    $skuid = isset($out[1])?$out[1]:"";
-
-                    if(!$domain)
-                    {
-                        $p3 = '/com\/(\w+)\/shop/';
-                        preg_match($p3,$itemurl,$out3);
-                        $domain = isset($out3[1])?$out3[1]:"";
-                    }
-                    $skuid = $domain.'-'.$skuid;
-                    $scity = $city[$domain.'.esf'];
-                    $d = $this->mongodb->findOne('lejubroker_Items',array('skuid'=>$skuid));
-                    if(!$d)
-                    {
-                        $this->redis->sadd($collection,$arr[0].'-4');
-                        $this->redis->hset('lejubrokerItemBak',$arr[0].'-4',1);
-                        echo "add :".$skuid."\n";
-                    }else{
-                        $loupan = $store= $regtime = "无";
-                        $ServiceArea = isset($item['ServiceArea'])?$item['ServiceArea']:"\t";
-                        if(isset($item['Category_Item_Area']) &&  $item['Category_Item_Area']){
-                            $loupan = join(",",$item['Category_Item_Area']);
-                            if(strstr($loupan,"所在楼盘") || strstr($loupan,"手机"))
-                                $loupan = "无";
-                            if(strstr($loupan,"门店")){
-                                $store = $loupan;
-                                $loupan = "无";
-                            }
-
-                        }
-                        $store = $store=='无' && isset($item['Stores']) && strstr($item['Stores'],"门店")?$item['Stores']:"无";
-                        $tel = trim(isset($item['Tel'])?$item['Tel']:"无");
-                        $sales = isset($item['Category_Item_Sale'])?$item['Category_Item_Sale']:"无";
-                        $maichu = isset($item['Category_Item_Hot'])?$item['Category_Item_Hot']:"无";
-                        $jp = isset($item['Category_Item_Mprice'])?$item['Category_Item_Mprice']:"无";
-                        $rz = isset($item['Category_Item_OPrice'])?$item['Category_Item_OPrice']:"无";
-                        $regtime = isset($d['isbn']) && $d['isbn']?$d['isbn']:"无";
-                        $str .= $scity."\t".$item['UserName']."\t".$ServiceArea."\t".$loupan."\t".$store."\t".$tel."\t";
-
-                        $str .= $sales."\t".$maichu."\t".$jp."\t".$rz."\t".$regtime."\t".$item['Category_Item_Skuid']."\t"."\n";
-
-                        $i++;
-//                       if($i>2000)
-//                        {
-//                            $file = fopen($filename,"a+");
-//                            fwrite($file,$str);
-//                            fclose($file);
-//                            exit("all over");
-//                        }
-                    }
-                }
-
-            echo "has do".$i."\n";
-
-            $s +=$limit;
-            echo "has load:".$s."\n";
-        }while($s<$total);
         $file = fopen($filename,"a+");
         fwrite($file,$str);
         fclose($file);
-        exit("all over");
-
     }
 
 }

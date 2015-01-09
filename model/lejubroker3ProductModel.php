@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Dream 
+ * User: Dream
  * Date: 14-5-4
  * Time: 下午5:39
  */
@@ -14,11 +14,10 @@
  *
  * @package model
  */
-class lejubrokerProductModel extends productXModel {
+class lejubroker3ProductModel extends productXModel {
 
     public function getCommon()
     {
-
         $filter = $this->_config[\elements::CATEGORY_ITEM_DPRICE];
         $nodes = $this->_xpath->query($filter);
         $commons = $this->_config[\elements::COMMON];
@@ -42,6 +41,7 @@ class lejubrokerProductModel extends productXModel {
             foreach($commons as $key=>$filter)
             {
                 preg_match($filter,$node->nodeValue,$out);
+
                 if(isset($out[1]) && $out[1])
                 {
                     $tmp = explode("		",trim($out[1]));
@@ -52,6 +52,11 @@ class lejubrokerProductModel extends productXModel {
         }
         $filter = '//div[@class="hall_people_house_name_l"]/a/text()||2';
         $this->_common['UserName'] = $this->_getRegexpInfo($filter, $this->getContent());
+        if(!$this->_common['UserName'])
+        {
+            $filter = '//div[@id="siteHouseList"]/div//strong/a/text()||2';
+            $this->_common['UserName'] = $this->_getRegexpInfo($filter, $this->getContent());
+        }
         return $this->_common;
     }
 
@@ -61,15 +66,14 @@ class lejubrokerProductModel extends productXModel {
         $nodes = $this->_xpath->query($filter);
         $filter2 = $this->_config[\elements::CATEGORY_ITEM_AREA];
         $this->_category_item_area = array();
+        $i=0;
         foreach ($nodes as $k=>$node) {
-            $p = '/服务楼盘：(.*?)所在门店/';
-            preg_match($p,$node->nodeValue,$out);
-            if(isset($out[1]) && $out[1])
-            {
-                $this->_category_item_area[$k] = explode(" ",trim($out[1]));
+            foreach ($this->_xpath->query($filter2, $node) as $child2) {
+                $this->_category_item_area[$i][] = $child2->nodeValue;
             }
+            $i++;
         }
-       return $this->_category_item_area;
+        return $this->_category_item_area;
     }
 
     public function getCategoryItemDprice()
@@ -103,7 +107,7 @@ class lejubrokerProductModel extends productXModel {
         }
         return $this->_category_item_oprice;
     }
-
+/*
     public function getCategoryItemHot()
     {
         $filter = $this->_config[\elements::CATEGORY_ITEM_DPRICE];
@@ -151,7 +155,7 @@ class lejubrokerProductModel extends productXModel {
         }
         return $this->_category_item_sale;
     }
-
+*/
     public function getCategoryItemUrL()
     {
         $data = parent::getCategoryItemUrL();
@@ -175,7 +179,7 @@ class lejubrokerProductModel extends productXModel {
         $p = '/shop\/(\d+)/';
         preg_match($p,$str,$out);
 
-        $p2 = '/http:\/\/(\w+).esf/';
+        $p2 = '/com\/(\w+)\/shop/';
         preg_match($p2,$str,$out2);
         $domain = isset($out2[1])?$out2[1]:"";
         $this->_productID = isset($out[1])?$out[1]:"";

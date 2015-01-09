@@ -57,7 +57,7 @@ class soufunesflistModel extends spiderModel
         $tmp = $this->pools->get ( $name );
         $jobs = array_values($tmp);
         $job = $jobs[0];
-        $sourceurl = $Categoryurl = $job.'newsecond/Map/Interfaces/getHouseData.aspx?businesstype=&purpose=&comarea=&district=&pricemax=&pricemin=&areamax=&areamin=&room=&source=&x1=&y1=&x2=&y2=&v=2014.12.18.20&pagesize=20&page=';
+        $sourceurl = $Categoryurl = $job.'newsecond/Map/Interfaces/getHouseData.aspx?businesstype=&y2=&v=2014.12.18.20&pagesize=100&page=';
         $poolname = $this->spidername . 'Item';
         $pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
         if (! $pageHtml) {
@@ -77,7 +77,8 @@ class soufunesflistModel extends spiderModel
         $data = json_decode($jsondata,true);
         $itemtotals = $data['allcount'];
         // 首先获取下该分类下面的总页数
-        $totalpages = ceil($itemtotals/20);
+        $totalpages = ceil($itemtotals/100);
+        $totalpages = $totalpages>100?100:$totalpages;//最多只监听100页数据
         if(!$totalpages && $pageHtml){
             $this->log->errlog ( array (
                 'job' => $job,
@@ -139,8 +140,8 @@ class soufunesflistModel extends spiderModel
                                 $item[\elements::CATEGORY_ITEM_URL] = $job.$item['houseurl'];
                                 $item[\elements::CATEGORY_ITEM_SKUID] = $item['houseid'];
                                 $item['registtime'] = $this->tools->getSourceUpdateTime($item['registdate']);
-                                $item['job'] = $rurl;
                                 $item['create_time'] = date('Y-m-d H:i:s');
+                                $item['job'] = $rurl;
                                 if($item[\elements::CATEGORY_ITEM_URL])
                                     $this->pools->set ( $poolname, $item[\elements::CATEGORY_ITEM_URL] );//将category_item_url加入任务池中 2014.12.20 22:32
                                 $this->mongodb->insert($this->spidername.'_category_list',$item);

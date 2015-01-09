@@ -23,6 +23,32 @@ class lejunewhouselistProductModel extends productXModel {
         return  $this->_barcode;
     }
 
+    public function getCategoryCommon()
+    {
+
+        $filter = '//ul[@class="results_list"]/li';
+        $nodes = $this->_xpath->query($filter);
+        $commons = $this->_config[\elements::CATEGORYCOMMON];
+        $i=0;
+
+        foreach ($nodes as $k=>$node) {
+            foreach($commons as $key=>$q)
+            {
+
+                preg_match($q,$node->nodeValue,$out);
+                if(isset($out[1]) && $out[1])
+                {
+                    $this->_common[$key][$i] = str_replace(" ",",",trim($out[1]));
+                }
+            }
+            $i++;
+        }
+
+//        exit;
+//        $filter = '//a[@class="c_default f14 mr5"]/text()||2';
+//        $this->_common['UserName'] = $this->_getRegexpInfo($filter, $this->getContent());
+        return $this->_common;
+    }
 
 
     public function getSales()

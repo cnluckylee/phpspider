@@ -5,3 +5,4 @@
 4.加入列表页内容获取并保存。
 5.加入任务完成监控。
 6.加入retry机制。
+7.master启动salvejob 暂时python调用

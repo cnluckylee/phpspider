@@ -5,7 +5,7 @@ $siteconfig = array(
 		elements::NAME => '乐居新房列表网',
 		elements::DB => array(
 				'mongodb' => array(
-						elements::HOST => 'mongo.wcc.cc',
+						elements::HOST => 'mongo.salve1.cc',
 						elements::PORT => '3376',
 						elements::TIMEOUT => 0,
 						elements::DBNAME => 'leju'
@@ -33,12 +33,15 @@ $siteconfig = array(
                     elements::CATEGORY_ITEM_NAME =>'//ul[@class="results_list"]//a[@class="pic"]/@title||2',
                     elements::CATEGORY_ITEM_AREA =>'//div[@id="s_list"]//dd[2]/a[@class="cur"]/text()||1',
                     elements::CATEGORY_ITEM_HOT=>'//div[@class="show_inner"]||2',//E基金
+
                     elements::CATEGORYCOMMON =>array(
-                        'Address'=>'//div[@class="txt"]/h3/p[1]/text()||2',
-                        'Price'=>'//div[@class="txt_r"]/p[1]/text()||2',
-                        'OpenDate'=>'//div[@class="txt_r"]/p[2]/text()||2',
-                        'ComeDate'=>'//div[@class="txt_r"]/p[3]/text()||2',
-                        'PropertyType'=>'//div[@class="txt"]/h3/p[2]/text()||2',
+                        'Address'=>'/物业地址：(.*)\n/',
+                        'Price'=>'/指导均价：(.*)\s/',
+                        'OpenDate'=>'/开盘时间：(.*)入/',
+                        'ComeDate'=>'/入住时间：(.*)\s+/',
+                        'PropertyType'=>'/ 物业类型：(.*)\n/',
+                        'MarketPrice'=>'/指导均价：(.*)\s/',
+                        'Apartment'=>'/主力户型：(.*)\n/',
                     ),
                 )
 		),
