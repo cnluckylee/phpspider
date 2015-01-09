@@ -44,7 +44,8 @@ class lejubrokerProductModel extends productXModel {
                 preg_match($filter,$node->nodeValue,$out);
                 if(isset($out[1]) && $out[1])
                 {
-                    $this->_common[$key][$i] = trim($out[1]);
+                    $tmp = explode("		",trim($out[1]));
+                    $this->_common[$key][$i] = $tmp[0];
                 }
             }
             $i++;

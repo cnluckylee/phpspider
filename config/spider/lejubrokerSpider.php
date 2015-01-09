@@ -5,7 +5,7 @@ $siteconfig = array(
 		elements::NAME => '乐居经纪人',
 		elements::DB => array(
 				'mongodb' => array(
-						elements::HOST => 'mongo.salve1.cc',
+						elements::HOST => 'mongo.wcc.cc',
 						elements::PORT => '3376',
 						elements::TIMEOUT => 0,
 						elements::DBNAME => 'leju'
@@ -38,7 +38,7 @@ $siteconfig = array(
                     elements::CATEGORY_ITEM_SALE =>'.//div[@class="hall_people_house_font"][5]/text()',//出租数量
                     elements::CATEGORY_ITEM_COMPANY=>'//div[@class="item"]/a[@class="hover"]/text()||1',//城市
                     elements::CATEGORYCOMMON =>array(
-                        'ServiceArea'=>'/服务区域：(.*)	服/',//区域
+                        'ServiceArea'=>'/服务区域：(.*)\s/',//区域
                         'Stores' => '/所在门店：(.*)/',//所在门店
                         'Tel'=>'/手机：(\d+)/',
                     ),
@@ -59,8 +59,8 @@ $siteconfig = array(
 		elements::STID => 111,
         elements::HTML_ZIP =>'gzip',
 		elements::DATASOURCE => '1',
-		elements::COLLECTION_ITEM_NAME => 'lejubroker_Items',
-		elements::COLLECTION_CATEGORY_NAME => 'lejubroker_category',
+		elements::COLLECTION_ITEM_NAME => 'lejubroker3_Items',
+		elements::COLLECTION_CATEGORY_NAME => 'lejubroker3_category',
         elements::ITEMPAGECHARSET => 'gbk',
         elements::CHARSET => '',
 		elements::MANAGER => 'living',
