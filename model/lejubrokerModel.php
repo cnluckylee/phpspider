@@ -2,71 +2,62 @@
 
 class lejubrokerModel extends spiderModel
 {
-    public function  getCategory()
-    {
-        $collection = 'Leju_Area_Items';
+    function getCategory() {
+        header("Content-type: text/html; charset=utf-8");
+        $Category = Application::$_spider ['Category'];
+        $thistimerun = isset ( $Category ['Category_Run'] ) ? $Category ['Category_Run'] : 1;
         $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
         $poolname = $this->spidername . 'Category';
         $sid = Application::$_spider ['stid'];
-//        $regex = new MongoRegex("/sh-./");
-        $data = $this->mongodb->find($collection,array());
-        $result = array();
-        /**
-         * 写入mongodb category集合
-         */
-        $this->mongodb->remove ( $collection_category_name, array () ); // 删除原始数据，保存最新的数据
-        foreach($data as $k=>$v)
-        {
-            $v['price_url'] = array_unique($v['price_url']);
-            $v['dprice'] = array_unique($v['dprice']);
-//            echo  count($v['price_url'])." ". count($v['dprice']);
-            if(!$v['price_url'])
-            {
-                $v['price_url'] = $v['dprice'];
-                unset($v['dprice']);
-            }
-            foreach($v['price_url'] as $u)
-            {
-                $tmp =  explode("agent/",$u);
-                $tmp = str_replace("/","",$tmp[1]);
-                $tmp = explode("-",$tmp);
-                $a = isset($tmp[0])?'-'.$tmp[0]:"";
-                $b = isset($tmp[1])?'-'.$tmp[1]:"";
-                foreach($v['dprice'] as $kk=>$vv)
-                {
-                    if($u!=$vv)
-                        $u2 = substr($vv,0,strlen($vv)-1);
-                    else
-                        $u2 = $vv;
-                    $result[] = $u2.$b.'-n';
-                }
-                if(!isset($v['dprice']))
-                {
-                    if($a || $b)
-                        $url = substr($u,0,strlen($u)-1);
-                    else{
-                        $url = $u;
-                    }
-                    $url = $url.'-n';
-                    $result[] = $url;
-                }
+        // 清理Category现场
+        $this->pools->del ( $poolname );
+        $this->redis->delete ( $this->spidername . 'CategoryCurrent' );
+        $this->redis->delete ( $this->spidername . 'ItemCurrent' );
+        $this->redis->delete ( $this->spidername . 'Item' );
+        $this->redis->delete ( $this->spidername . 'ItemJobRun' );
+        // 判断本次是否重新抓取分类数据
 
+        if ($thistimerun) {
+            $Category_URL = $Category[elements::CATEGORY_URL];
+            $tmp = $this->curlmulit->remote( $Category_URL , null, false, Application::$_spider[elements::CHARSET],Application::$_spider [ elements::ITEMPAGECHARSET]);
+            $page = $tmp[$Category_URL];
+            $Categorytmp = array();
+            $preg = '//div[@class="city_list"]/a/@href';
+            $tmphref = $this->curlmulit->getRegexpInfo2($preg,$page);
+            $preg = '//div[@class="city_list"]/a/text()';
+            $tmptext = $this->curlmulit->getRegexpInfo2($preg,$page);
+            foreach($tmptext as $k=>$v)
+            {
+                $url = isset($tmphref[$k])?$tmphref[$k]:"";
+                $url .='/agent/n';
+                $Categorytmp[$v] = $url;
             }
-            $Categorylist = array_unique ( $result );
-//            print_r($Categorylist);
-            $mondata2 = array ();
+            $Categorylist = array_unique ( $Categorytmp );
+            $mondata = array ();
             foreach ( $Categorylist as $name => $cid ) {
                 $this->pools->set ( $poolname, $cid );
-                $mondata2 = array (
+                $mondata [] = array (
                     'name' => $name,
                     'cid' => $cid,
                     'sid' => $sid
                 );
-                $this->mongodb->insert ( $collection_category_name, $mondata2 );
             }
-            unset($result);
+            /**
+             * 写入mongodb category集合
+             */
+            $this->mongodb->remove ( $collection_category_name, array () ); // 删除原始数据，保存最新的数据
+            if($mondata)
+                $this->mongodb->batchinsert ( $collection_category_name, $mondata );
+            unset($mondata);
+        } else {
+            $Categorylist = $this->mongodb->find ( $collection_category_name, array () );
+            foreach ( $Categorylist as $obj ) {
+                $cid = $obj ['cid'];
+                $this->pools->set ( $poolname, $cid );
+            }
         }
-        echo "do over"."\n";
+        echo "共收集到" . count ( $Categorylist ) . "个分类\n";
+        unset($Categorylist);
         exit;
     }
 /*
