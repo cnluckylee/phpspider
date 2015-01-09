@@ -8,11 +8,11 @@ $siteconfig = array(
 						elements::HOST => 'mongo.wcc.cc',
 						elements::PORT => '3376',
 						elements::TIMEOUT => 0,
-						elements::DBNAME => 'soufun'
+						elements::DBNAME => 'soufunbak'
 				)
 		),
 		elements::CATEGORY => array(
-				elements::CATEGORY_URL => 'http://js.soufunimg.com/homepage/new/family/css/citys.js?v=421824131436',
+				elements::CATEGORY_URL => 'http://fang.com/SoufunFamily.htm',
 				elements::CATEGORY_MATCH_PREG => '/"spell": "(\w+)", "url": "http:\/\/(.*)"/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>1,'cid'=>2),
 				elements::CATEGORY_GROUP_SIZE => 1,

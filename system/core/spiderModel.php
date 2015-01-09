@@ -188,7 +188,7 @@ foreach($Categorylist as $k=>$v)
 
 
 
-//       $job = 'http://www.leju.com/index.php?mod=sale_search&city=zz&p=';
+       $job = 'http://esf.baidu.com/sh/agent/m3-n';
 
 
 //        $job = 'http://esf.sh.fang.com/agenthome-a019-b010345/-j310-i3';
@@ -204,6 +204,7 @@ foreach($Categorylist as $k=>$v)
 
 		// 首先获取下该分类下面的总页数
 		$pageHtml = $this->curlmulit->remote ( $Categoryurl,null,false,Application::$_spider [ elements::ITEMPAGECHARSET],Application::$_spider [elements::HTML_ZIP]);
+
         if (! $pageHtml) {
 //			$this->autostartitemmaster ();
 			$this->redis->decr ( $this->spidername . 'CategoryTotalCurrent' );
@@ -291,7 +292,8 @@ foreach($Categorylist as $k=>$v)
                         $spidermodel = new $Productmodel ( $this->spidername, $rurl, $page, $Category [elements::CATEGORY_ITEM_PREG] );
                         $categorydata = $spidermodel->CategoryToArray ( );
 
-//print_r($categorydata);
+print_r($categorydata);
+                        echo $s."\n";
 //exit;
 
 
@@ -320,8 +322,8 @@ foreach($Categorylist as $k=>$v)
                         'addtime' => date ( 'Y-m-d H:i:s' )
                     ) );
                 }
-                $sleep = rand(1,3);
-                sleep($sleep);
+//                $sleep = rand(1,3);
+//                sleep($sleep);
 			} while ( $s <= $totalpages );
 		}
         $this->pools->deljob($name,$job);//加入删除备份任务机制

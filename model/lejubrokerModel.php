@@ -100,7 +100,90 @@ class lejubrokerModel extends spiderModel
         }while($s<$total);
     }
 */
+
+    //计算每个城市的经纪人数量
+    function tocsvlist()
+    {
+//        $this->tojsond();exit;
+        $data = $this->mongodb->find('lejubroker3_category',array());
+        $collection = 'lejubroker_category_list_Tel_Uniqu';
+        $str = '城市 抓取数量 URL'."\n";
+        $filename = 'lejubroker3_agent.csv';
+        $i=0;
+        foreach($data as $q)
+        {
+            $p = '/com\/(.*)\/agent\//';
+            preg_match($p,$q['cid'],$out);
+
+
+            $domain = 'com\/'.$out[1].'\/shop';
+
+            $regex = new MongoRegex("/.".$domain."./");
+            $total = $this->mongodb->count($collection,array("Category_Item_Url"=>$regex));
+//            $total = $datas[$domain];
+            $total = $total>0?$total:0;
+
+//            unset($datas[$domain]);
+
+            $str .= $q['name']." ".$total." ".$domain.'/agenthome/'."\n";
+            echo $q['name']." ".$total." ".$domain.'/agenthome/'."\n";
+        }
+//print_r($datas);
+//        foreach($datas as $k=>$v)
+//        {
+//            $str .= $k." ".$v."\n";
+//        }
+        $file = fopen($filename,"a+");
+        fwrite($file,$str);
+        fclose($file);
+        exit("all over");
+    }
+
+
     function tojson($cname)
+    {
+        $this->tocsvlist();exit;
+        $cname = 'lejubroker2_category_list';
+        $total = $this->mongodb->count($cname);
+        $cityt = $this->mongodb->find('leju_area',array());
+        $city = array();
+        foreach($cityt as $k=>$v)
+        {
+            $s = str_replace(array("http://",".sina.com.cn"),"",$v['cid']);
+            $city[$s] = $v['name'];
+        }
+
+        $collection = 'lejubrokerItem';
+        $s = $i= 0;
+        $limit = 1000;
+        $companys = array();
+        $tmp = array();
+        $filename = 'lejubroker_detail.csv';
+        $str = "城市\t名称\t服务区域\t服务楼盘\t所在门店\t手机\t出租数量\t出售数量\t评分等级\t诚信认证\t注册时间\tURL"."\n";
+        $i=0;
+        do {
+            $mondata = $this->mongodb->find ( $cname, array (), array (
+                "start" => $s,
+                "limit" => $limit
+            ) );
+            foreach($mondata as $item)
+            {
+                $this->mongodb->insert("");
+            }
+            echo "has do".$i."\n";
+
+            $s +=$limit;
+            echo "has load:".$s."\n";
+        }while($s<$total);
+        $file = fopen($filename,"a+");
+        fwrite($file,$str);
+        fclose($file);
+        exit("all over");
+
+    }
+
+
+    function tojsond($cname)
     {
         $cname = 'lejubroker2_category_list';
         $total = $this->mongodb->count($cname);

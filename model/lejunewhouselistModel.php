@@ -4,12 +4,11 @@ class lejunewhouselistModel extends spiderModel
 {
     public function  getCategory()
     {
-        $collection = 'lejunewhousearea_category_list';
+        $collection = 'lejunewhouse_area';
         $collection_category_name = Application::$_spider [elements::COLLECTION_CATEGORY_NAME];
         $poolname = $this->spidername . 'Category';
         $sid = Application::$_spider ['stid'];
         $data = $this->mongodb->find($collection,array());
-
         $result = array();
         /**
          * 写入mongodb category集合
@@ -17,11 +16,9 @@ class lejunewhouselistModel extends spiderModel
         $this->mongodb->remove ( $collection_category_name, array () ); // 删除原始数据，保存最新的数据
         foreach($data as $k=>$v)
         {
-            $cid = $v['Category_Item_Url'].'&p=';
-            $name = $v['Category_Item_Name'];
-            $tmp = parse_url($cid);
-            parse_str($tmp['query'],$parr);
-            $url = 'http://www.leju.com/index.php?mod=sale_search&city='.$parr['city'].'&district='.urlencode($parr['district']).'&&p=';
+            $name = $v['name'];
+            $cid = $v['cid'];
+            $url = 'http://www.leju.com/index.php?mod=sale_search&city='.$v['cid'].'&p=';
             $this->pools->set ( $poolname, $url );
             $mondata2 = array (
                 'name' => $name,
@@ -34,13 +31,36 @@ class lejunewhouselistModel extends spiderModel
         echo "do over"."\n";
         exit;
     }
-
-
     //计算每个城市的经纪人数量
     function tojson($cname)
     {
-            $data = $this->mongodb->find('soufunnewhouse_area',array());
-            $collection = $cname = 'soufunnewhouselist_category_list';
+        $this->tojsond(); exit;
+        $data = $this->mongodb->find('lejunewhouse_area',array());
+        $collection =  'lejunewhouselist_category_list_copy';
+        $str = '城市 抓取数量 domain'."\n";
+        $filename = 'lejunewhouse_list2.csv';
+        $i=0;
+        foreach($data as $q)
+        {
+            $keyword = 'city='.$q['cid'].'&';
+            echo $keyword."\n";
+            $regex = new MongoRegex("/.".$keyword."./");
+            $total = $this->mongodb->count($collection,array("Category_Item_Url"=>$regex));
+            $total = $total>0?$total:0;
+            $str .= $q['name']." ".$total." ".$q['cid']."\n";
+            echo $q['name']." ".$total." ".$keyword."\n";
+        }
+        $file = fopen($filename,"a+");
+        fwrite($file,$str);
+        fclose($file);
+        exit("all over");
+    }
+
+    //计算每个城市的经纪人数量
+    function tojsond()
+    {
+            $data = $this->mongodb->find('lejunewhouse_area',array());
+            $collection = $cname = 'lejunewhouselist_category_list';
             $str = "城市\t楼盘名称\t物业类别\ttag\t户型\t均价\t可售套数\t报名人数\t优惠描述（重要）\t所属商圈\t地址\t环线位置\t开盘时间\t开发商\t评论总数\t物业公司\tURL"."\n";
             $filename = 'soufunnewhouse_list2.csv';
             $i=0;
@@ -53,7 +73,8 @@ class lejunewhouselistModel extends spiderModel
                 $dd = $this->mongodb->find($collection,array("Category_Source_Url"=>$regex));
                 foreach($dd as $k=>$v)
                 {
-                    $d = $this->mongodb->findOne('Soufunnewhouse_List_Items',array('source_url'=>$v['Category_Item_Url']));
+                    $skuid = str_replace("/project/","",$v['Category_Item_Skuid']);
+                    $d = $this->mongodb->findOne('Soufunnewhouse_List_Items',array('skuid'=>$skuid));
                     if($d)
                     {
                         $area = $v['Category_Item_Area'];
@@ -67,7 +88,7 @@ class lejunewhouselistModel extends spiderModel
                         $wylb = str_replace(array(" ","\t"),",",trim(isset($d['promotion']['物业类别'])?$d['promotion']['物业类别']:""));
                         $d['Discount'] = str_replace(" ",",",trim($d['Discount']?$d['Discount']:"无\t"));
 
-                        $d['Address'] = trim($v['Category_Item_Area']?$v['Category_Item_Area']:"无\t");
+                        $d['Address'] = trim($v['Address']?$v['Address']:"无");
                         $v['PropertyType'] = trim($v['PropertyType']?$v['PropertyType']:"无\t");
                         $v['Category_Item_DPrice'] = $v['Category_Item_DPrice']?$v['Category_Item_DPrice']:"无\t";
                         $d['Apartment'] = $d['Apartment']?$d['Apartment']:"无\t";

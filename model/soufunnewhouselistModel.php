@@ -68,11 +68,39 @@ class soufunnewhouselistModel extends spiderModel
                 'addtime' => date ( 'Y-m-d H:i:s' )
             ) );
         }
+
         return $totalpages;
     }
 
     //计算每个城市的经纪人数量
     function tojson($cname)
+    {
+        $data = $this->mongodb->find('soufunnewhouse_area',array());
+
+        $collection =  'soufunnewhouselist_category_list';
+        $str = '城市 抓取数量 domain'."\n";
+        $filename = 'soufunnewhouse_list.csv';
+        $i=0;
+        foreach($data as $q)
+        {
+            $sourceurl = $q['cid'];
+            $arr = parse_url($sourceurl);
+            $keyword = $arr['host'];
+            $regex = new MongoRegex("/.".$keyword."./");
+            $total = $this->mongodb->count($collection,array("Category_Source_Url"=>$regex));
+            $total = $total>0?$total:0;
+            $str .= $q['name']." ".$total." ".$q['cid']."\n";
+            echo $q['name']." ".$total." ".$keyword."\n";
+        }
+        $file = fopen($filename,"a+");
+        fwrite($file,$str);
+        fclose($file);
+        exit("all over");
+
+    }
+
+    //计算每个城市的经纪人数量
+    function todetail($cname)
     {
         $data = $this->mongodb->find('soufunnewhouse_area',array());
         $collection = $cname = 'soufunnewhouselist_category_list';
@@ -95,28 +123,29 @@ class soufunnewhouselistModel extends spiderModel
                     $p='/\[(.*)\]/';
                     preg_match($p,$area,$out);
                     $s = $out[1];
-                    $s = $s?$s:"无\t";
+                    $s = $s?$s:"无";
                     $sq = str_replace(array(" ","\t"),",",trim(isset($d['promotion']['所属商圈'])?$d['promotion']['所属商圈']:""));
                     $wy = str_replace(array(" ","\t"),",",trim(isset($d['promotion']['物业公司'])?$d['promotion']['物业公司']:""));
-                    $kp = str_replace(array(" ","\t"),",",trim(isset($d['promotion']['开盘时间'])?$d['promotion']['开盘时间']:""));
+                    $kp = str_replace(array(" ","\t"),",",trim(isset($d['promotion']['开盘时间'])?$d['promotion']['开盘时间']:"无"));
+                    $kp = str_replace(array(" ","\t"),",",$kp);
                     $wylb = str_replace(array(" ","\t"),",",trim(isset($d['promotion']['物业类别'])?$d['promotion']['物业类别']:""));
-                    $d['Discount'] = str_replace(" ",",",trim($d['Discount']?$d['Discount']:"无\t"));
+                    $d['Discount'] = str_replace(" ",",",trim($d['Discount']?$d['Discount']:"无"));
 
-                    $d['Address'] = trim($v['Category_Item_Area']?$v['Category_Item_Area']:"无\t");
-                    $v['PropertyType'] = trim($v['PropertyType']?$v['PropertyType']:"无\t");
-                    $v['Category_Item_DPrice'] = $v['Category_Item_DPrice']?$v['Category_Item_DPrice']:"无\t";
-                    $d['Apartment'] = $d['Apartment']?$d['Apartment']:"无\t";
-                    $d['AvePrice'] = trim($d['AvePrice']?$d['AvePrice']:"无\t");
-                    $d['sales'] = trim($d['sales']?$d['sales']:"无\t");
-                    $d['isbn'] = trim($d['isbn']?$d['isbn']:"无\t");
-                    $d['Developer'] = trim($d['Developer']?$d['Developer']:"无\t");
+                    $d['Address'] = trim($v['Category_Item_Area']?$v['Category_Item_Area']:"无");
+                    $v['PropertyType'] = trim($v['PropertyType']?$v['PropertyType']:"无");
+                    $v['Category_Item_DPrice'] = trim($v['Category_Item_DPrice']?$v['Category_Item_DPrice']:"无");
+                    $d['Apartment'] = $d['Apartment']?$d['Apartment']:"无";
+                    $d['AvePrice'] = trim($d['AvePrice']?$d['AvePrice']:"无");
+                    $d['sales'] = trim($d['sales']?$d['sales']:"无");
+                    $d['isbn'] = trim($d['isbn']?$d['isbn']:"无");
+                    $d['Developer'] = trim($d['Developer']?$d['Developer']:"无");
                     $d['all_comment_number'] = trim($d['all_comment_number']?$d['all_comment_number']:0);
-                    $v['City'] = trim($v['City']?$v['City']:"无\t");
+                    $v['City'] = trim($q['name']?$q['name']:"无");
                     $tag = array();
                     foreach($v['Category_Item_DPrice'] as $k=>$vs)
                     {
                         if($vs)
-                        $tag[] = $vs;
+                            $tag[] = $vs;
                     }
                     $hx = array();
                     foreach($d['Apartment'] as $kk=>$vv)
@@ -126,17 +155,17 @@ class soufunnewhouselistModel extends spiderModel
                     }
                     $hxs = trim(join(",",$hx));
                     if(!$hxs)
-                        $hxs = "无\t";
+                        $hxs = "无";
 
 
                     $tags = trim(join(",",$tag));
                     if(!$tags)
-                        $tags = "无\t";
+                        $tags = "无";
                     if(!$wylb)
-                    $wylb = "无\t";
+                        $wylb = "无";
 
                     if(!$wy)
-                        $wy = "无\t";
+                        $wy = "无";
 
                     $str .= $v['City']."\t".$v['Category_Item_Name']."\t".$wylb."\t".$tags."\t".$hxs."\t".$d['AvePrice']."\t".$d['sales'];
                     $str .="\t".$d['isbn']."\t".$d['Discount']."\t".$sq."\t".$d['Address']."\t".$s."\t".$kp."\t".$d['Developer']."\t".$d['all_comment_number'];
@@ -144,7 +173,13 @@ class soufunnewhouselistModel extends spiderModel
                     $str .="\n";
                 }else
                 {
+                    $d['Address'] = trim($v['Category_Item_Area']?$v['Category_Item_Area']:"无");
+                    $v['PropertyType'] = trim($v['PropertyType']?$v['PropertyType']:"无");
+                    $v['Category_Item_DPrice'] = trim($v['Category_Item_DPrice']?$v['Category_Item_DPrice']:"无");
+                    $str .= $v['City']."\t".$v['Category_Item_Name']."\t".$v['Category_Item_Url'];
+                    $str .="\n";
                     echo $v['Category_Item_Url']."\n";
+                    $this->pools->set("soufunnewhouseItem",$v['Category_Item_Url']);
                 }
 
 //                if($i>20)

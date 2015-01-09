@@ -2,10 +2,6 @@
 
 class soufunnewhouseareaModel extends spiderModel
 {
-
-    /**
-     * 获取分类数据
-     */
     function getCategory() {
         header("Content-type: text/html; charset=utf-8");
         $Category = Application::$_spider ['Category'];
@@ -15,38 +11,33 @@ class soufunnewhouseareaModel extends spiderModel
         $sid = Application::$_spider ['stid'];
         // 清理Category现场
         $this->pools->del ( $poolname );
+        $this->redis->delete ( $this->spidername . 'CategoryTotalCurrent' );
         $this->redis->delete ( $this->spidername . 'CategoryCurrent' );
         $this->redis->delete ( $this->spidername . 'ItemCurrent' );
         $this->redis->delete ( $this->spidername . 'Item' );
         $this->redis->delete ( $this->spidername . 'ItemJobRun' );
         // 判断本次是否重新抓取分类数据
-
         if ($thistimerun) {
             $Category_URL = $Category[elements::CATEGORY_URL];
-//			$page = file_get_contents ( $Category_URL );
-            $tmp = $this->curlmulit->remote( $Category_URL , null, false, Application::$_spider[elements::CHARSET],Application::$_spider [ elements::ITEMPAGECHARSET]);
-
+            $tmp = $this->curlmulit->remote( $Category_URL , null, false, 'utf-8','utf-8');
             $page = $tmp[$Category_URL];
-            $preg = $Category [elements::CATEGORY_MATCH_PREG];
-            $matchnum = $Category [elements::CATEGORY_MATCH_MATCH];
             $Categorytmp = array();
-            preg_match_all ( $preg, $page, $match );
-            if (is_array ( $matchnum )) {
-                $name = $matchnum ['name'];
-                $cid = $matchnum ['cid'];
-                $Categorytmp = array_combine ( $match [$name], $match [$cid] );
-            } else {
-                $Categorytmp = $match [$matchnum];
-            }
-            // $Categorylist = array_slice($Categorytmp,1,12);
-            $Categorylist = array_unique ( $Categorytmp );
-//            }
+            $preg = '//div[@id="c02"]//a/@href';
+            $tmphref = $this->curlmulit->getRegexpInfo2($preg,$page);
+            $preg = '//div[@id="c02"]//a/text()';
+            $tmptext = $this->curlmulit->getRegexpInfo2($preg,$page);
 
+            foreach($tmptext as $k=>$v)
+            {
+                $url = isset($tmphref[$k])?$tmphref[$k]:"";
+                if($url){
+                    $nurl = str_replace(array("http://","/"),"",$url);
+                    $Categorytmp[$v] = "http://newhouse.".$nurl."/house/s/list/";
+                }
+            }
+            $Categorylist = array_unique ( $Categorytmp );
             $mondata = array ();
             foreach ( $Categorylist as $name => $cid ) {
-                $cid = str_replace("soufun","fang",$cid);
-                $cid = str_replace("/","",$cid);
-                $cid = 'http://newhouse.'.$cid.'/house/s/list/';
                 $this->pools->set ( $poolname, $cid );
                 $mondata [] = array (
                     'name' => $name,

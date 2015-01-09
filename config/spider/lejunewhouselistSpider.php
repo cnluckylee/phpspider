@@ -15,7 +15,7 @@ $siteconfig = array(
 				elements::CATEGORY_URL => 'http://bj.house.sina.com.cn/cityguide/',
 				elements::CATEGORY_MATCH_PREG => '/href="http:\/\/(\w+).house.sina.com.cn">(.*?)<\/a>/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>2,'cid'=>1),
-				elements::CATEGORY_GROUP_SIZE => 1,
+				elements::CATEGORY_GROUP_SIZE => 5,
 				elements::CATEGORY_LIST_URL => 'http://data.house.sina.com.cn/#job/search/',
 				elements::CATEGORY_LIST_PAGES_URL => 'http://data.house.sina.com.cn/#job/search/?&charset=utf8',
 				elements::CATEGORY_LIST_PREG => '//form[@id="filterPageForm"]/text()||/共(\d+)页/',

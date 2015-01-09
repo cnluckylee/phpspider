@@ -316,50 +316,19 @@ class soufunbrokerModel extends spiderModel
     //计算每个城市的经纪人数量
     function tojson($cname)
     {
-        $this->tojsond();exit;
+//        $this->tojsond();exit;
         $data = $this->mongodb->find('soufun_area',array());
-        $collection = $cname = 'soufunbroker_category_list';
+        $collection = $cname = 'soufunbroker_Items';
         $str = '城市 抓取数量 URL'."\n";
         $filename = 'soufun_agent.csv';
 
         $i=0;
-//        foreach($data as $q)
-//        {
-//            $domain = str_replace(array("http://","/"),"",$q['cid']);
-//            $regex = new MongoRegex("/.".$domain."./");
-//            $total = $this->mongodb->count($collection,array("Category_Item_Url"=>$regex));
-//            $str .= $q['name']." ".$total." ".$domain.'/agenthome/'."\n";
-//            echo $q['name']." ".$total." ".$domain.'/agenthome/'."\n";
-////            if($i>10)
-////                break;
-////            $i++;
-//        }
-//        $total = $this->mongodb->count($collection);
-//        $s = 0;
-//        $limit = 1000;
-//        do {
-//            $mondata = $this->mongodb->find ( $cname, array (), array (
-//                "start" => $s,
-//                "limit" => $limit
-//            ) );
-//            foreach($mondata as $v)
-//            {
-//                $url = $v['Category_Item_Url'];
-//                $tmp = parse_url($url);
-//                $domainurl = $tmp['host'];
-//                $this->redis->hincrby('tmptotal',$domainurl,1);
-//            }
-//            $s +=$limit;
-//            echo "has load:".$s."\n";
-//        }while($s<$total);
-//        $datas = $this->redis->hgetall('tmptotal');
-
         foreach($data as $q)
         {
             $arr = parse_url($q['cid']);
             $domain = $arr['host'];
             $regex = new MongoRegex("/.".$domain."./");
-            $total = $this->mongodb->count($collection,array("Category_Item_Url"=>$regex));
+            $total = $this->mongodb->count($collection,array("source_url"=>$regex));
 //            $total = $datas[$domain];
             $total = $total>0?$total:0;
 
@@ -419,27 +388,25 @@ class soufunbrokerModel extends spiderModel
                     $tel = $d['source_category_id']?$d['source_category_id']:"无";
                     $qy = $d['brand_id']?$d['brand_id']:"无";
                     $sq = $d['brand_name']?$d['brand_name']:"无";
-                    $tc = $v['Category_Item_Hot']?$v['Category_Item_Hot']:"无";
+                    $tc = $v['Category_Item_Hot']?join(",",$v['Category_Item_Hot']):"无";
                     $zj = $v['Category_Item_Sale']?'是':'否';
                     $zyrz = in_array("已通过职业资格认证",$v['Category_Item_Reviews'])?"是":"否";
                     $sfrz = in_array("已通过身份认证",$v['Category_Item_Reviews'])?"是":"否";
                     $mprz = in_array("已通过名片认证",$v['Category_Item_Reviews'])?"是":"否";
                     $zs = $v['Category_Item_Area']?$v['Category_Item_Area']:"无";
                     $str .= $ct."\t".$v['UserName']."\t".$ssgs."\t".$ssmd."\t".$tel."\t".$qy."\t".$sq."\t".$tc."\t".$zs."\t".$zj."\t";
-                    $str .= $zyrz."\t".$sfrz."\t".$mprz."\t".$url."\t";
+                    $str .= $zyrz."\t".$sfrz."\t".$mprz."\t".$url."\n";
                 }
 
             }
             $s +=$limit;
             echo "has load:".$s."\n";
-            if($s>1000)
-            {
-                $file = fopen($filename,"a+");
-                fwrite($file,$str);
-                fclose($file);
-            }
+
         }while($s<$total);
 
+        $file = fopen($filename,"a+");
+        fwrite($file,$str);
+        fclose($file);
 
 
 
