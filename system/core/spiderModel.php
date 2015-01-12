@@ -217,7 +217,7 @@ foreach($Categorylist as $k=>$v)
 
         //获取分类列表页总页数，如果获取不到则自动停止，并做好相应记录
         $totalpages = $this->getcategorylisttotalpages($Category,$xpath,$pageHtml,$Categoryurl,$job,$jobname);
-
+echo $totalpages;exit;
 		$s = isset ( $Category [elements::CATEGORY_PAGE_START] ) ? $Category[elements::CATEGORY_PAGE_START] : 0;
 		$pagesize = $Category [elements::CATEGORY_GROUP_SIZE];
 		if ($totalpages > 0) {
