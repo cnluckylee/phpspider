@@ -34,31 +34,31 @@ class lejunewhouselistModel extends spiderModel
     //计算每个城市的经纪人数量
     function tojson($cname)
     {
-
-        $data = $this->mongodb->find('lejunewhouse_area',array());//212
-        $data2 = $this->mongodb->find('lejunewhouse_area_2',array());//255
-        $city1 = $city2 = array();
-        foreach($data as $k=>$v)
-        {
-            $city1[$v['cid']] = $v['name'];
-        }
-        foreach($data2 as $k=>$v)
-        {
-            $city2[$v['cid']] = $v['name'];
-        }
-
-        foreach($city1 as $c=>$v)
-        {
-            if(isset($city2[$c]) && $city2[$c] && $v==$city2[$c])
-            {
-//                echo "find".$v."\n";
-                unset($city2[$c]);
-            }else{
-                echo "no find".$v."\n";
-            }
-        }
-        print_r($city2);
-        exit;
+//
+        $data = $this->mongodb->find('lejunewhouse_area_copy',array());//212
+//        $data2 = $this->mongodb->find('lejunewhouse_area_2',array());//255
+//        $city1 = $city2 = array();
+//        foreach($data as $k=>$v)
+//        {
+//            $city1[$v['cid']] = $v['name'];
+//        }
+//        foreach($data2 as $k=>$v)
+//        {
+//            $city2[$v['cid']] = $v['name'];
+//        }
+//
+//        foreach($city1 as $c=>$v)
+//        {
+//            if(isset($city2[$c]) && $city2[$c] && $v==$city2[$c])
+//            {
+////                echo "find".$v."\n";
+//                unset($city2[$c]);
+//            }else{
+//                echo "no find".$v."\n";
+//            }
+//        }
+//        print_r($city2);
+//        exit;
         $collection =  'lejunewhouselist_category_list';
         $str = '城市 抓取数量 domain'."\n";
         $filename = 'lejunewhouse_list_new.csv';

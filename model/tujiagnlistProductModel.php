@@ -16,252 +16,113 @@
  */
 class tujiagnlistProductModel extends productXModel {
 
-    public function getCategoryItemDprice()
+    public function getCategoryItemHot()
     {
-        $filter = $this->_config[\elements::CATEGORY_ITEM_DPRICE];
+        $data = parent::getCategoryItemSkuid();
 
+        foreach($data as $k=>$v)
+        {
+            $p = '/_(\d+).htm/';
+            preg_match($p,$v,$out);
+
+            $num = $out[1];
+            $this->_category_item_hot[$k] = $num;
+        }
+        return $this->_category_item_hot;
+    }
+
+    public function getCategoryItemOprice()
+    {
+
+        $filter = '//div[@class="house-sid"]';
         $nodes = $this->_xpath->query($filter);
-        $address = $this->_config[\elements::CATEGORY_ITEM_AREA];
-        $tags = './/p[@class="sf_status"]/a/text()';
-        $this->_category_item_area = array();
-        $this->_category_item_dprice = array();
+        $filter2 = $this->_config[\elements::CATEGORY_ITEM_OPRICE];
+
+        $this->_category_item_oprice = array();
         foreach ($nodes as $k=>$node) {
-
-            //address
-            foreach ($this->_xpath->query($address, $node) as $child) {
+            foreach ($this->_xpath->query($filter2, $node) as $child) {
                 if($child->nodeValue)
-                    $this->_category_item_area[$k] = $child->nodeValue;
-            }
-            if(!$this->_category_item_area[$k]){
-                $address2 = './/div[@class="sclist_con fl ml15"]/p[1]/text()';
-                $i=1;
-                foreach ($this->_xpath->query($address2, $node) as $child) {
-                    if(strlen($child->nodeValue)>0 && $i==1){
-                        $this->_category_item_area[$k] = $child->nodeValue;
-                        $i++;
-                    }
-                }
-            }
-            if(!$this->_category_item_area[$k]){
-                $address3 = './/li[2]/font/@title';
-                foreach ($this->_xpath->query($address3, $node) as $child) {
-                    if(strlen($child->nodeValue)>0 && $i==1){
-                        $this->_category_item_area[$k] = $child->nodeValue;
-                    }
-                }
-            }
-
-            //TAGS
-            foreach ($this->_xpath->query($tags, $node) as $child) {
-
-                if($child->nodeValue)
-                    $this->_category_item_dprice[$k][] = $child->nodeValue;
+                    $this->_category_item_oprice[$k] = $child->nodeValue;
             }
         }
 
-        return $this->_category_item_dprice;
+        return $this->_category_item_oprice;
     }
 
     public function getCategoryCommon()
     {
-        $data = parent::getCategoryItemOprice();
-        $this->_categorycommon = array();
-        if(!$data){
-            $filter = '//span[@class="shoucang"]/@onclick||2';
-            $data = $this->_getRegexpInfo($filter,$this->getContent());
-        }
-        foreach($data as $k=>$nodes)
-        {
-            $str = str_replace(array("PostSelect(",");","'"),"",$nodes);
-            $arr = explode(",",$str);
-            if($arr)
-            {
-                $this->_categorycommon['Price'][$k] = $arr[5] . $arr[6];
-                $this->_categorycommon['Address'][$k] = $arr[3];
-                $this->_categorycommon['Name'][$k] = $arr[2];
-                $this->_categorycommon['Num'][$k] = $arr[1];
-                $this->_categorycommon['City'][$k] = $arr[4];
-//                $this->_categorycommon['Category_Item_Url'][$k] = $arr[8];
+        if (is_null($this->_categorycommon)) {
+            $filter = '//div[@class="house-list"]/div';
+            $nodes = $this->_xpath->query($filter);
+            $commons = $this->_config[\elements::CATEGORYCOMMON];
+            $tmp = array();
+            foreach ($nodes as $k=>$node) {
+                $filter2 = './/div[@class="house-datelist"]/span/@title';
+                foreach ($this->_xpath->query($filter2, $node) as $child) {
+                    if($child->nodeValue)
+                        $tmp[$k][] = $child->nodeValue;
+                }
+                foreach($tmp as $k=>$v)
+                {
+                    $count = count($v);
+
+                    if($count == 6)
+                    {
+                        //有房屋类型
+                        $this->_categorycommon['Type'][$k] = $v[0];
+                        $this->_categorycommon['Apart'][$k] = $v[1];
+                        $this->_categorycommon['Size'][$k] = $v[3];
+                        $p = '/(\d+)/';
+                        preg_match($p,$v[5],$out);
+                        $this->_categorycommon['Num'][$k] = $out[1];
+                    }else{
+                        $this->_categorycommon['Apart'][$k] = $v[0];
+                        $this->_categorycommon['Size'][$k] = $v[2];
+                        $p = '/(\d+)/';
+                        preg_match($p,$v[4],$out);
+                        $this->_categorycommon['Num'][$k] = $out[1];
+                    }
+                }
+
+                unset($commons['Type']);
+                foreach($commons as $key=>$p)
+                {
+                    preg_match($p,$node->nodeValue,$out);
+
+                    $this->_categorycommon[$key][] = trim($out[1]);
+
+                }
+
             }
         }
-
-        return  $this->_categorycommon;
+        return $this->_categorycommon;
     }
-    public function getCategoryItemUrL()
+
+    public function getCategoryItemUrl()
     {
-        $str = parent::getCategoryItemUrL();
-        if(!$str)
+        $data = parent::getCategoryItemUrl();
+        $sourceurl = parent::getUrl();
+        $arr = parse_url($sourceurl);
+        $baseurl = $arr['scheme']."://".$arr['host'];
+        foreach($data as $k=>$v)
         {
-           $this->_category_item_url = array();
-           $filter = '//strong[@class="f14px"]/a/@href||2';
-            $this->_category_item_url = $this->_category_item_url = $this->_getRegexpInfo($filter,$this->getContent());
+            $this->_category_item_url[$k] = $baseurl.$v;
         }
         return $this->_category_item_url;
     }
 
-    public function getCategoryItemSkuid()
+    public function getProductID()
     {
-        $str = parent::getCategoryItemSkuid();
-        if(!$str)
+        $str = parent::getUrl();
+        if($str)
         {
-            $this->_category_item_skuid = array();
-            $filter = '//strong[@class="f14px"]/a/@href||2';
-            $this->_category_item_skuid = $this->_category_item_url = $this->_getRegexpInfo($filter,$this->getContent());
+            $p = '/gongyu\/(.*).htm/';
+            preg_match($p,$str,$out);
+            $this->_productID = $out[1];
         }
-        return $this->_category_item_skuid;
+        return $this->_productID;
     }
 
-    public function getCategoryItemName()
-    {
-        $data = parent::getCategoryItemName();
-        if(!$data)
-        {
-            $this->_category_item_name = array();
-            $filter = '//strong[@class="f14px"]/a/text()||2';
-            $this->_category_item_name = $this->_getRegexpInfo($filter,$this->getContent());
-        }
-        return $this->_category_item_name;
-    }
-
-    public function getSales()
-    {
-        $p =$this->_config[elements::ITEM_SALES];
-        preg_match($p,$this->_content,$out);
-        $this->_sales = isset($out[1])?$out[1]:0;
-        return $this->_sales;
-    }
-
-    public function getIsbnCode()
-    {
-        $p =$this->_config[elements::ITEM_ISBN];
-        preg_match($p,$this->_content,$out);
-        $this->_isbnCode = isset($out[1])?$out[1]:0;
-        return $this->_isbnCode;
-    }
-
-
-    public function getBarcode()
-    {
-        if(is_null($this->_barcode))
-        {
-            $p =$this->_config[elements::ITEM_BARCODE];
-            preg_match($p,$this->_content,$out);
-            $this->_barcode = isset($out[1])?$out[1]:0;
-        }
-        return $this->_barcode;
-    }
-
-    public function getPromotion()
-    {
-        $source_url = parent::getUrl();
-        $url = $source_url."/house/".$this->getBarcode()."/housedetail.htm";
-        $xpath = $this->getXpathByUrl($url);
-        $filter = $this->_config[\elements::ITEM_PROMOTION];
-        $nodes = $xpath->query($filter);
-        $key = './/td[1]/strong/text()';
-        $val = './/td[1]/text()';
-        $key2 = './/td[2]/strong/text()';
-        $val2 = './/td[2]/text()';
-        $this->_promotion = $this->_promotion2 =array();
-        $filter2 = './/a/text()';
-        foreach ($nodes as $k=>$node) {
-
-            $key_v2 = $val_v2="";
-            //address
-            foreach ($xpath->query($key2, $node) as $child) {
-                if($child->nodeValue)
-                    $key_v2 = trim($child->nodeValue);
-            }
-            foreach ($xpath->query($val2, $node) as $child) {
-                if($child->nodeValue)
-                    $val_v2 = trim($child->nodeValue);
-                }
-
-            if($key_v2 && !$val_v2)
-            {
-                foreach ($xpath->query($filter2, $node) as $child2) {
-                    if($child2->nodeValue)
-                        $val_v2 = trim($child2->nodeValue);
-                }
-            }
-            if($key_v2 && $val_v2)
-             $this->_promotion[$key_v2] = $val_v2;
-
-        }
-        foreach ($nodes as $k=>$node) {
-            $key_v = $val_v="";
-            foreach ($xpath->query($key, $node) as $child) {
-                if($child->nodeValue)
-                    $key_v = trim($child->nodeValue);
-                else{
-                    foreach ($xpath->query($filter2, $node) as $child) {
-                        if($child->nodeValue)
-                            $key_v = trim($child->nodeValue);
-                    }
-                }
-            }
-            foreach ($xpath->query($val, $node) as $child) {
-                if($child->nodeValue)
-                    $val_v = trim($child->nodeValue);
-            }
-            if($key_v && (empty($val_v) || $key_v=="开 发 商"))
-            {
-                foreach ($xpath->query($filter2, $node) as $child2) {
-                    if($child2->nodeValue)
-                        $val_v = trim($child2->nodeValue);
-                }
-            }
-            if($key_v && $val_v)
-                $this->_promotion[$key_v] = $val_v;
-            if(strstr($key_v,"交通状况")){
-                break;
-            }
-        }
-        return $this->_promotion;
-    }
-
-    public  function getCharacters()
-    {
-        if(is_null($this->_characters))
-        {
-            $source_url = parent::getUrl();
-            $url = $source_url."/house/ajaxrequest/dianpingList.php?&newcode=".$this->getBarcode()."&order=n&pagesize=10&page=";
-            $str = $this->getContentByUrl($url);
-            $arr = json_decode($str,true);
-            $comments = array();
-            $list = $arr['list'];
-            foreach($list as $k=>$v)
-            {
-                $comments[] = $v;
-            }
-            $totalpages = ceil($arr['count']/10);
-            for($i=2;$i<=$totalpages;$i++)
-            {
-                $url = $source_url."/house/ajaxrequest/dianpingList.php?&newcode=".$this->getBarcode()."&order=n&pagesize=10&page=".$i;
-                $str = $this->getContentByUrl($url);
-                $arr = json_decode($str,true);
-                $list = $arr['list'];
-                foreach($list as $k=>$v)
-                {
-                    $comments[] = $v;
-                }
-            }
-            $this->_characters = $comments;
-        }
-        return $this->_characters;
-    }
-
-    public function  getDescription()
-    {
-        $str = parent::getDescription();
-        $this->_description = str_replace(" ","",$str);
-        return $this->_description;
-    }
-    public  function getAllCommentNumber()
-    {
-        $this->_allCommentNumber = count($this->_characters);
-        return  $this->_allCommentNumber;
-    }
     /*
         public function getSales2()
         {
