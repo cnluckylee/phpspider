@@ -12,7 +12,7 @@ $siteconfig = array(
 				)
 		),
 		elements::CATEGORY => array(
-				elements::CATEGORY_URL => 'http://bj.house.sina.com.cn/cityguide/',
+				elements::CATEGORY_URL => 'http://www.leju.com/?mod=sale_search',
 				elements::CATEGORY_MATCH_PREG => '/href="http:\/\/(\w+).house.sina.com.cn">(.*?)<\/a>/',
 				elements::CATEGORY_MATCH_MATCH => array('name'=>2,'cid'=>1),
 				elements::CATEGORY_GROUP_SIZE => 1,

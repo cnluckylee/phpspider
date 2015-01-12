@@ -34,16 +34,38 @@ class lejunewhouselistModel extends spiderModel
     //计算每个城市的经纪人数量
     function tojson($cname)
     {
-        $this->tojsond(); exit;
+
         $data = $this->mongodb->find('lejunewhouse_area',array());
-        $collection =  'lejunewhouselist_category_list_copy';
+        $data2 = $this->mongodb->find('lejunewhouse_area_2',array());
+        $city1 = $city2 = array();
+        foreach($data as $k=>$v)
+        {
+            $city1[$v['cid']] = $v['name'];
+        }
+        foreach($data2 as $k=>$v)
+        {
+            $city2[$v['cid']] = $v['name'];
+        }
+
+        foreach($city1 as $c=>$v)
+        {
+            if(isset($city1[$c]) && $city1[$c] && $v==$city1[$c])
+            {
+                echo "find".$v."\n";
+            }else{
+                echo "no find".$v."\n";
+            }
+        }
+        exit;
+        $collection =  'lejunewhouselist_category_list';
         $str = '城市 抓取数量 domain'."\n";
-        $filename = 'lejunewhouse_list2.csv';
+        $filename = 'lejunewhouse_list_new.csv';
         $i=0;
         foreach($data as $q)
         {
             $keyword = 'city='.$q['cid'].'&';
-            echo $keyword."\n";
+
+
             $regex = new MongoRegex("/.".$keyword."./");
             $total = $this->mongodb->count($collection,array("Category_Item_Url"=>$regex));
             $total = $total>0?$total:0;

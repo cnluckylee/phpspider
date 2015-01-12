@@ -1,0 +1,81 @@
+城市	抓取数量	domain
+新疆	1	xj
+自贡	73	zigong
+攀枝花	79	pzh
+常熟	87	changshu
+钦州	90	qinzhou
+泰安	106	taian
+张家口	126	zjk
+大庆	137	daqing
+宜宾	159	yibin
+西宁	170	xining
+博鳌	178	boao
+郴州	185	chenzhou
+宜兴	190	yx
+宜昌	194	yichang
+怀化	197	hh
+九江	197	jiujiang
+岳阳	206	yueyang
+北海	208	beihai
+江门	211	jiangmen
+湘潭	231	xiangtan
+株洲	240	zz
+兰州	270	lanzhou
+乐山	273	leshan
+绍兴	296	shaoxing
+衡阳	308	hengyang
+东营	316	dy
+鞍山	323	anshan
+包头	325	bt
+银川	336	yinchuan
+珠海	352	zhuhai
+南充	358	nanchong
+三亚	375	sanya
+秦皇岛	379	qhd
+贵州	389	guizhou
+昆山	395	ks
+常德	403	changde
+威海	415	weihai
+潍坊	422	weifang
+柳州	435	liuzhou
+桂林	464	guilin
+保定	493	baoding
+广西	493	gx
+南通	496	nt
+泉州	501	quanzhou
+徐州	512	xz
+中山	519	zhongshan
+呼和浩特	529	hhht
+佛山	558	fs
+常州	560	cz
+烟台	567	yt
+惠州	588	huizhou
+唐山	625	tangshan
+南昌	637	nc
+台州	693	taizhou
+哈尔滨	731	h
+无锡	830	wx
+海南	883	han
+石家庄	1090	sjz
+宁波	1170	nb
+苏州	1249	suzhou
+大连	1324	dl
+合肥	1330	hf
+长沙	1406	cs
+青岛	1559	qd
+沈阳	1830	sy
+天津	2471	tj
+深圳	2499	sz
+武汉	2909	wh
+重庆	3193	cq
+广州	3980	gz
+四川	4045	sc
+北京	7278	bj
+上海	9204	sh
+		
+		
+		
+		
+		
+		
+Total	66851	
