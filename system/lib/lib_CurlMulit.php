@@ -69,7 +69,7 @@ class CurlMulit {
             if ($reffer)
                 curl_setopt($curl[$k], CURLOPT_REFERER, $reffer); //来路地址
             curl_setopt($curl[$k], CURLOPT_USERAGENT, $user_agent);
-            curl_setopt($curl[$k], CURLOPT_TIMEOUT, 10); //过期时间
+            curl_setopt($curl[$k], CURLOPT_TIMEOUT, 30); //过期时间
             curl_multi_add_handle($handle, $curl[$k]);
         }
 
